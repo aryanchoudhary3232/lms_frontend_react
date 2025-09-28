@@ -1,5 +1,6 @@
 import React from "react";
-import '../css/Home.css'
+import "../../css/teacher/Home.css";
+import { Link, Outlet } from "react-router-dom";
 
 function Home() {
   return (
@@ -12,7 +13,7 @@ function Home() {
             <a href="/">Home</a>
           </li>
           <li>
-            <a href="/courses">Courses</a>
+            <Link to="/teacher/courses">Courses</Link>
           </li>
           <li>
             <a href="/login">Login</a>
@@ -50,6 +51,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <Outlet />
     </div>
   );
 }

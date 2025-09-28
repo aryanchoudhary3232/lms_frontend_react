@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../css/Login.css";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -12,6 +12,8 @@ const Login = () => {
     role: "",
   });
 
+  const navigate = useNavigate();
+
   const handleOnChange = (e) => {
     setFormData({
       ...formData,
@@ -19,7 +21,7 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmitSignUp = async (e) => {
     e.preventDefault();
 
     try {
@@ -35,14 +37,54 @@ const Login = () => {
       console.log("data", data);
 
       if (response.ok) {
-        alert("Sign up successfully");
         setFormData({
           name: "",
           email: "",
           password: "",
           role: "",
         });
-        redirect("/");
+
+        if (data.data.role === "Teacher") {
+          navigate("/home/teacher");
+        } else {
+          navigate("/home/student");
+        }
+      } else {
+        alert("error:", data.error);
+      }
+    } catch (error) {
+      console.log("error coming...", error);
+    }
+  };
+
+  const handleSubmitLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      console.log("res", response);
+      console.log("data", data);
+
+      if (response.ok) {
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          role: "",
+        });
+
+        if (data.data.role === "Teacher") {
+          navigate("/home/teacher");
+        } else {
+          navigate("/home/student");
+        }
       } else {
         alert("error:", data.error);
       }
@@ -56,7 +98,7 @@ const Login = () => {
       <div className="loginform">
         <div className={`container ${isSignup ? "active" : ""}`} id="container">
           <div className="form-container sign-up">
-            <form onSubmit={handleSubmit} id="signup_form">
+            <form onSubmit={handleSubmitSignUp} id="signup_form">
               <h1 style={{ color: "black" }}>Create Account</h1>
               <div className="social-icons">
                 <a href="#" className="icons">
@@ -112,7 +154,7 @@ const Login = () => {
           </div>
 
           <div className="form-container sign-in">
-            <form id="login_form">
+            <form onSubmit={handleSubmitLogin} id="login_form">
               <h1 style={{ color: "black" }}>Sign In</h1>
               <div className="social-icons">
                 <a href="#" className="icons">
