@@ -9,6 +9,7 @@ import TeacherCourseDetail from "./components/teacher/CourseDetail";
 import StudentHome from "./components/student/Home";
 import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
+import AddCourse from "./components/teacher/AddCourse";
 
 const App = () => {
   return (
@@ -20,9 +21,10 @@ const App = () => {
         <Route path="/home/teacher" element={<TeacherHome />}></Route>
         <Route path="/teacher/courses" element={<TeacherCourses />} />
         <Route
-          path="teacher/courses/:courseId"
+          path="/teacher/courses/:courseId"
           element={<TeacherCourseDetail />}
         />
+        <Route path="/teacher/courses/add" element={<AddCourse />} />
 
         {/* Student routes  */}
         <Route path="/home/student" element={<StudentHome />} />
