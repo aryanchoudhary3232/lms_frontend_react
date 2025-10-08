@@ -69,8 +69,9 @@ const Login = () => {
       });
 
       const data = await response.json();
-      console.log("res", response);
+
       console.log("data", data);
+      console.log("token", data.token);
 
       if (response.ok) {
         setFormData({
@@ -81,9 +82,12 @@ const Login = () => {
         });
 
         if (data.data.role === "Teacher") {
-          navigate("/home/teacher");
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.data.role);
+          navigate("/teacher/home");
         } else {
-          navigate("/home/student");
+          localStorage.setItem("token", data.token);
+          navigate("/student/home");
         }
       } else {
         alert("error:", data.error);
