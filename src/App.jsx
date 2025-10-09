@@ -10,12 +10,16 @@ import StudentHome from "./components/student/Home";
 import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import AddCourse from "./components/teacher/AddCourse";
+import Sidebar from "./components/sidebar";
+import AdminDashboard from "./components/admin/Dashboard";
 
 const App = () => {
   return (
+    <>
+    {/* <Sidebar /> */}
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home/>} />
         <Route path="/login" element={<Login />} />
         {/* Teacher routes  */}
         <Route path="/home/teacher" element={<TeacherHome />}></Route>
@@ -33,8 +37,13 @@ const App = () => {
           path="/student/courses/:courseId"
           element={<StudentCourseDetail />}
         />
+        <Route 
+          path="/home/admin/"
+          element={<AdminDashboard />}
+        ></Route>
       </Routes>
     </BrowserRouter>
+    </>
   );
 };
 
