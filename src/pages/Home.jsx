@@ -1,5 +1,6 @@
-import React from "react";
-import '../css/Home.css'
+import React, { useEffect, useState } from "react";
+import "../css/Home.css";
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
@@ -9,13 +10,10 @@ function Home() {
         <h1 className="logo">MyLMS</h1>
         <ul className="nav-links">
           <li>
-            <a href="/">Home</a>
+            <Link to={"/"}>Home</Link>
           </li>
           <li>
-            <a href="/courses">Courses</a>
-          </li>
-          <li>
-            <a href="/login">Login</a>
+            <Link to="/login">Login</Link>
           </li>
         </ul>
       </nav>
@@ -24,9 +22,9 @@ function Home() {
       <header className="hero">
         <h2>Welcome to MyLMS</h2>
         <p>Learn anytime, anywhere with our courses.</p>
-        <a href="/courses" className="btn">
+        <Link to="/login" className="btn">
           Explore Courses
-        </a>
+        </Link>
       </header>
 
       {/* Courses Preview */}

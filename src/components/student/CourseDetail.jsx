@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../css/teacher/CourseDetail.css";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const CourseDetail = () => {
   const [course, setCourse] = useState([]);
@@ -21,7 +21,9 @@ const CourseDetail = () => {
         if (response.ok) {
           setCourse(courseResponse.data);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log("err occured...", error);
+      }
     }
 
     getCourseById();
@@ -45,33 +47,80 @@ const CourseDetail = () => {
   };
 
   return (
-    <div className="course-player-wrapper">
+    <div
+      className="course-player-wrapper"
+      style={{
+        display: "flex",
+        // gap: "12rem",
+        margin: "5px 5px 5px 5px",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       {/* Left - Video Player */}
-      <div className="player-left">
-        <video src={selectedVideo} controls className="main-video" />
+      <div
+        className="player-left"
+        style={{
+          width: "75%",
+        }}
+      >
+        <video
+          src={selectedVideo}
+          controls
+          style={{
+            borderRadius: "12px",
+            width: "100%",
+          }}
+        />
       </div>
 
       {/* Right - Chapters + Topics */}
-      <div className="player-right">
+      <div
+        className="player-right"
+        style={{
+          width: "25%",
+          display: "flex",
+          flexDirection: "column",
+          marginLeft: "53px",
+        }}
+      >
         <h2 className="course-title">{course.title}</h2>
         <p className="course-description">{course.description}</p>
 
-        <div className="chapters-list">
+        <div
+          className="chapters-list"
+          style={{
+            width: "100%",
+          }}
+        >
           {course.chapters && course.chapters.length > 0 ? (
             course.chapters.map((chapter, chIdx) => (
               <div key={chIdx} className="chapter-card">
                 <h3>{chapter.title}</h3>
                 <ul>
                   {chapter.topics.map((topic, tpIdx) => (
-                    <li
-                      key={tpIdx}
-                      className={`topic-item ${
-                        selectedVideo === topic.video ? "active" : ""
-                      }`}
-                      onClick={() => handleTopicClick(topic.video)}
-                    >
-                      {topic.title}
-                    </li>
+                    <>
+                      <li
+                        key={tpIdx}
+                        className={`topic-item ${
+                          selectedVideo === topic.video ? "active" : ""
+                        }`}
+                        onClick={() => handleTopicClick(topic.video)}
+                      >
+                        {topic.title}
+                      </li>
+                      <Link
+                        to={`/student/courses/${course._id}/${chIdx}/${tpIdx}/quiz`}
+                        style={{
+                          marginLeft: "12px",
+                          textDecoration: "none",
+                          color: "black",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Quiz
+                      </Link>
+                    </>
                   ))}
                 </ul>
               </div>

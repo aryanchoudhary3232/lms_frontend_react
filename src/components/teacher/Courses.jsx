@@ -42,6 +42,9 @@ const Courses = () => {
         ) : (
           courses.map((course) => (
             <Link
+              style={{
+                textDecoration: "none",
+              }}
               to={`/teacher/courses/${course._id}`}
               key={course._id}
               className="course-card"

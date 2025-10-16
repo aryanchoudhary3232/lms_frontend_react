@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "../../css/teacher/AddCourse.css";
 
 const AddCourse = () => {
+  const token = localStorage.getItem("token");
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -81,7 +83,31 @@ const AddCourse = () => {
     const newChapters = [...formData.chapters];
     newChapters[chapterIdx] = {
       ...newChapters[chapterIdx],
-      topics: [...newChapters[chapterIdx].topics, { title: "", video: "" }],
+      topics: [
+        ...newChapters[chapterIdx].topics,
+        { title: "", video: "", quiz: [] },
+      ],
+    };
+
+    setFormData({
+      ...formData,
+      chapters: newChapters,
+    });
+  };
+
+  const handleAddQuestion = (chapterIdx, topicIdx) => {
+    const newChapters = [...formData.chapters];
+    newChapters[chapterIdx].topics[topicIdx] = {
+      ...newChapters[chapterIdx].topics[topicIdx],
+      quiz: [
+        ...newChapters[chapterIdx].topics[topicIdx].quiz,
+        {
+          question: "",
+          options: ["", "", "", ""],
+          correctOption: "",
+          explaination: "",
+        },
+      ],
     };
 
     setFormData({
@@ -115,6 +141,34 @@ const AddCourse = () => {
   };
   console.log(".....", formData);
 
+  const handleQuizOptionChange = (
+    e,
+    chapterIdx,
+    topicIdx,
+    quizIdx,
+    quizOptionIdx
+  ) => {
+    const newChapters = [...formData.chapters];
+    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].options[
+      quizOptionIdx
+    ] = e.target.value;
+
+    setFormData({
+      ...formData,
+      chapters: newChapters,
+    });
+  };
+
+  const handleQuizCorrectOption = (e, chapterIdx, topicIdx, quizIdx, val) => {
+    const newChapters = [...formData.chapters];
+    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption = val;
+
+    setFormData({
+      ...formData,
+      chapters: newChapters,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -142,6 +196,7 @@ const AddCourse = () => {
 
           return {
             title: topic.title,
+            quiz: topic.quiz,
           };
         }),
       };
@@ -154,13 +209,14 @@ const AddCourse = () => {
         `${import.meta.env.VITE_BACKEND_URL}/teacher/courses/create_course`,
         {
           method: "POST",
+          // headers: { Authorization: `Bearer ${token}` },
           body: data,
         }
       );
       const coursesResponse = await response.json();
 
       if (response.ok) {
-        window.location.href = "/teacher/courses"
+        window.location.href = "/teacher/courses";
       }
     } catch (err) {
       console.log("error occured", err);
@@ -168,159 +224,522 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="form-overlay">
-      <div className="form-container">
-        <h2>Add New Course</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="title"
-            placeholder="Course Title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="description"
-            placeholder="Course Description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="category"
-            placeholder="Category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          />
-          <select name="level" value={formData.level} onChange={handleChange}>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advance">Advance</option>
-          </select>
-          <input
-            type="number"
-            name="duration"
-            placeholder="Duration (in hours)"
-            value={formData.duration}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="number"
-            name="price"
-            placeholder="Price (₹)"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
-          <label>Preview Image:</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleChange}
-          />
-          <label>Course Video:</label>
-          <input
-            type="file"
-            name="video"
-            accept="video/*"
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            onChange={handleSearchChangeTeacher}
-            value={searchTeacher}
-            placeholder="Search teacher"
-          />
-          <select name="teacher" onChange={handleChange}>
-            <option>Select Teacher</option>
-            {filterdTeachers.map((teacher) => (
-              <option value={teacher._id} key={teacher._id}>
-                {teacher.name}
-              </option>
-            ))}
-          </select>
-          <div className="">
-            <button type="button" onClick={handleAddChapter}>
-              Add Chapter
-            </button>
-          </div>
-          {formData.chapters.map((chapter, chapterIdx) => (
-            <div
-              key={chapterIdx}
+    <div
+      className="form-container"
+      style={{
+        width: "50vw",
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginTop: "2px",
+        boxShadow: "0 0 12px rgba(0,0,0,0.2)",
+        borderRadius: "12px",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: "center",
+          color: "white",
+          background: "#2337ad",
+          height: "3rem",
+          paddingTop: "16px",
+          marginTop: "0",
+          borderRadius: "12px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          width: "825px",
+        }}
+      >
+        {" "}
+        Add New Course
+      </h2>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          paddingLeft: "12px",
+          paddingRight: "12px",
+        }}
+      >
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+        >
+          Title
+        </label>
+        <input
+          type="text"
+          name="title"
+          placeholder="Course Title"
+          value={formData.title}
+          onChange={handleChange}
+          required
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+          htmlFor=""
+        >
+          Description
+        </label>
+        <textarea
+          name="description"
+          placeholder="Course Description"
+          value={formData.description}
+          onChange={handleChange}
+          required
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+          htmlFor=""
+        >
+          Category
+        </label>
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+          htmlFor=""
+        >
+          Level
+        </label>
+        <select
+          name="level"
+          value={formData.level}
+          onChange={handleChange}
+          style={{
+            height: "41px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        >
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advance">Advance</option>
+        </select>
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+          htmlFor=""
+        >
+          Duration
+        </label>
+        <input
+          type="number"
+          name="duration"
+          placeholder="Duration (in hours)"
+          value={formData.duration}
+          onChange={handleChange}
+          required
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+          htmlFor=""
+        >
+          Price
+        </label>
+        <input
+          type="number"
+          name="price"
+          placeholder="Price (₹)"
+          value={formData.price}
+          onChange={handleChange}
+          required
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+        >
+          Preview Image
+        </label>
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={handleChange}
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+        >
+          Preview Video
+        </label>
+        <input
+          type="file"
+          name="video"
+          accept="video/*"
+          onChange={handleChange}
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+          htmlFor=""
+        >
+          Teacher
+        </label>
+        <input
+          type="text"
+          onChange={handleSearchChangeTeacher}
+          value={searchTeacher}
+          placeholder="Search teacher"
+          style={{
+            height: "26px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        />
+        <select
+          name="teacher"
+          onChange={handleChange}
+          style={{
+            height: "41px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        >
+          <option>Select Teacher</option>
+          {filterdTeachers.map((teacher) => (
+            <option value={teacher._id} key={teacher._id}>
+              {teacher.name}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={handleAddChapter}
+          style={{
+            height: "41px",
+            margin: "0 42px 12px 42px",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        >
+          Add Chapter
+        </button>
+        {formData.chapters.map((chapter, chapterIdx) => (
+          <div
+            key={chapterIdx}
+            style={{
+              margin: "0 42px 0px 42px",
+              padding: "5px",
+              borderRadius: "5px",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <label
+              htmlFor=""
               style={{
-                boxShadow: "0 0 12px rgba(0, 0, 0, 0.2)",
-                marginBottom: "20px",
-                display: "flex",
-                flexDirection: "column",
+                marginBottom: "10px",
               }}
             >
-              <input
-                onChange={(e) =>
-                  handleChapterChange(chapterIdx, e.target.value)
-                }
-                value={chapter.title}
+              Chapter Title
+            </label>
+            <input
+              onChange={(e) => handleChapterChange(chapterIdx, e.target.value)}
+              value={chapter.title}
+              style={{
+                height: "26px",
+                margin: "0 0 12px 0",
+                padding: "11px 3px",
+                borderRadius: "5px",
+                height: "26px",
+              }}
+              type="text"
+              placeholder="Chapter title"
+            />
+            {chapter.topics.map((topic, topicIdx) => (
+              <div
+                key={topicIdx}
                 style={{
-                  width: "20rem",
+                  marginBottom: "10px",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
-                type="text"
-                placeholder="Enter title"
-              />
-              {chapter.topics.map((topic, topicIdx) => (
-                <div
-                  key={topicIdx}
+              >
+                <label
+                  htmlFor=""
                   style={{
-                    boxShadow: "0 0 12px rgba(0, 0, 0, 0.2)",
                     marginBottom: "10px",
                   }}
                 >
-                  <input
-                    onChange={(e) =>
-                      handleTopicChange(chapterIdx, topicIdx, "title", e)
-                    }
-                    value={topic.title}
-                    style={{
-                      width: "20rem",
-                    }}
-                    type="text"
-                    placeholder="Enter title"
-                  />
-                  <input
-                    onChange={(e) =>
-                      handleTopicChange(chapterIdx, topicIdx, "video", e)
-                    }
-                    accept="video/*"
-                    style={{
-                      width: "20rem",
-                    }}
-                    type="file"
-                  />
-                </div>
-              ))}
-              <button onClick={() => handleAddTopic(chapterIdx)} type="button">
-                Add Topic
-              </button>
-            </div>
-          ))}
+                  Topic Title
+                </label>
+                <input
+                  onChange={(e) =>
+                    handleTopicChange(chapterIdx, topicIdx, "title", e)
+                  }
+                  value={topic.title}
+                  style={{
+                    height: "26px",
+                    margin: "0 0 12px 0",
+                    padding: "9px 3px",
+                    borderRadius: "5px",
+                    height: "26px",
+                  }}
+                  type="text"
+                  placeholder="Enter title"
+                />
+                <label
+                  htmlFor=""
+                  style={{
+                    marginBottom: "3px",
+                  }}
+                >
+                  Topic Video
+                </label>
+                <input
+                  onChange={(e) =>
+                    handleTopicChange(chapterIdx, topicIdx, "video", e)
+                  }
+                  accept="video/*"
+                  style={{
+                    height: "26px",
+                    margin: "0 0 -4px 0",
+                    padding: "11px 3px",
+                    borderRadius: "5px",
+                    height: "26px",
+                  }}
+                  type="file"
+                />
+                <label
+                  htmlFor=""
+                  style={{
+                    marginBottom: "12px",
+                  }}
+                >
+                  Quiz
+                </label>
+                {topic.quiz.map((q, quizIdx) => (
+                  <div
+                    key={quizIdx}
+                    style={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <label
+                      style={{
+                        marginBottom: "11px",
+                      }}
+                      htmlFor=""
+                    >
+                      Question Text
+                    </label>
+                    <input
+                      onChange={(e) => {
+                        const newChapters = [...formData.chapters];
+                        newChapters[chapterIdx].topics[topicIdx].quiz[
+                          quizIdx
+                        ].question = e.target.value;
 
-          <div className="form-actions">
+                        setFormData({
+                          ...formData,
+                          chapters: newChapters,
+                        });
+                      }}
+                      value={q.question}
+                      style={{
+                        height: "26px",
+                        margin: "0 0 14px 0",
+                        padding: "9px 3px",
+                        borderRadius: "5px",
+                        height: "26px",
+                      }}
+                      type="text"
+                      name=""
+                      id=""
+                      placeholder="Enter question"
+                    />
+                    {q.options.map((option, quizOptionIdx) => (
+                      <label
+                        key={quizOptionIdx}
+                        htmlFor=""
+                        style={{ marginBottom: "5px" }}
+                      >
+                        <input
+                          onChange={(e) =>
+                            handleQuizCorrectOption(
+                              e,
+                              chapterIdx,
+                              topicIdx,
+                              quizIdx,
+                              option
+                            )
+                          }
+                          type="radio"
+                          name=""
+                          id=""
+                        />
+                        <input
+                          onChange={(e) =>
+                            handleQuizOptionChange(
+                              e,
+                              chapterIdx,
+                              topicIdx,
+                              quizIdx,
+                              quizOptionIdx
+                            )
+                          }
+                          value={option}
+                          style={{
+                            height: "26px",
+                            margin: "0 0 14px 5px",
+                            padding: "6px 3px",
+                            borderRadius: "5px",
+                            height: "26px",
+                          }}
+                          type="text"
+                          placeholder={`Enter option ${quizOptionIdx + 1}`}
+                        />
+                      </label>
+                    ))}
+
+                    <label
+                      style={{
+                        marginBottom: "11px",
+                      }}
+                      htmlFor=""
+                    >
+                      Explaination
+                    </label>
+                    <input
+                      onChange={(e) => {
+                        const newChapters = [...formData.chapters];
+                        newChapters[chapterIdx].topics[topicIdx].quiz[
+                          quizIdx
+                        ].explaination = e.target.value;
+
+                        setFormData({
+                          ...formData,
+                          chapters: newChapters,
+                        });
+                      }}
+                      style={{
+                        height: "26px",
+                        margin: "0 0 9px 0",
+                        padding: "9px 3px",
+                        borderRadius: "5px",
+                        height: "26px",
+                      }}
+                      type="text"
+                      name=""
+                      id=""
+                      placeholder="Enter Explaination"
+                    />
+                  </div>
+                ))}
+                <button
+                  onClick={() => handleAddQuestion(chapterIdx, topicIdx)}
+                  type="button"
+                  style={{
+                    padding: "12px 5px",
+                    borderRadius: "5px",
+                    marginBottom: "12px",
+                    width: "122px",
+                  }}
+                >
+                  Add Question
+                </button>
+              </div>
+            ))}
             <button
+              onClick={() => handleAddTopic(chapterIdx)}
               type="button"
-              className="cancel-btn"
-              
+              style={{
+                padding: "12px 5px",
+                borderRadius: "5px",
+                marginBottom: "12px",
+              }}
             >
-              Cancel
-            </button>
-            <button type="submit" className="submit-btn">
-              Add Course
+              Add Topic
             </button>
           </div>
-        </form>
-      </div>
+        ))}
+        <button
+          type="submit"
+          style={{
+            height: "41px",
+
+            padding: "5px 6px",
+            background: "#2337ad",
+            color: "white",
+            borderRadius: "5px",
+            margin: "10px 43px",
+          }}
+        >
+          Add Course
+        </button>
+      </form>
     </div>
   );
 };
