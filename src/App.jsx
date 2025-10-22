@@ -10,8 +10,8 @@ import StudentHome from "./components/student/Home";
 import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import AddCourse from "./components/teacher/AddCourse";
-import Sidebar from "./components/sidebar";
-import AdminDashboard from "./components/admin/Dashboard";
+import Sidebar from "./components/admin/components/sidebar";
+import AdminDashboard from "./app/dashboard/Dashboard";
 
 const App = () => {
   return (
