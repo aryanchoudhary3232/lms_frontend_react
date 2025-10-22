@@ -1,8 +1,8 @@
-import { AppSidebar } from "@/components/admin/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/admin/components/chart-area-interactive"
-import { DataTable } from "@/components/admin/components/data-table"
-import { SectionCards } from "@/components/admin/components/section-cards"
-import { SiteHeader } from "@/components/admin/components/site-header"
+import { AppSidebar } from "@/components/teacher/components/app-sidebar"
+import { ChartAreaInteractive } from "@/components/teacher/components/chart-area-interactive"
+import { DataTable } from "@/components/teacher/components/data-table"
+import { SectionCards } from "@/components/teacher/components/section-cards"
+import { SiteHeader } from "@/components/teacher/components/site-header"
 import {
   SidebarInset,
   SidebarProvider,
@@ -10,7 +10,7 @@ import {
 
 import data from "./data.json"
 
-export default function AdminDashboard() {
+export default function TeacherDashboard() {
   return (
     <SidebarProvider
       style={

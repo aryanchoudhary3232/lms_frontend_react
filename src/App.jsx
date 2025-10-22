@@ -10,8 +10,8 @@ import StudentHome from "./components/student/Home";
 import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import AddCourse from "./components/teacher/AddCourse";
-import Sidebar from "./components/admin/components/sidebar";
-import AdminDashboard from "./app/dashboard/Dashboard";
+import Sidebar from "./components/teacher/components/sidebar";
+import TeacherDashboard from "./app/dashboard/Dashboard";
 
 const App = () => {
   return (
@@ -37,10 +37,12 @@ const App = () => {
           path="/student/courses/:courseId"
           element={<StudentCourseDetail />}
         />
+        //touch kiya tho sab hat jayega
         <Route 
-          path="/home/admin/"
-          element={<AdminDashboard />}
+          path="/home/teacher/dashboard"
+          element={<TeacherDashboard />}
         ></Route>
+        //end
       </Routes>
     </BrowserRouter>
     </>

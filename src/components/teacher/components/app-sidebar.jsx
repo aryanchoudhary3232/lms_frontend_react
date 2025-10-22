@@ -17,10 +17,10 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/admin/components/nav-documents"
-import { NavMain } from "@/components/admin/components/nav-main"
-import { NavSecondary } from "@/components/admin/components/nav-secondary"
-import { NavUser } from "@/components/admin/components/nav-user"
+import { NavDocuments } from "@/components/teacher/components/nav-documents"
+import { NavMain } from "@/components/teacher/components/nav-main"
+import { NavSecondary } from "@/components/teacher/components/nav-secondary"
+import { NavUser } from "@/components/teacher/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -33,8 +33,8 @@ import {
 
 const data = {
   user: {
-    name: "Admin",
-    email: "admin@seekobharat.com",
+    name: "Teacher",
+    email: "teacher@seekobharat.com",
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
