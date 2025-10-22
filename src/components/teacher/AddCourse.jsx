@@ -13,6 +13,7 @@ const AddCourse = () => {
     price: "",
     image: null,
     video: null,
+    notes: null,
     teacher: "",
     chapters: [],
   });
@@ -181,6 +182,7 @@ const AddCourse = () => {
     data.append("price", formData.price);
     data.append("image", formData.image);
     data.append("video", formData.video);
+  if (formData.notes) data.append("notes", formData.notes);
     data.append("teacher", formData.teacher);
 
     const chaptersCopy = formData.chapters.map((chapter, chapterIdx) => {
@@ -396,6 +398,24 @@ const AddCourse = () => {
             margin: "0 42px 12px 42px",
             padding: "5px",
             borderRadius: "5px",
+          }}
+        />
+        <label
+          style={{
+            marginLeft: "42px",
+            marginBottom: "9px",
+          }}
+          htmlFor=""
+        >
+          Notes (PDF)
+        </label>
+        <input
+          type="file"
+          name="notes"
+          accept="application/pdf"
+          onChange={handleChange}
+          style={{
+            margin: "0 42px 12px 42px",
           }}
         />
         <label
