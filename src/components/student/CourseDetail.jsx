@@ -87,6 +87,25 @@ const CourseDetail = () => {
       >
         <h2 className="course-title">{course.title}</h2>
         <p className="course-description">{course.description}</p>
+        {course.notes ? (
+          <div style={{ margin: "8px 0" }}>
+            <a
+              href={course.notes}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                background: "#2337ad",
+                color: "white",
+                borderRadius: "6px",
+                textDecoration: "none",
+              }}
+            >
+              View / Download Notes (PDF)
+            </a>
+          </div>
+        ) : null}
 
         <div
           className="chapters-list"
