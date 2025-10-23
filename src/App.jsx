@@ -22,16 +22,16 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        {/* Teacher routes  */}
         <Route
-          path="/login"
+          path="/teacher"
           element={
-            <ProtectedRoute>
-              <Login />
+            <ProtectedRoute allowedRole={["Teacher"]}>
+              <Teacher />
             </ProtectedRoute>
           }
-        />
-        {/* Teacher routes  */}
-        <Route path="/teacher" element={<Teacher />}>
+        >
           <Route path="home" element={<TeacherHome />}></Route>
           <Route path="courses" element={<TeacherCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
@@ -39,12 +39,19 @@ const App = () => {
         </Route>
 
         {/* Student routes  */}
-        <Route path="/student" element={<Student />}>
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute allowedRole={["Student"]}>
+              <Student />
+            </ProtectedRoute>
+          }
+        >
           <Route path="home" element={<StudentHome />} />
           <Route path="courses" element={<StudentCourses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
-            path="courses/:courseId/:chapterIdx/:topicIdx/quiz"
+            path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<Quiz />}
           />
         </Route>

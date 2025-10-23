@@ -62,6 +62,7 @@ const Login = () => {
 
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      console.log('.....', backendUrl)
       const response = await fetch(`${backendUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,6 +88,7 @@ const Login = () => {
           navigate("/teacher/home");
         } else {
           localStorage.setItem("token", data.token);
+          localStorage.setItem('role', data.data.role)
           navigate("/student/home");
         }
       } else {

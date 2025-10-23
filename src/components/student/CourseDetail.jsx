@@ -28,6 +28,7 @@ const CourseDetail = () => {
 
     getCourseById();
   }, []);
+  console.log('course',course)
 
   useEffect(() => {
     // Page load pe default video = course intro
@@ -99,9 +100,8 @@ const CourseDetail = () => {
                 <h3>{chapter.title}</h3>
                 <ul>
                   {chapter.topics.map((topic, tpIdx) => (
-                    <>
+                    <div key={tpIdx}>
                       <li
-                        key={tpIdx}
                         className={`topic-item ${
                           selectedVideo === topic.video ? "active" : ""
                         }`}
@@ -110,7 +110,7 @@ const CourseDetail = () => {
                         {topic.title}
                       </li>
                       <Link
-                        to={`/student/courses/${course._id}/${chIdx}/${tpIdx}/quiz`}
+                        to={`/student/courses/${course._id}/${chapter._id}/${topic._id}/quiz`}
                         style={{
                           marginLeft: "12px",
                           textDecoration: "none",
@@ -120,7 +120,7 @@ const CourseDetail = () => {
                       >
                         Quiz
                       </Link>
-                    </>
+                    </div>
                   ))}
                 </ul>
               </div>
