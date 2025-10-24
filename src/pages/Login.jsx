@@ -71,6 +71,7 @@ const Login = () => {
 
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      console.log('.....', backendUrl)
       const response = await fetch(`${backendUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

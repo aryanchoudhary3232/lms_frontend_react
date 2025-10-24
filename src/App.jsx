@@ -36,6 +36,38 @@ function App() {
         />
         {/* Catch all route */}
         <Route path="*" element={<Home />} />
+        {/* Teacher routes  */}
+        <Route
+          path="/teacher"
+          element={
+            <ProtectedRoute allowedRole={["Teacher"]}>
+              <Teacher />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="home" element={<TeacherHome />}></Route>
+          <Route path="courses" element={<TeacherCourses />} />
+          <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
+          <Route path="courses/add" element={<AddCourse />} />
+        </Route>
+
+        {/* Student routes  */}
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute allowedRole={["Student"]}>
+              <Student />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="home" element={<StudentHome />} />
+          <Route path="courses" element={<StudentCourses />} />
+          <Route path="courses/:courseId" element={<StudentCourseDetail />} />
+          <Route
+            path="courses/:courseId/:chapterId/:topicId/quiz"
+            element={<Quiz />}
+          />
+        </Route>
       </Routes>
     </Router>
   );
