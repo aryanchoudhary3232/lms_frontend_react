@@ -25,7 +25,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
       const response = await fetch(`${backendUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,10 +34,10 @@ const Login = () => {
       });
 
       const data = await response.json();
-      console.log("res", response);
-      console.log("data", data);
+      console.log("Registration response:", data);
 
-      if (response.ok) {
+      if (response.ok && data.success) {
+        alert("Registration successful! Please login with your credentials.");
         setFormData({
           name: "",
           email: "",
@@ -44,25 +45,14 @@ const Login = () => {
           role: "",
         });
 
-        // Store token if provided
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("role", data.data.role);
-        }
-
-        // Navigate based on role
-        if (data.data.role === "Teacher") {
-          navigate("/teacher/home");
-        } else if (data.data.role === "Admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/student/home");
-        }
+        // Switch to login form
+        setIsSignup(false);
       } else {
-        alert("Error: " + data.message);
+        alert("Registration Error: " + (data.message || "Unknown error"));
       }
     } catch (error) {
-      console.log("error coming...", error);
+      console.log("Registration error:", error);
+      alert("Network error during registration. Please try again.");
     }
   };
 
@@ -70,8 +60,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      console.log('.....', backendUrl)
+<<<<<<< Updated upstream
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+=======
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+>>>>>>> Stashed changes
       const response = await fetch(`${backendUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -79,11 +74,13 @@ const Login = () => {
       });
 
       const data = await response.json();
+      console.log("Login response:", data);
 
-      console.log("data", data);
-      console.log("token", data.token);
+      if (response.ok && data.success) {
+        // Store token and role
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.data.role);
 
-      if (response.ok) {
         setFormData({
           name: "",
           email: "",
@@ -91,23 +88,22 @@ const Login = () => {
           role: "",
         });
 
-        // Store token and role
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.data.role);
-
         // Navigate based on role
         if (data.data.role === "Teacher") {
           navigate("/teacher/home");
         } else if (data.data.role === "Admin") {
           navigate("/admin/dashboard");
-        } else {
+        } else if (data.data.role === "Student") {
           navigate("/student/home");
+        } else {
+          navigate("/");
         }
       } else {
-        alert("Error: " + data.message);
+        alert("Login Error: " + (data.message || "Invalid credentials"));
       }
     } catch (error) {
-      console.log("error coming...", error);
+      console.log("Login error:", error);
+      alert("Network error during login. Please try again.");
     }
   };
 

@@ -7,13 +7,18 @@ const Courses = () => {
 
   const getAllCourses = async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/teacher/courses/get_courses`
-      );
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      const response = await fetch(`${backendUrl}/student/courses`);
       const coursesResponse = await response.json();
-      setCourses(coursesResponse.data);
+
+      if (coursesResponse.success) {
+        setCourses(coursesResponse.data);
+      } else {
+        console.error("Error fetching courses:", coursesResponse.message);
+      }
     } catch (error) {
-      console.log("error occured", error);
+      console.log("error occurred", error);
     }
   };
   console.log(courses);

@@ -10,40 +10,61 @@ const Quiz = () => {
   const [quiz, setQuiz] = useState([]);
   const [quizTitle, setQuizTitle] = useState("");
   const [answerQuiz, setAnswerQuiz] = useState([]);
+  const [userAnswers, setUserAnswers] = useState([]);
   const [result, setResult] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     async function getCourseById() {
       try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_URL
-          }/teacher/courses/get_course_by_id/${courseId}`
+          `${backendUrl}/student/courses/${courseId}`
         );
         const courseResponse = await response.json();
-        const chapter = courseResponse.data.chapters.find(
-          (chapter) => chapter._id === chapterId
-        );
-        const topic = chapter.topics.find((topic) => topic._id === topicId);
-        setQuiz(topic.quiz);
 
-        setQuizTitle(courseResponse.data.title);
+        if (response.ok && courseResponse.success) {
+          const chapter = courseResponse.data.chapters.find(
+            (chapter) => chapter._id === chapterId
+          );
+          const topic = chapter.topics.find((topic) => topic._id === topicId);
+          setQuiz(topic.quiz);
+
+          setQuizTitle(courseResponse.data.title);
+        } else {
+          console.error(
+            "Error fetching course for quiz:",
+            courseResponse.message
+          );
+        }
       } catch (error) {
-        console.log("err occured..", error);
+        console.log("err occurred..", error);
       }
     }
 
     getCourseById();
   }, [courseId, chapterId, topicId]);
 
-  const handleTickOption = (e, question, option) => {
-    console.log("question", question);
+  console.log(quiz);
+
+  const handleTickOption = (questionIdx, option) => {
+    setUserAnswers((prev) => {
+      const newAnswers = [...prev];
+      newAnswers[questionIdx] = option;
+      return newAnswers;
+    });
     setAnswerQuiz((prev) => {
-      const updated = prev.filter((ans) => ans.question !== question);
-      return [...updated, { question: question, tickOption: option }];
+      const updated = prev.filter(
+        (ans) => ans.question !== quiz[questionIdx].question
+      );
+      return [
+        ...updated,
+        { question: quiz[questionIdx].question, tickOption: option },
+      ];
     });
   };
+
   console.log("answerQuiz", answerQuiz);
 
   const handleOnSubmit = async (e) => {
@@ -115,17 +136,9 @@ const Quiz = () => {
                   style={{ display: "flex", gap: "6px" }}
                 >
                   <input
-                    onChange={(e) =>
-                      handleTickOption(e, question.question, option)
-                    }
-                    value={option}
-                    checked={
-                      answerQuiz.find(
-                        (ans) =>
-                          ans.question === question.question &&
-                          ans.tickOption === option
-                      ) !== undefined
-                    }
+                    onChange={() => handleTickOption(questionIdx, option)}
+                    checked={userAnswers[questionIdx] === option}
+                    name={`question-${questionIdx}`}
                     type="radio"
                   />
                   <div>{option}</div>
@@ -195,7 +208,7 @@ const Quiz = () => {
       >
         {result?.quiz?.map((q, qidx) => (
           <div
-          key={qidx}
+            key={qidx}
             className={q.tickOption === q.correctOption ? "green" : ""}
             style={{
               boxShadow: "0 0 5px rgba(0,0,0,0.2)",

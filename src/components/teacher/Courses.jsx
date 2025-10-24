@@ -30,7 +30,7 @@ const Courses = () => {
           style={{
             textDecoration: "none",
           }}
-          to={`/teacher/courses/add`}
+          to={`/teacher/add-course`}
         >
           <button className="add-btn">+ Add New Course</button>
         </Link>
