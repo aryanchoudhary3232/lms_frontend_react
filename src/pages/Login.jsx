@@ -60,13 +60,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
-<<<<<<< Updated upstream
       const backendUrl =
         import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-=======
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
->>>>>>> Stashed changes
       const response = await fetch(`${backendUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
