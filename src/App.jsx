@@ -1,56 +1,44 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import ProtectedRoute from "./helper/ProtectedRoute";
-
-// Teacher routes
-import Teacher from "./components/teacher/Teacher";
-import TeacherHome from "./components/teacher/Home";
-import TeacherCourses from "./components/teacher/Courses";
-import TeacherCourseDetail from "./components/teacher/CourseDetail";
-
-// Student routes
+import Login from "./pages/Login";
 import Student from "./components/student/Student";
-import StudentHome from "./components/student/Home";
-import StudentCourses from "./components/student/Courses";
-import StudentCourseDetail from "./components/student/CourseDetail";
-import AddCourse from "./components/teacher/AddCourse";
-import Quiz from "./components/student/Quiz";
+import Teacher from "./components/teacher/Teacher";
+import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminUsers from "./components/admin/AdminUsers";
+import AdminCourses from "./components/admin/AdminCourses";
+import AdminSidebar from "./components/admin/AdminSidebar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-const App = () => {
+function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/student/*" element={<Student />} />
+        <Route path="/teacher/*" element={<Teacher />} />
         <Route
-          path="/login"
+          path="/admin/*"
           element={
-            <ProtectedRoute>
-              <Login />
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <div className="admin-layout">
+                <AdminSidebar />
+                <div className="admin-content">
+                  <Routes>
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="courses" element={<AdminCourses />} />
+                  </Routes>
+                </div>
+              </div>
             </ProtectedRoute>
           }
         />
-        {/* Teacher routes  */}
-        <Route path="/teacher" element={<Teacher />}>
-          <Route path="home" element={<TeacherHome />}></Route>
-          <Route path="courses" element={<TeacherCourses />} />
-          <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
-          <Route path="courses/add" element={<AddCourse />} />
-        </Route>
-
-        {/* Student routes  */}
-        <Route path="/student" element={<Student />}>
-          <Route path="home" element={<StudentHome />} />
-          <Route path="courses" element={<StudentCourses />} />
-          <Route path="courses/:courseId" element={<StudentCourseDetail />} />
-          <Route
-            path="courses/:courseId/:chapterIdx/:topicIdx/quiz"
-            element={<Quiz />}
-          />
-        </Route>
+        {/* Catch all route */}
+        <Route path="*" element={<Home />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
-};
+}
 
 export default App;
