@@ -11,18 +11,20 @@ const CourseDetail = () => {
   useEffect(() => {
     async function getCourseById() {
       try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_URL
-          }/teacher/courses/get_course_by_id/${courseId}`
+          `${backendUrl}/student/courses/${courseId}`
         );
         const courseResponse = await response.json();
 
-        if (response.ok) {
+        if (response.ok && courseResponse.success) {
           setCourse(courseResponse.data);
+        } else {
+          console.error("Error fetching course:", courseResponse.message);
         }
       } catch (error) {
-        console.log("err occured...", error);
+        console.log("err occurred...", error);
       }
     }
 
