@@ -1,0 +1,122 @@
+/* Common layout and theme for Navbar, Header and Footer */
+
+:root{
+  /* Use requested blue for primary theme across header and navbar */
+  --sb-blue: rgb(35, 55, 173);
+  /* a slightly darker variant for hover/shadows */
+  --sb-dark-blue: rgb(23, 40, 150);
+  --sb-white: #ffffff;
+  --sb-light: #f5f9ff;
+}
+
+.container{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Navbar */
+.site-navbar{
+  background: var(--sb-blue);
+  color: var(--sb-white);
+  box-shadow: 0 2px 6px rgba(13,110,253,0.08);
+}
+.site-navbar .nav-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 0;
+}
+.site-navbar .brand{
+  color:var(--sb-white);
+  text-decoration:none;
+  font-weight:700;
+  font-size:1.25rem;
+}
+.site-navbar .nav-links{
+  display:flex;
+  gap:12px;
+}
+.site-navbar .nav-item{
+  color:var(--sb-white);
+  text-decoration:none;
+  padding:8px 12px;
+  border-radius:6px;
+}
+.site-navbar .nav-item:hover{background: rgba(255,255,255,0.08)}
+.site-navbar .nav-item.action{
+  background: var(--sb-white);
+  color: var(--sb-blue);
+  font-weight:600;
+}
+
+/* Header (hero) */
+.site-header{
+  background: linear-gradient(180deg, var(--sb-light), #fff);
+  text-align:center;
+  padding:48px 0;
+}
+.site-header .site-title{
+  /* Use requested header blue */
+  color: rgb(35, 55, 173);
+  font-size:2rem;
+  margin:0 0 8px 0;
+}
+.site-header .site-sub{
+  color:#334155;
+  margin:0 0 16px 0;
+}
+.btn{
+  display:inline-block;
+  padding:10px 16px;
+  border-radius:8px;
+  text-decoration:none;
+}
+.btn.primary{
+  background:var(--sb-blue);
+  color:var(--sb-white);
+}
+
+/* Footer */
+.site-footer{
+  background:#f8fafc;
+  color:#334155;
+  padding:20px 0;
+  border-top:1px solid #e6eefb;
+}
+.site-footer .footer-inner{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:18px;
+  align-items:start;
+}
+
+.footer-col h4{margin:0 0 8px 0}
+.footer-links{list-style:none; padding:0; margin:0}
+.footer-links li{margin:6px 0}
+
+.contact-form input, .contact-form textarea{
+  width:100%;
+  padding:8px 10px;
+  margin:6px 0;
+  border:1px solid #dbeafe;
+  border-radius:6px;
+}
+.contact-form textarea{min-height:90px; resize:vertical}
+.contact-form .error{color:#b91c1c}
+.contact-form .success{color:#064e3b}
+
+.site-footer .footer-inner .btn.primary{background:var(--sb-blue); color:var(--sb-white); border:none}
+
+@media (max-width:720px){
+  .site-navbar .nav-links{display:none}
+  .site-footer .footer-inner{flex-direction:column; text-align:center}
+}
