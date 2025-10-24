@@ -1,7 +1,10 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import ProtectedRoute from "./helper/ProtectedRoute";
+
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
 
 // Teacher routes
 import Teacher from "./components/teacher/Teacher";
@@ -20,6 +23,18 @@ import Quiz from "./components/student/Quiz";
 const App = () => {
   return (
     <BrowserRouter>
+      <Main />
+    </BrowserRouter>
+  );
+};
+
+function Main() {
+  const location = useLocation();
+  const hideShell = location.pathname === "/login";
+
+  return (
+    <>
+      {!hideShell && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
@@ -49,8 +64,9 @@ const App = () => {
           />
         </Route>
       </Routes>
-    </BrowserRouter>
+      {!hideShell && <Footer />}
+    </>
   );
-};
+}
 
 export default App;
