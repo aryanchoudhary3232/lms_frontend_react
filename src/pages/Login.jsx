@@ -44,13 +44,22 @@ const Login = () => {
           role: "",
         });
 
+        // Store token if provided
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.data.role);
+        }
+
+        // Navigate based on role
         if (data.data.role === "Teacher") {
-          navigate("/home/teacher");
+          navigate("/teacher/home");
+        } else if (data.data.role === "Admin") {
+          navigate("/admin/dashboard");
         } else {
-          navigate("/home/student");
+          navigate("/student/home");
         }
       } else {
-        alert("error:", data.error);
+        alert("Error: " + data.message);
       }
     } catch (error) {
       console.log("error coming...", error);
@@ -82,17 +91,20 @@ const Login = () => {
           role: "",
         });
 
+        // Store token and role
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.data.role);
+
+        // Navigate based on role
         if (data.data.role === "Teacher") {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("role", data.data.role);
           navigate("/teacher/home");
+        } else if (data.data.role === "Admin") {
+          navigate("/admin/dashboard");
         } else {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem('role', data.data.role)
           navigate("/student/home");
         }
       } else {
-        alert("error:", data.error);
+        alert("Error: " + data.message);
       }
     } catch (error) {
       console.log("error coming...", error);
@@ -153,6 +165,7 @@ const Login = () => {
                 <option value="">...Choose role...</option>
                 <option value="Student">Student</option>
                 <option value="Teacher">Teacher</option>
+                <option value="Admin">Admin</option>
               </select>
 
               <button type="submit">Sign Up</button>
