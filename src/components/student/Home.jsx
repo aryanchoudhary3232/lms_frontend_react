@@ -3,51 +3,9 @@ import "../../css/teacher/Home.css";
 import { Link, useNavigate } from "react-router-dom";
 
 function Home() {
-  const navigate = useNavigate();
 
   return (
     <div className="home-container">
-      {/* Navbar */}
-      <div className="navbar">
-        <h1 className="logo">MyLMS</h1>
-        <div
-          style={{
-            display: "flex",
-            gap: "23px",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Link
-            style={{ textDecoration: "none", color: "white" }}
-            to="/student/home"
-          >
-            Home
-          </Link>
-          <Link
-            style={{ textDecoration: "none", color: "white" }}
-            to="/student/courses"
-          >
-            Courses
-          </Link>
-          <button
-            style={{
-              border: "none",
-              background: "none",
-              color: "white",
-              fontSize: "17px",
-            }}
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("role");
-              navigate("/login");
-            }}
-          >
-            Log out
-          </button>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <header className="hero">
         <h2>Welcome to MyLMS</h2>

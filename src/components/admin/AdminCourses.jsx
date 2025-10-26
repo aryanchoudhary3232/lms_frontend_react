@@ -71,7 +71,7 @@ const AdminCourses = () => {
   }
 
   return (
-    <div className="admin-courses">
+    <div style={{ width: "84vw", marginLeft: '12px' }} className="admin-courses">
       <h2>All Courses ({courses.length})</h2>
 
       {courses.length > 0 ? (

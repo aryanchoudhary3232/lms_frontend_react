@@ -2,17 +2,8 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import ProtectedRoute from "./helper/ProtectedRoute";
-
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
-
-// Teacher routes
-import Teacher from "./components/teacher/Teacher";
-import TeacherHome from "./components/teacher/Home";
-import TeacherCourses from "./components/teacher/Courses";
-import TeacherCourseDetail from "./components/teacher/CourseDetail";
-
-// Student routes
 import Student from "./components/student/Student";
 import StudentHome from "./components/student/Home";
 import StudentCourses from "./components/student/Courses";
@@ -28,7 +19,8 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
 import AdminCourses from "./components/admin/AdminCourses";
 import AdminSidebar from "./components/admin/AdminSidebar";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AddCourse from "./components/teacher/AddCourse";
+import Quiz from "./components/student/Quiz";
 
 function App() {
   return (
@@ -36,7 +28,7 @@ function App() {
       <Main />
     </BrowserRouter>
   );
-};
+}
 
 function Main() {
   const location = useLocation();
@@ -44,67 +36,14 @@ function Main() {
 
   return (
     <>
-      {!hideShell && <Navbar />}
+      {!hideShell && !(location.pathname === "/teacher/courses/add") && (
+        <Navbar />
+      )}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/student/*"
-          element={
-            <ProtectedRoute allowedRoles={["Student"]}>
-              <Routes>
-                <Route path="home" element={<StudentHome />} />
-                <Route path="courses" element={<StudentCourses />} />
-                <Route
-                  path="courses/:courseId"
-                  element={<StudentCourseDetail />}
-                />
-                <Route
-                  path="courses/:courseId/:chapterIdx/:topicIdx/quiz"
-                  element={<StudentQuiz />}
-                />
-                <Route path="*" element={<StudentHome />} />
-              </Routes>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/teacher/*"
-          element={
-            <ProtectedRoute allowedRoles={["Teacher"]}>
-              <Routes>
-                <Route path="home" element={<TeacherHome />} />
-                <Route path="courses" element={<TeacherCourses />} />
-                <Route path="courses/:id" element={<TeacherCourseDetail />} />
-                <Route path="add-course" element={<TeacherAddCourse />} />
-                <Route
-                  path="chapters/:courseId"
-                  element={<TeacherChapters />}
-                />
-                <Route path="*" element={<TeacherHome />} />
-              </Routes>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/*"
-          element={
-            <ProtectedRoute allowedRoles={["Admin"]}>
-              <div className="admin-layout">
-                <AdminSidebar />
-                <div className="admin-content">
-                  <Routes>
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="courses" element={<AdminCourses />} />
-                  </Routes>
-                </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-        {/* Catch all route */}
-        <Route path="*" element={<Home />} />
+
         {/* Teacher routes  */}
         <Route
           path="/teacher"
@@ -137,8 +76,20 @@ function Main() {
             element={<Quiz />}
           />
         </Route>
+
+        {/* Admin routes  */}
+        <Route path="/admin" element={<AdminSidebar />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="courses" element={<AdminCourses />} />
+        </Route>
       </Routes>
-      {!hideShell && <Footer />}
+
+      {!hideShell &&
+        !(location.pathname === "/teacher/courses/add") &&
+        !(location.pathname === "/admin/dashboard") &&
+        !(location.pathname === "/admin/users") &&
+        !(location.pathname === "/admin/courses") && <Footer />}
     </>
   );
 }

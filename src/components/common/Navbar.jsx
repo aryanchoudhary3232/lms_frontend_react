@@ -17,12 +17,12 @@ const Navbar = () => {
   return (
     <header className="site-navbar">
       <div className="container nav-inner">
-        <Link to="/" className="brand">
+        <Link to={role==='Admin' ? '/admin/dashboard' : role==='Teacher' ? '/teacher/home' : "/student/home"} className="brand">
           SeekhoBharat
         </Link>
 
         <nav className="nav-links">
-          <Link to="/student/courses" className="nav-item">
+          <Link to={role==='Admin'? '/admin/courses' : role==='Student' ? "/student/courses" : '/teacher/courses'} className="nav-item">
             Courses
           </Link>
           <Link to="/cart" className="nav-item">
