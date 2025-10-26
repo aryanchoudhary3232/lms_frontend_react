@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../common/layout.css";
 
 const Footer = () => {
@@ -61,9 +62,10 @@ const Footer = () => {
         <div className="footer-col">
           <h4>Quick Links</h4>
           <ul className="footer-links">
-            <li><a href="/student/courses">Courses</a></li>
-            <li><a href="/contact-us">Contact Us</a></li>
-            <li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/student/courses">Courses</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            <li style={{ marginTop: 8 }}>
               Address: 42, Knowledge Park, Sector 18,<br />
               Noida, Uttar Pradesh, 201301, India
             </li>
@@ -88,6 +90,9 @@ const Footer = () => {
             )}
           </form>
         </div>
+      </div>
+      <div className="container footer-bottom">
+        <div>© {new Date().getFullYear()} SeekhoBharat — All rights reserved.</div>
       </div>
     </footer>
   );

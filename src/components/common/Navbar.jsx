@@ -25,6 +25,9 @@ const Navbar = () => {
       : "/teacher/courses"
     : "/";
 
+  // Temporarily point Cart to a Not Found page until cart is implemented
+  const cartTarget = "/404";
+
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -42,7 +45,7 @@ const Navbar = () => {
           <Link to={coursesTarget} className="nav-item">
             Courses
           </Link>
-          <Link to="/cart" className="nav-item">
+          <Link to={cartTarget} className="nav-item">
             Cart
           </Link>
 

@@ -82,44 +82,60 @@
   color:var(--sb-white);
 }
 
-/* Footer */
+/* Footer - blue themed and compact contact form */
 .site-footer{
-  background:#f8fafc;
-  color:#334155;
-  padding:20px 0;
-  border-top:1px solid #e6eefb;
+  background: linear-gradient(180deg, var(--sb-dark-blue), var(--sb-blue));
+  color: var(--sb-white);
+  padding: 40px 0 24px;
+  border-top: none;
 }
 .site-footer .footer-inner{
   display:flex;
   justify-content:space-between;
-  gap:12px;
+  gap:24px;
   align-items:flex-start;
   flex-wrap:wrap;
+  padding: 8px 0;
 }
 
 .footer-grid{
   display:grid;
   grid-template-columns: repeat(3, 1fr);
-  gap:18px;
+  gap:24px;
   align-items:start;
 }
 
-.footer-col h4{margin:0 0 8px 0}
+.footer-col h4{margin:0 0 8px 0; color: #fff}
+.footer-col p{color: rgba(255,255,255,0.9); line-height:1.5}
 .footer-links{list-style:none; padding:0; margin:0}
-.footer-links li{margin:6px 0}
+.footer-links li{margin:8px 0}
+.footer-links a{color: rgba(255,255,255,0.95); text-decoration:none}
+.footer-links a:hover{opacity:0.9; text-decoration:underline}
 
 .contact-form input, .contact-form textarea{
   width:100%;
-  padding:8px 10px;
-  margin:6px 0;
-  border:1px solid #dbeafe;
-  border-radius:6px;
+  padding:10px 12px;
+  margin:8px 0;
+  border: none;
+  border-radius:8px;
+  background: rgba(255,255,255,0.95);
+  color: #0b1220;
+  box-shadow: 0 2px 6px rgba(2,6,23,0.15) inset;
 }
-.contact-form textarea{min-height:90px; resize:vertical}
-.contact-form .error{color:#b91c1c}
-.contact-form .success{color:#064e3b}
+.contact-form textarea{min-height:110px; resize:vertical}
+.contact-form .error{color:#ffd6d6}
+.contact-form .success{color:#d1ffd6}
 
-.site-footer .footer-inner .btn.primary{background:var(--sb-blue); color:var(--sb-white); border:none}
+.site-footer .footer-inner .btn.primary{background:var(--sb-white); color:var(--sb-blue); border:none; padding:10px 18px}
+
+/* Footer bottom line */
+.site-footer .footer-bottom{margin-top:18px; border-top: 1px solid rgba(255,255,255,0.08); padding-top:12px; text-align:center; color: rgba(255,255,255,0.8); font-size:14px}
+
+@media (max-width:900px){
+  .footer-grid{grid-template-columns: 1fr;}
+  .site-footer .footer-inner{padding:0 8px}
+  .site-footer .footer-bottom{text-align:center}
+}
 
 @media (max-width:720px){
   .site-navbar .nav-links{display:none}

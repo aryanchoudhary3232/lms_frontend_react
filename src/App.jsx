@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
@@ -44,6 +45,7 @@ function Main() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/404" element={<NotFound />} />
 
         {/* Teacher routes  */}
         <Route
@@ -84,6 +86,8 @@ function Main() {
           <Route path="users" element={<AdminUsers />} />
           <Route path="courses" element={<AdminCourses />} />
         </Route>
+        {/* Catch-all 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {!hideShell &&
