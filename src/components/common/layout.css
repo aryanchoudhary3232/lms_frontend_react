@@ -21,6 +21,11 @@
   color: var(--sb-white);
   box-shadow: 0 2px 6px rgba(13,110,253,0.08);
 }
+/* Ensure navbar is above any page overlays (e.g. login toggle panels) */
+.site-navbar{
+  position: relative;
+  z-index: 2000;
+}
 .site-navbar .nav-inner{
   display:flex;
   align-items:center;

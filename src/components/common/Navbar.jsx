@@ -8,6 +8,23 @@ const Navbar = () => {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
 
+  // Determine safe targets for links when user is not authenticated
+  const brandTarget = role
+    ? role === "Admin"
+      ? "/admin/dashboard"
+      : role === "Teacher"
+      ? "/teacher/home"
+      : "/student/home"
+    : "/";
+
+  const coursesTarget = role
+    ? role === "Admin"
+      ? "/admin/courses"
+      : role === "Student"
+      ? "/student/courses"
+      : "/teacher/courses"
+    : "/";
+
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -17,12 +34,12 @@ const Navbar = () => {
   return (
     <header className="site-navbar">
       <div className="container nav-inner">
-        <Link to={role==='Admin' ? '/admin/dashboard' : role==='Teacher' ? '/teacher/home' : "/student/home"} className="brand">
+        <Link to={brandTarget} className="brand">
           SeekhoBharat
         </Link>
 
         <nav className="nav-links">
-          <Link to={role==='Admin'? '/admin/courses' : role==='Student' ? "/student/courses" : '/teacher/courses'} className="nav-item">
+          <Link to={coursesTarget} className="nav-item">
             Courses
           </Link>
           <Link to="/cart" className="nav-item">

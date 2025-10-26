@@ -32,7 +32,8 @@ function App() {
 
 function Main() {
   const location = useLocation();
-  const hideShell = location.pathname === "/login";
+  // Do not hide the shell on /login — keep Navbar visible on the login page
+  const hideShell = false;
 
   return (
     <>
