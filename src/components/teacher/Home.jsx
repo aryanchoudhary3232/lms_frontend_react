@@ -1,8 +1,95 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { SectionCards } from "./components/section-cards";
+import { ChartAreaInteractive } from "./components/chart-area-interactive";
+import { DataTable } from "./components/data-table";
 import "../../css/teacher/Home.css";
 import { Link, Outlet } from "react-router-dom";
 
-function Home() {
+export default function TeacherHome() {
+  const [metrics, setMetrics] = useState(null);
+  const [courseStats, setCourseStats] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [cardData, setCardData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [periodDays, setPeriodDays] = useState(30);
+
+  const fetchMetrics = async (days = 30) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+      const response = await fetch(
+        `${backendUrl}/teacher/metrics?days=${days}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMetrics(data.data.metrics);
+        setCourseStats(data.data.courseStats || []);
+        setRevenueData(data.data.revenueByDay || []);
+
+        // Set card data
+        const cards = [
+          {
+            title: "Total Revenue",
+            value: `₹${data.data.metrics.totalRevenue.toLocaleString()}`,
+            change: `${data.data.metrics.revenueGrowthRate}%`,
+            trend: parseFloat(data.data.metrics.revenueGrowthRate) >= 0 ? "up" : "down",
+            description: `from last ${days} days`,
+          },
+          {
+            title: "Total Students",
+            value: data.data.metrics.totalCustomers.toString(),
+            change: `${data.data.metrics.customerGrowthRate}%`,
+            trend: parseFloat(data.data.metrics.customerGrowthRate) >= 0 ? "up" : "down",
+            description: `enrolled students`,
+          },
+          {
+            title: "New Students",
+            value: data.data.metrics.newCustomers.toString(),
+            change: "",
+            trend: "neutral",
+            description: `in last ${days} days`,
+          },
+          {
+            title: "Active Courses",
+            value: data.data.metrics.totalCourses.toString(),
+            change: "",
+            trend: "neutral",
+            description: `published courses`,
+          },
+        ];
+        setCardData(cards);
+      } else {
+        console.error("Error fetching metrics:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching teacher metrics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMetrics(periodDays);
+  }, [periodDays]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-lg text-gray-600">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="home-container">
       {/* Navbar */}
@@ -52,9 +139,36 @@ function Home() {
         </div>
       </section>
 
+      <div className="flex flex-col gap-6 p-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Teacher Dashboard</h1>
+          <select
+            value={periodDays}
+            onChange={(e) => setPeriodDays(Number(e.target.value))}
+            className="px-4 py-2 border rounded-md"
+          >
+            <option value={7}>Last 7 Days</option>
+            <option value={30}>Last 30 Days</option>
+            <option value={90}>Last 90 Days</option>
+          </select>
+        </div>
+
+        <SectionCards cards={cardData} />
+
+        <ChartAreaInteractive
+          data={revenueData}
+          title="Revenue Analytics"
+          description={`Daily revenue for last ${periodDays} days`}
+        />
+
+        <DataTable
+          data={courseStats}
+          title="Course Performance"
+          description="Overview of your courses"
+        />
+      </div>
+
       <Outlet />
     </div>
   );
 }
-
-export default Home;

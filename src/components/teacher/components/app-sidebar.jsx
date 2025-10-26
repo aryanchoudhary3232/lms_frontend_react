@@ -38,23 +38,23 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
-    },
     // {
-    //   title: "Lifecycle",
+    //   title: "Dashboard",
     //   url: "#",
-    //   icon: IconListDetails,
+    //   icon: IconDashboard,
     // },
+    {
+      title: "Create Course",
+      url: "#",
+      icon: IconListDetails,
+    },
     {
       title: "Analytics",
       url: "#",
       icon: IconChartBar,
     },
     {
-      title: "Projects",
+      title: "My Courses",
       url: "#",
       icon: IconFolder,
     },
@@ -130,11 +130,11 @@ const data = {
     },
   ],
   documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
-    },
+    // {
+    //   name: "Data Library",
+    //   url: "#",
+    //   icon: IconDatabase,
+    // },
     {
       name: "Reports",
       url: "#",
