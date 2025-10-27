@@ -21,6 +21,7 @@ import AdminCourses from "./components/admin/AdminCourses";
 import AdminSidebar from "./components/admin/AdminSidebar";
 import AddCourse from "./components/teacher/AddCourse";
 import Quiz from "./components/student/Quiz";
+import Courses from "./pages/Courses";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function Main() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/courses" element={<Courses />} />
 
         {/* Teacher routes  */}
         <Route
@@ -57,7 +59,11 @@ function Main() {
           <Route path="courses" element={<TeacherCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
           <Route path="courses/add" element={<AddCourse />} />
-          <Route path="dashboard" element={<AdminSidebar />} />
+          <Route path="sidebar" element={<AdminSidebar />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="courses" element={<AdminCourses />} />
+          </Route>
         </Route>
 
         {/* Student routes  */}
@@ -76,7 +82,11 @@ function Main() {
             path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<Quiz />}
           />
-          <Route path="dashboard" element={<AdminSidebar />} />
+          <Route path="sidebar" element={<AdminSidebar />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="courses" element={<AdminCourses />} />
+          </Route>
         </Route>
 
         {/* Admin routes  */}

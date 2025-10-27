@@ -34,19 +34,21 @@ const Navbar = () => {
 
         <nav className="nav-links">
           {role === "Teacher" && (
-            <Link to={"/teacher/dashboard"} className="nav-item">
+            <Link to={"/teacher/sidebar/dashboard"} className="nav-item">
               Dashboard
             </Link>
           )}
           {role === "Student" && (
-            <Link to={"/student/dashboard"} className="nav-item">
+            <Link to={"/student/sidebar/dashboard"} className="nav-item">
               Dashboard
             </Link>
           )}
 
           <Link
             to={
-              role === "Admin"
+              !token
+                ? "/courses"
+                : role === "Admin"
                 ? "/admin/courses"
                 : role === "Student"
                 ? "/student/courses"

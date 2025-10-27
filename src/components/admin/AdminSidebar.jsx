@@ -4,6 +4,7 @@ import "../../css/admin/Admin.css";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
+  const role = localStorage.getItem("role");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -12,13 +13,19 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className="" style={{display: 'flex', width: '100vw'}}>
-      <div style={{width: '14vw'}} className="admin-sidebar" >
+    <div className="" style={{ display: "flex", width: "100vw" }}>
+      <div style={{ width: "14vw" }} className="admin-sidebar">
         <nav className="admin-nav">
           <ul>
             <li className="admin-nav-item">
               <NavLink
-                to="/admin/dashboard"
+                to={
+                  role === "Admin"
+                    ? "/admin/dashboard"
+                    : role === "Teacher"
+                    ? "/teacher/sidebar/dashboard"
+                    : "/student/sidebar/dashboard"
+                }
                 className={({ isActive }) =>
                   `admin-nav-link ${isActive ? "active" : ""}`
                 }
@@ -29,7 +36,13 @@ const AdminSidebar = () => {
             </li>
             <li className="admin-nav-item">
               <NavLink
-                to="/admin/users"
+                to={
+                  role === "Admin"
+                    ? "/admin/users"
+                    : role === "Teacher"
+                    ? "/teacher/sidebar/users"
+                    : "/student/sidebar/users"
+                }
                 className={({ isActive }) =>
                   `admin-nav-link ${isActive ? "active" : ""}`
                 }
@@ -40,7 +53,13 @@ const AdminSidebar = () => {
             </li>
             <li className="admin-nav-item">
               <NavLink
-                to="/admin/courses"
+                to={
+                  role === "Admin"
+                    ? "/admin/courses"
+                    : role === "Teacher"
+                    ? "/teacher/sidebar/courses"
+                    : "/student/sidebar/courses"
+                }
                 className={({ isActive }) =>
                   `admin-nav-link ${isActive ? "active" : ""}`
                 }
