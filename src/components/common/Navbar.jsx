@@ -5,8 +5,10 @@ import "../common/layout.css";
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const role =
+    typeof window !== "undefined" ? localStorage.getItem("role") : null;
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
@@ -17,12 +19,41 @@ const Navbar = () => {
   return (
     <header className="site-navbar">
       <div className="container nav-inner">
-        <Link to={role==='Admin' ? '/admin/dashboard' : role==='Teacher' ? '/teacher/home' : "/student/home"} className="brand">
+        <Link
+          to={
+            role === "Admin"
+              ? "/admin/dashboard"
+              : role === "Teacher"
+              ? "/teacher/home"
+              : "/student/home"
+          }
+          className="brand"
+        >
           SeekhoBharat
         </Link>
 
         <nav className="nav-links">
-          <Link to={role==='Admin'? '/admin/courses' : role==='Student' ? "/student/courses" : '/teacher/courses'} className="nav-item">
+          {role === "Teacher" && (
+            <Link to={"/teacher/dashboard"} className="nav-item">
+              Dashboard
+            </Link>
+          )}
+          {role === "Student" && (
+            <Link to={"/student/dashboard"} className="nav-item">
+              Dashboard
+            </Link>
+          )}
+
+          <Link
+            to={
+              role === "Admin"
+                ? "/admin/courses"
+                : role === "Student"
+                ? "/student/courses"
+                : "/teacher/courses"
+            }
+            className="nav-item"
+          >
             Courses
           </Link>
           <Link to="/cart" className="nav-item">

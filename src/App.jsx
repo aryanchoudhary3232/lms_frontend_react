@@ -24,7 +24,7 @@ import Quiz from "./components/student/Quiz";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/">
       <Main />
     </BrowserRouter>
   );
@@ -57,6 +57,7 @@ function Main() {
           <Route path="courses" element={<TeacherCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
           <Route path="courses/add" element={<AddCourse />} />
+          <Route path="dashboard" element={<AdminSidebar />} />
         </Route>
 
         {/* Student routes  */}
@@ -75,6 +76,7 @@ function Main() {
             path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<Quiz />}
           />
+          <Route path="dashboard" element={<AdminSidebar />} />
         </Route>
 
         {/* Admin routes  */}
@@ -89,7 +91,9 @@ function Main() {
         !(location.pathname === "/teacher/courses/add") &&
         !(location.pathname === "/admin/dashboard") &&
         !(location.pathname === "/admin/users") &&
-        !(location.pathname === "/admin/courses") && <Footer />}
+        !(location.pathname === "/admin/courses") &&
+        !(location.pathname === "/student/dashboard") &&
+        !(location.pathname === "/teacher/dashboard") && <Footer />}
     </>
   );
 }
