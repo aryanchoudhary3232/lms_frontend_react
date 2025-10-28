@@ -16,6 +16,7 @@
   box-shadow: 2px 0 10px rgba(35, 55, 173, 0.1);
   position: relative;
   min-height: 100vh;
+  display: flex;
 }
 
 .admin-sidebar-header {

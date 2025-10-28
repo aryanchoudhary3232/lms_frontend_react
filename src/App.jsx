@@ -1,6 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
+import Home from "./pages/Home";
+import ProtectedRoute from "./helper/ProtectedRoute";
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
 import Student from "./components/student/Student";
 import StudentHome from "./components/student/Home";
 import StudentCourses from "./components/student/Courses";
@@ -16,71 +19,33 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
 import AdminCourses from "./components/admin/AdminCourses";
 import AdminSidebar from "./components/admin/AdminSidebar";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AddCourse from "./components/teacher/AddCourse";
+import Quiz from "./components/student/Quiz";
+import Courses from "./pages/Courses";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter basename="/">
+      <Main />
+    </BrowserRouter>
+  );
+}
+
+function Main() {
+  const location = useLocation();
+  const hideShell = location.pathname === "/login";
+
+  return (
+    <>
+      {!hideShell && !(location.pathname === "/teacher/courses/add") && (
+        <Navbar />
+      )}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/student/*"
-          element={
-            <ProtectedRoute allowedRoles={["Student"]}>
-              <Routes>
-                <Route path="home" element={<StudentHome />} />
-                <Route path="courses" element={<StudentCourses />} />
-                <Route
-                  path="courses/:courseId"
-                  element={<StudentCourseDetail />}
-                />
-                <Route
-                  path="courses/:courseId/:chapterIdx/:topicIdx/quiz"
-                  element={<StudentQuiz />}
-                />
-                <Route path="*" element={<StudentHome />} />
-              </Routes>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/teacher/*"
-          element={
-            <ProtectedRoute allowedRoles={["Teacher"]}>
-              <Routes>
-                <Route path="home" element={<TeacherHome />} />
-                <Route path="courses" element={<TeacherCourses />} />
-                <Route path="courses/:id" element={<TeacherCourseDetail />} />
-                <Route path="add-course" element={<TeacherAddCourse />} />
-                <Route
-                  path="chapters/:courseId"
-                  element={<TeacherChapters />}
-                />
-                <Route path="*" element={<TeacherHome />} />
-              </Routes>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/*"
-          element={
-            <ProtectedRoute allowedRoles={["Admin"]}>
-              <div className="admin-layout">
-                <AdminSidebar />
-                <div className="admin-content">
-                  <Routes>
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="courses" element={<AdminCourses />} />
-                  </Routes>
-                </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-        {/* Catch all route */}
-        <Route path="*" element={<Home />} />
+        <Route path="/courses" element={<Courses />} />
+
         {/* Teacher routes  */}
         <Route
           path="/teacher"
@@ -94,6 +59,11 @@ function App() {
           <Route path="courses" element={<TeacherCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
           <Route path="courses/add" element={<AddCourse />} />
+          <Route path="sidebar" element={<AdminSidebar />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="courses" element={<AdminCourses />} />
+          </Route>
         </Route>
 
         {/* Student routes  */}
@@ -112,9 +82,29 @@ function App() {
             path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<Quiz />}
           />
+          <Route path="sidebar" element={<AdminSidebar />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="courses" element={<AdminCourses />} />
+          </Route>
+        </Route>
+
+        {/* Admin routes  */}
+        <Route path="/admin" element={<AdminSidebar />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="courses" element={<AdminCourses />} />
         </Route>
       </Routes>
-    </Router>
+
+      {!hideShell &&
+        !(location.pathname === "/teacher/courses/add") &&
+        !(location.pathname === "/admin/dashboard") &&
+        !(location.pathname === "/admin/users") &&
+        !(location.pathname === "/admin/courses") &&
+        !(location.pathname === "/student/dashboard") &&
+        !(location.pathname === "/teacher/dashboard") && <Footer />}
+    </>
   );
 }
 

@@ -41,7 +41,7 @@ const AdminUsers = () => {
   }
 
   return (
-    <div className="admin-users">
+    <div style={{ width: "84vw", marginLeft: '12px' }} className="admin-users">
       <h2>All Users</h2>
 
       <div className="admin-section">
