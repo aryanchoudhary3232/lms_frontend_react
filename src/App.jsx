@@ -18,6 +18,7 @@ import TeacherChapters from "./components/teacher/Chapters";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
 import AdminCourses from "./components/admin/AdminCourses";
+import AdminCourseDetail from "./components/admin/AdminCourseDetail";
 import AdminSidebar from "./components/admin/AdminSidebar";
 import AddCourse from "./components/teacher/AddCourse";
 import Quiz from "./components/student/Quiz";
@@ -94,6 +95,7 @@ function Main() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="courses" element={<AdminCourses />} />
+          <Route path="courses/:courseId" element={<AdminCourseDetail />} />
         </Route>
       </Routes>
 
