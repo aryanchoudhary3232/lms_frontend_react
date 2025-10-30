@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
@@ -48,6 +50,9 @@ function Main() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses" element={<Courses />} />
+  <Route path="/contact" element={<Contact />} />
+  {/* Cart currently not implemented - render 404 for now */}
+  <Route path="/cart" element={<NotFound />} />
 
         {/* Teacher routes  */}
         <Route
@@ -104,6 +109,9 @@ function Main() {
           <Route path="courses" element={<AdminCourses />} />
           <Route path="courses/:courseId" element={<AdminCourseDetail />} />
         </Route>
+
+        {/* Catch-all 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {!hideShell &&
