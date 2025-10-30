@@ -34,12 +34,12 @@ const Navbar = () => {
 
         <nav className="nav-links">
           {role === "Teacher" && (
-            <Link to={"/teacher/sidebar/dashboard"} className="nav-item">
+            <Link to={"/teacher/home"} className="nav-item">
               Dashboard
             </Link>
           )}
           {role === "Student" && (
-            <Link to={"/student/sidebar/dashboard"} className="nav-item">
+            <Link to={"/student/home"} className="nav-item">
               Dashboard
             </Link>
           )}

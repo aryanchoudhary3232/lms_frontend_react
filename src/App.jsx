@@ -8,6 +8,7 @@ import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import Student from "./components/student/Student";
 import StudentHome from "./components/student/Home";
+import StudentDashboard from "./components/student/StudentDashboard";
 import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import StudentQuiz from "./components/student/Quiz";
@@ -71,11 +72,7 @@ function Main() {
             path="upload-qualification"
             element={<TeacherQualificationUpload />}
           />
-          <Route path="sidebar" element={<AdminSidebar />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="courses" element={<AdminCourses />} />
-          </Route>
+          {/* removed student/teacher sidebar routes to avoid showing admin components under their sidebar */}
         </Route>
 
         {/* Student routes  */}
@@ -87,22 +84,25 @@ function Main() {
             </ProtectedRoute>
           }
         >
-          <Route path="home" element={<StudentHome />} />
+          <Route path="home" element={<StudentDashboard />} />
           <Route path="courses" element={<StudentCourses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
             path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<Quiz />}
           />
-          <Route path="sidebar" element={<AdminSidebar />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="courses" element={<AdminCourses />} />
-          </Route>
+          {/* removed student sidebar to avoid mounting admin layout for students */}
         </Route>
 
-        {/* Admin routes  */}
-        <Route path="/admin" element={<AdminSidebar />}>
+        {/* Admin routes  - protect admin pages */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole={["Admin"]}>
+              <AdminSidebar />
+            </ProtectedRoute>
+          }
+        >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="teachers/:teacherId" element={<AdminTeacherDetail />} />
