@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../css/admin/Admin.css";
 
 const AdminCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -66,57 +68,132 @@ const AdminCourses = () => {
     }
   };
 
+  const viewCourseDetails = (courseId) => {
+    navigate(`/admin/courses/${courseId}`);
+  };
+
   if (loading) {
     return <div className="admin-loading">Loading courses...</div>;
   }
 
   return (
-    <div style={{ width: "84vw", marginLeft: '12px' }} className="admin-courses">
+    <div
+      style={{ width: "84vw", marginLeft: "12px" }}
+      className="admin-courses"
+    >
       <h2>All Courses ({courses.length})</h2>
 
       {courses.length > 0 ? (
-        <div className="admin-grid">
+        <div className="admin-courses-grid">
           {courses.map((course) => (
-            <div key={course._id} className="admin-card course">
-              <div className="admin-course-info">
-                <h4>{course.title}</h4>
-                <p>
-                  <strong>Teacher:</strong>{" "}
-                  {course.teacher ? course.teacher.name : "No teacher assigned"}
-                </p>
-                <p>
-                  <strong>Description:</strong>{" "}
-                  {course.description || "No description"}
-                </p>
-                {course.category && (
-                  <p>
-                    <strong>Category:</strong> {course.category}
-                  </p>
+            <div key={course._id} className="admin-course-card">
+              {/* Course Image */}
+              <div className="admin-course-image-container">
+                {course.image ? (
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    className="admin-course-image"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src =
+                        "https://via.placeholder.com/300x200?text=Course+Image";
+                    }}
+                  />
+                ) : (
+                  <div className="admin-course-placeholder">
+                    <span className="placeholder-icon">📚</span>
+                    <span className="placeholder-text">No Image</span>
+                  </div>
                 )}
-                {course.level && (
-                  <p>
-                    <strong>Level:</strong> {course.level}
-                  </p>
-                )}
-                {course.students && (
-                  <p>
-                    <strong>Students Enrolled:</strong> {course.students.length}
-                  </p>
-                )}
+                <div className="admin-course-overlay">
+                  <button
+                    onClick={() => viewCourseDetails(course._id)}
+                    className="admin-view-btn"
+                    title="View Course Details"
+                  >
+                    👁️
+                  </button>
+                  <button
+                    onClick={() => deleteCourse(course._id)}
+                    className="admin-delete-btn"
+                    title="Delete Course"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
-              <div className="admin-course-actions">
-                <button
-                  onClick={() => deleteCourse(course._id)}
-                  className="admin-delete-btn"
-                >
-                  Delete
-                </button>
+
+              {/* Course Info */}
+              <div className="admin-course-info">
+                <h3 className="admin-course-title">{course.title}</h3>
+                <p className="admin-course-description">
+                  {course.description || "No description available"}
+                </p>
+
+                <div className="admin-course-details">
+                  <div className="admin-course-detail-item">
+                    <span className="detail-label">Teacher:</span>
+                    <span className="detail-value">
+                      {course.teacher
+                        ? course.teacher.name
+                        : "No teacher assigned"}
+                    </span>
+                  </div>
+
+                  {course.category && (
+                    <div className="admin-course-detail-item">
+                      <span className="detail-label">Category:</span>
+                      <span className="detail-value">{course.category}</span>
+                    </div>
+                  )}
+
+                  {course.level && (
+                    <div className="admin-course-detail-item">
+                      <span className="detail-label">Level:</span>
+                      <span className="detail-value">{course.level}</span>
+                    </div>
+                  )}
+
+                  <div className="admin-course-detail-item">
+                    <span className="detail-label">Students:</span>
+                    <span className="detail-value">
+                      {course.students ? course.students.length : 0} enrolled
+                    </span>
+                  </div>
+
+                  <div className="admin-course-detail-item">
+                    <span className="detail-label">Chapters:</span>
+                    <span className="detail-value">
+                      {course.chapters ? course.chapters.length : 0} chapters
+                    </span>
+                  </div>
+                </div>
+
+                <div className="admin-course-actions">
+                  <button
+                    onClick={() => viewCourseDetails(course._id)}
+                    className="admin-view-details-btn"
+                  >
+                    View Details & Videos
+                  </button>
+                  <button
+                    onClick={() => deleteCourse(course._id)}
+                    className="admin-delete-course-btn"
+                  >
+                    Delete Course
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="admin-empty">No courses found</div>
+        <div className="admin-empty">
+          <span className="empty-icon">📚</span>
+          <h3>No courses found</h3>
+          <p>There are currently no courses in the system.</p>
+        </div>
       )}
     </div>
   );

@@ -15,9 +15,12 @@ import TeacherCourses from "./components/teacher/Courses";
 import TeacherCourseDetail from "./components/teacher/CourseDetail";
 import TeacherAddCourse from "./components/teacher/AddCourse";
 import TeacherChapters from "./components/teacher/Chapters";
+import TeacherQualificationUpload from "./components/teacher/TeacherQualificationUpload";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
 import AdminCourses from "./components/admin/AdminCourses";
+import AdminCourseDetail from "./components/admin/AdminCourseDetail";
+import AdminTeacherDetail from "./components/admin/AdminTeacherDetail";
 import AdminSidebar from "./components/admin/AdminSidebar";
 import AddCourse from "./components/teacher/AddCourse";
 import Quiz from "./components/student/Quiz";
@@ -59,6 +62,10 @@ function Main() {
           <Route path="courses" element={<TeacherCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
           <Route path="courses/add" element={<AddCourse />} />
+          <Route
+            path="upload-qualification"
+            element={<TeacherQualificationUpload />}
+          />
           <Route path="sidebar" element={<AdminSidebar />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="users" element={<AdminUsers />} />
@@ -93,7 +100,9 @@ function Main() {
         <Route path="/admin" element={<AdminSidebar />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="teachers/:teacherId" element={<AdminTeacherDetail />} />
           <Route path="courses" element={<AdminCourses />} />
+          <Route path="courses/:courseId" element={<AdminCourseDetail />} />
         </Route>
       </Routes>
 
