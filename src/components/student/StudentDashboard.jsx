@@ -42,29 +42,35 @@ const StudentDashboard = () => {
   return (
     <div className="student-dashboard-container">
       <div className="student-dashboard-header">
-        <h2>Your Dashboard</h2>
-        <p>{`You have ${totalCourses} enrolled course${totalCourses !== 1 ? "s" : ""}`}</p>
+        <div>
+          <h2>Your Dashboard</h2>
+          <p className="muted">{`You have ${totalCourses} enrolled course${totalCourses !== 1 ? "s" : ""}`}</p>
+        </div>
       </div>
 
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="student-dashboard-grid">
-          <section className="enrolled-courses">
+        <>
+          {/* Enrolled courses full-width section */}
+          <section className="enrolled-courses-section">
             <h3>Enrolled Courses</h3>
             {enrolled.length === 0 ? (
-              <p>You are not enrolled in any courses yet.</p>
+              <p className="muted">You are not enrolled in any courses yet.</p>
             ) : (
-              <div className="courses-list">
+              <div className="courses-grid">
                 {enrolled.map((c) => (
                   <Link to={`/student/courses/${c._id}`} className="course-card" key={c._id}>
-                    <img src={c.image} alt={c.title} />
-                    <div className="course-meta">
-                      <h4>{c.title}</h4>
-                      <p>{c.description}</p>
-                      <p>
-                        <strong>Teacher:</strong> {c.teacher?.name}
-                      </p>
+                    <div className="course-card-media">
+                      <img src={c.image} alt={c.title} />
+                    </div>
+                    <div className="course-card-body">
+                      <h4 className="course-title">{c.title}</h4>
+                      <p className="course-desc">{c.description}</p>
+                      <div className="course-meta-row">
+                        <span className="course-teacher">{c.teacher?.name}</span>
+                        <button className="btn small">Start</button>
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -72,36 +78,40 @@ const StudentDashboard = () => {
             )}
           </section>
 
-          <aside className="student-analytics">
-            <h3>Analytics</h3>
-            <div className="analytics-card">
-              <p>
-                <strong>Courses bought/enrolled:</strong> {totalCourses}
-              </p>
-              <p>
-                <strong>Total spent:</strong> ₹-- (payment tracking not implemented)
-              </p>
-            </div>
+          {/* Bottom area: analytics + quiz summary */}
+          <div className="dashboard-bottom">
+            <section className="analytics-panel">
+              <h3>Analytics</h3>
+              <div className="analytics-cards">
+                <div className="analytics-card">
+                  <div className="analytic-number">{totalCourses}</div>
+                  <div className="analytic-label">Courses Enrolled</div>
+                </div>
+                <div className="analytics-card">
+                  <div className="analytic-number">₹--</div>
+                  <div className="analytic-label">Total Spent</div>
+                </div>
+              </div>
+            </section>
 
-            <div className="analytics-card">
-              <h4>Quiz Summary</h4>
+            <aside className="quiz-panel">
+              <h3>Quiz Summary</h3>
               {quizStats.length === 0 ? (
-                <p>No quiz attempts yet.</p>
+                <p className="muted">No quiz attempts yet.</p>
               ) : (
-                <ul>
+                <div className="quiz-list">
                   {quizStats.map((qs) => (
-                    <li key={qs.courseId || qs.courseTitle}>
-                      <strong>{qs.courseTitle || "Course"}</strong>
-                      <div>
-                        Attempts: {qs.attempts} — Avg: {qs.averageScore} — Latest: {qs.latestScore}
-                      </div>
-                    </li>
+                    <div className="quiz-item" key={qs.courseId || qs.courseTitle}>
+                      <div className="quiz-item-title">{qs.courseTitle || "Course"}</div>
+                      <div className="quiz-item-meta">Attempts: {qs.attempts}</div>
+                      <div className="quiz-item-meta">Avg: {qs.averageScore} • Latest: {qs.latestScore}</div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
-            </div>
-          </aside>
-        </div>
+            </aside>
+          </div>
+        </>
       )}
     </div>
   );
