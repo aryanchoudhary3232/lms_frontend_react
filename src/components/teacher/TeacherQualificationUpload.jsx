@@ -9,24 +9,21 @@ const TeacherQualificationUpload = () => {
   const [verificationStatus, setVerificationStatus] = useState(null);
   const navigate = useNavigate();
 
-  const BACKEND_URL =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
   useEffect(() => {
     fetchVerificationStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchVerificationStatus = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${BACKEND_URL}/teacher/qualification-status`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/teacher/verification/status`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
       if (data.success) {
@@ -40,7 +37,6 @@ const TeacherQualificationUpload = () => {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      // Validate file type (PDF, JPG, PNG, DOC, DOCX)
       const validTypes = [
         "application/pdf",
         "image/jpeg",
@@ -51,21 +47,14 @@ const TeacherQualificationUpload = () => {
       ];
 
       if (!validTypes.includes(selectedFile.type)) {
-        setMessage({
-          type: "error",
-          text: "Please upload a valid file (PDF, JPG, PNG, DOC, DOCX)",
-        });
+        setMessage({ type: "error", text: "Please upload a valid file (PDF, JPG, PNG, DOC, DOCX)" });
         setFile(null);
         e.target.value = "";
         return;
       }
 
-      // Validate file size (max 5MB)
       if (selectedFile.size > 5 * 1024 * 1024) {
-        setMessage({
-          type: "error",
-          text: "File size should not exceed 5MB",
-        });
+        setMessage({ type: "error", text: "File size should not exceed 5MB" });
         setFile(null);
         e.target.value = "";
         return;
@@ -92,43 +81,30 @@ const TeacherQualificationUpload = () => {
       const formData = new FormData();
       formData.append("qualification", file);
 
-      const response = await fetch(
-        `${BACKEND_URL}/teacher/upload-qualification`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/teacher/verification/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       const data = await response.json();
 
       if (data.success) {
-        setMessage({
-          type: "success",
-          text: "Qualification uploaded successfully! Awaiting admin verification.",
-        });
+        setMessage({ type: "success", text: "Qualification uploaded successfully! Awaiting admin verification." });
         setFile(null);
         document.getElementById("fileInput").value = "";
 
-        // Refresh verification status
         setTimeout(() => {
           fetchVerificationStatus();
         }, 1000);
       } else {
-        setMessage({
-          type: "error",
-          text: data.message || "Failed to upload qualification",
-        });
+        setMessage({ type: "error", text: data.message || "Failed to upload qualification" });
       }
     } catch (error) {
       console.error("Upload error:", error);
-      setMessage({
-        type: "error",
-        text: "Network error. Please try again.",
-      });
+      setMessage({ type: "error", text: "Network error. Please try again." });
     } finally {
       setUploading(false);
     }
@@ -164,32 +140,24 @@ const TeacherQualificationUpload = () => {
         <button onClick={() => navigate("/teacher/home")} className="back-btn">
           ← Back to Dashboard
         </button>
-        <h1>Teacher Qualification Verification</h1>
-        <p className="qualification-subtitle">
-          Upload your teaching qualification documents for verification
-        </p>
+        <h2>Teacher Qualification Verification</h2>
+        <p className="qualification-subtitle">Upload your teaching qualification documents for verification</p>
       </div>
 
       {/* Current Verification Status */}
       {verificationStatus && (
-        <div className="verification-status-card">
-          <h3>Current Verification Status</h3>
+        <div className="current-status">
           <div className="status-info">
-            <div
-              className={`status-badge ${getStatusBadgeClass(
-                verificationStatus.verificationStatus
-              )}`}
-            >
-              <span className="status-icon">
-                {getStatusIcon(verificationStatus.verificationStatus)}
-              </span>
-              <span className="status-text">
-                {verificationStatus.verificationStatus}
-              </span>
+            <div className="status-icon">{getStatusIcon(verificationStatus.verificationStatus)}</div>
+            <div className="status-text">
+              <h3>Current Verification Status</h3>
+              <div className={`status-badge ${getStatusBadgeClass(verificationStatus.verificationStatus)}`}>{verificationStatus.verificationStatus}</div>
             </div>
+          </div>
 
+          <div style={{ maxWidth: 420 }}>
             {verificationStatus.verificationNotes && (
-              <div className="verification-notes">
+              <div className="status-notes">
                 <h4>Admin Notes:</h4>
                 <p>{verificationStatus.verificationNotes}</p>
               </div>
@@ -197,30 +165,17 @@ const TeacherQualificationUpload = () => {
 
             {verificationStatus.qualificationDoc && (
               <div className="uploaded-doc-info">
-                <h4>Uploaded Document:</h4>
-                <div className="doc-details">
-                  <span className="doc-icon">📄</span>
-                  <div className="doc-info">
-                    <p className="doc-name">
-                      {verificationStatus.qualificationDoc.publicId ||
-                        "Qualification Document"}
-                    </p>
-                    <p className="doc-date">
-                      Uploaded on:{" "}
-                      {new Date(
-                        verificationStatus.qualificationDoc.uploadedAt
-                      ).toLocaleDateString()}
-                    </p>
+                <h4>Uploaded Document</h4>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div className="doc-details" style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                    <span className="doc-icon">📄</span>
+                    <div className="doc-info">
+                      <p className="doc-name">{verificationStatus.qualificationDoc.publicId || "Qualification Document"}</p>
+                      <p className="doc-date">Uploaded: {new Date(verificationStatus.qualificationDoc.uploadedAt).toLocaleDateString()}</p>
+                    </div>
                   </div>
                   {verificationStatus.qualificationDoc.url && (
-                    <a
-                      href={verificationStatus.qualificationDoc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="view-doc-btn"
-                    >
-                      View Document
-                    </a>
+                    <a href={verificationStatus.qualificationDoc.url} target="_blank" rel="noopener noreferrer" className="doc-link">View Document</a>
                   )}
                 </div>
               </div>
@@ -230,89 +185,59 @@ const TeacherQualificationUpload = () => {
       )}
 
       {/* Upload Form */}
-      <div className="upload-form-card">
-        <h3>
-          {verificationStatus?.qualificationDoc
-            ? "Upload New Qualification Document"
-            : "Upload Qualification Document"}
-        </h3>
-        <p className="upload-instructions">
-          Please upload your teaching qualification certificate or degree.
-          Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max size: 5MB)
-        </p>
+      <div className="upload-section">
+        <h3>{verificationStatus?.qualificationDoc ? "Upload New Qualification Document" : "Upload Qualification Document"}</h3>
+
+        <div className="upload-instructions">
+          <h4>Instructions</h4>
+          <ul>
+            <li>Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max size: 5MB)</li>
+            <li>Use a clear, readable scan or photo of your certificate</li>
+            <li>Ensure all text and personal details are visible</li>
+          </ul>
+        </div>
 
         <form onSubmit={handleUpload} className="qualification-form">
-          <div className="file-input-container">
-            <label htmlFor="fileInput" className="file-input-label">
-              <span className="file-icon">📎</span>
-              <span className="file-text">
-                {file ? file.name : "Choose a file or drag it here"}
-              </span>
-            </label>
-            <input
-              type="file"
-              id="fileInput"
-              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-              onChange={handleFileChange}
-              disabled={uploading}
-              className="file-input"
-            />
-          </div>
+          <label htmlFor="fileInput" className={`file-upload-area ${file ? 'has-file' : ''}`}>
+            <div className="upload-icon">📤</div>
+            <h4>{file ? file.name : 'Drag & drop or click to browse'}</h4>
+            <p>{file ? `${(file.size / 1024).toFixed(2)} KB` : 'PDF, JPG, PNG, DOC, DOCX'}</p>
+            <button type="button" className="browse-btn" onClick={(e) => { e.preventDefault(); document.getElementById('fileInput').click(); }}>
+              Browse files
+            </button>
+            <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onChange={handleFileChange} disabled={uploading} style={{ display: 'none' }} />
+          </label>
 
           {file && (
-            <div className="file-preview">
-              <span className="file-preview-icon">📄</span>
-              <div className="file-preview-info">
-                <p className="file-preview-name">{file.name}</p>
-                <p className="file-preview-size">
-                  {(file.size / 1024).toFixed(2)} KB
-                </p>
+            <div className="selected-file">
+              <div className="file-info">
+                <div className="file-icon">📄</div>
+                <div className="file-details">
+                  <h5>{file.name}</h5>
+                  <p>{(file.size / 1024).toFixed(2)} KB</p>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null);
-                  document.getElementById("fileInput").value = "";
-                }}
-                className="file-remove-btn"
-                disabled={uploading}
-              >
-                ✕
-              </button>
+              <button type="button" className="remove-file-btn" onClick={() => { setFile(null); document.getElementById('fileInput').value = ''; }} disabled={uploading}>Remove</button>
             </div>
           )}
 
           {message.text && (
-            <div className={`message-box ${message.type}`}>
-              {message.type === "success" ? "✅" : "⚠️"} {message.text}
+            <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-error'}`}>
+              {message.type === 'success' ? '✅' : '⚠️'} {message.text}
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={!file || uploading}
-            className="upload-submit-btn"
-          >
-            {uploading ? (
-              <>
-                <span className="spinner"></span>
-                Uploading...
-              </>
-            ) : (
-              <>
-                <span>📤</span>
-                Upload Qualification
-              </>
-            )}
-          </button>
+          <div className="submit-section">
+            <button type="submit" disabled={!file || uploading} className="submit-btn">
+              {uploading ? 'Uploading...' : 'Upload Qualification'}
+            </button>
+          </div>
         </form>
 
         <div className="upload-guidelines">
           <h4>📋 Upload Guidelines:</h4>
           <ul>
-            <li>
-              ✓ Upload clear, readable copies of your qualification documents
-            </li>
+            <li>✓ Upload clear, readable copies of your qualification documents</li>
             <li>✓ Ensure all text and details are visible</li>
             <li>✓ Accepted: Teaching certificates, degrees, diplomas</li>
             <li>✓ File size limit: 5MB</li>
