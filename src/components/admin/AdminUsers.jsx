@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../css/admin/Admin.css";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState({ students: [], teachers: [] });
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -41,7 +43,7 @@ const AdminUsers = () => {
   }
 
   return (
-    <div style={{ width: "84vw", marginLeft: '12px' }} className="admin-users">
+    <div style={{ width: "84vw", marginLeft: "12px" }} className="admin-users">
       <h2>All Users</h2>
 
       <div className="admin-section">
@@ -74,7 +76,7 @@ const AdminUsers = () => {
         {users.teachers.length > 0 ? (
           <div className="admin-grid">
             {users.teachers.map((teacher) => (
-              <div key={teacher._id} className="admin-card user">
+              <div key={teacher._id} className="admin-card user teacher-card">
                 <h4>{teacher.name}</h4>
                 <p>
                   <strong>Email:</strong> {teacher.email}
@@ -82,6 +84,23 @@ const AdminUsers = () => {
                 <p>
                   <strong>Role:</strong> Teacher
                 </p>
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span
+                    className={`verification-badge ${teacher.verificationStatus?.toLowerCase()}`}
+                  >
+                    {teacher.verificationStatus || "Not Submitted"}
+                  </span>
+                </p>
+                <p>
+                  <strong>Courses:</strong> {teacher.courses?.length || 0}
+                </p>
+                <button
+                  onClick={() => navigate(`/admin/teachers/${teacher._id}`)}
+                  className="btn-review-teacher"
+                >
+                  👁️ Review Details
+                </button>
               </div>
             ))}
           </div>

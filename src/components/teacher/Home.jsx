@@ -1,9 +1,9 @@
 import React from "react";
 import "../../css/teacher/Home.css";
 import { Link } from "react-router-dom";
+import TeacherVerificationStatus from "./TeacherVerificationStatus";
 
 function Home() {
-
   return (
     <div className="home-container">
       {/* Hero Section */}
@@ -14,6 +14,11 @@ function Home() {
           Explore Courses
         </Link>
       </header>
+
+      {/* Verification Status Widget */}
+      <section className="verification-section">
+        <TeacherVerificationStatus />
+      </section>
 
       {/* Courses Preview */}
       <section className="courses-preview">
