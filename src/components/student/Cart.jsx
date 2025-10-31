@@ -6,38 +6,60 @@ const Cart = () => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Fetch cart from backend
   useEffect(() => {
-    // In a real implementation, this would fetch from an API
-    // For now, we'll get cart items from localStorage
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      const items = JSON.parse(savedCart);
-      setCartItems(items);
-      calculateTotal(items);
-    }
-    setLoading(false);
+    const fetchCart = async () => {
+      try {
+        const token = localStorage.getItem("token"); // JWT from login
+        const res = await fetch("http://localhost:3000/cart", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+
+        if (data.success && data.data.items) {
+          const items = data.data.items.map(i => ({
+            id: i.course._id,
+            title: i.course.title,
+            instructor: i.course.description, // adjust if needed
+            price: i.course.price,
+            thumbnail: i.course.image,
+          }));
+          setCartItems(items);
+          calculateTotal(items);
+        } else {
+          setCartItems([]);
+        }
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCart();
   }, []);
 
   const calculateTotal = (items) => {
-    const sum = items.reduce((acc, item) => acc + item.price, 0);
+    const sum = items.reduce((acc, item) => acc + (item.price || 0), 0);
     setTotal(sum);
   };
 
-  const removeFromCart = (courseId) => {
-    const updatedCart = cartItems.filter(item => item.id !== courseId);
-    setCartItems(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    calculateTotal(updatedCart);
+  const removeFromCart = async (courseId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`http://localhost:3000/cart/remove/${courseId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const updated = cartItems.filter(item => item.id !== courseId);
+      setCartItems(updated);
+      calculateTotal(updated);
+    } catch (err) {
+      console.error("Error removing course:", err);
+    }
   };
 
-  const handleCheckout = () => {
-    // This would integrate with a payment gateway in production
-    alert("This would proceed to payment in production!");
-  };
-
-  if (loading) {
-    return <div className="cart-container">Loading...</div>;
-  }
+  if (loading) return <div className="cart-container">Loading...</div>;
 
   return (
     <div className="cart-container">
@@ -45,7 +67,7 @@ const Cart = () => {
       {cartItems.length === 0 ? (
         <div className="empty-cart">
           <p>Your cart is empty</p>
-          <button onClick={() => window.location.href = '/courses'} className="browse-courses-btn">
+          <button onClick={() => (window.location.href = "/courses")} className="browse-courses-btn">
             Browse Courses
           </button>
         </div>
@@ -60,16 +82,13 @@ const Cart = () => {
                   <p>{item.instructor}</p>
                   <p className="price">₹{item.price}</p>
                 </div>
-                <button 
-                  onClick={() => removeFromCart(item.id)}
-                  className="remove-btn"
-                >
+                <button onClick={() => removeFromCart(item.id)} className="remove-btn">
                   Remove
                 </button>
               </div>
             ))}
           </div>
-          
+
           <div className="cart-summary">
             <h3>Order Summary</h3>
             <div className="summary-row">
@@ -80,19 +99,7 @@ const Cart = () => {
               <span>Total Amount:</span>
               <span>₹{total}</span>
             </div>
-            <button onClick={handleCheckout} className="checkout-btn">
-              Proceed to Checkout
-            </button>
-            <div className="payment-methods">
-              <p>We accept:</p>
-              <div className="payment-icons">
-                <i className="far fa-credit-card"></i>
-                <i className="fab fa-cc-visa"></i>
-                <i className="fab fa-cc-mastercard"></i>
-                <i className="fab fa-cc-paypal"></i>
-                <i className="fab fa-google-pay"></i>
-              </div>
-            </div>
+            <button className="checkout-btn">Proceed to Checkout</button>
           </div>
         </>
       )}
