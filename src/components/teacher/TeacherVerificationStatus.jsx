@@ -18,7 +18,7 @@ const TeacherVerificationStatus = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${BACKEND_URL}/teacher/qualification-status`,
+        `${BACKEND_URL}/teacher/verification/status`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

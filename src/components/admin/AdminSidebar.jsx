@@ -23,8 +23,8 @@ const AdminSidebar = () => {
                   role === "Admin"
                     ? "/admin/dashboard"
                     : role === "Teacher"
-                    ? "/teacher/sidebar/dashboard"
-                    : "/student/sidebar/dashboard"
+                    ? "/teacher/home"
+                    : "/student/home"
                 }
                 className={({ isActive }) =>
                   `admin-nav-link ${isActive ? "active" : ""}`
