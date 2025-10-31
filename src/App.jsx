@@ -1,11 +1,14 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import Student from "./components/student/Student";
 import StudentHome from "./components/student/Home";
+import StudentDashboard from "./components/student/StudentDashboard";
 import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import StudentQuiz from "./components/student/Quiz";
@@ -48,6 +51,9 @@ function Main() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses" element={<Courses />} />
+  <Route path="/contact" element={<Contact />} />
+  {/* Cart currently not implemented - render 404 for now */}
+  <Route path="/cart" element={<NotFound />} />
 
         {/* Teacher routes  */}
         <Route
@@ -66,11 +72,7 @@ function Main() {
             path="upload-qualification"
             element={<TeacherQualificationUpload />}
           />
-          <Route path="sidebar" element={<AdminSidebar />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="courses" element={<AdminCourses />} />
-          </Route>
+          {/* removed student/teacher sidebar routes to avoid showing admin components under their sidebar */}
         </Route>
 
         {/* Student routes  */}
@@ -82,28 +84,34 @@ function Main() {
             </ProtectedRoute>
           }
         >
-          <Route path="home" element={<StudentHome />} />
+          <Route path="home" element={<StudentDashboard />} />
           <Route path="courses" element={<StudentCourses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
             path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<Quiz />}
           />
-          <Route path="sidebar" element={<AdminSidebar />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="courses" element={<AdminCourses />} />
-          </Route>
+          {/* removed student sidebar to avoid mounting admin layout for students */}
         </Route>
 
-        {/* Admin routes  */}
-        <Route path="/admin" element={<AdminSidebar />}>
+        {/* Admin routes  - protect admin pages */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole={["Admin"]}>
+              <AdminSidebar />
+            </ProtectedRoute>
+          }
+        >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="teachers/:teacherId" element={<AdminTeacherDetail />} />
           <Route path="courses" element={<AdminCourses />} />
           <Route path="courses/:courseId" element={<AdminCourseDetail />} />
         </Route>
+
+        {/* Catch-all 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {!hideShell &&
