@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/admin/Admin.css";
 
-const AdminCourses = () => {
+const StudentCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const AdminCourses = () => {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-        const response = await fetch(`${backendUrl}/admin/courses`, {
+        const response = await fetch(`${backendUrl}/student/courses`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -38,35 +38,7 @@ const AdminCourses = () => {
     fetchCourses();
   }, []);
 
-  const deleteCourse = async (courseId) => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-
-      const response = await fetch(`${backendUrl}/admin/courses/${courseId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setCourses(courses.filter((course) => course._id !== courseId));
-        alert("Course deleted successfully");
-      } else {
-        alert("Error deleting course: " + data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting course:", error);
-      alert("Error deleting course");
-    }
-  };
+  console.log("courses", courses);
 
   const viewCourseDetails = (courseId) => {
     navigate(`/admin/courses/${courseId}`);
@@ -78,7 +50,7 @@ const AdminCourses = () => {
 
   return (
     <div
-     style={{width: '100%', padding: '39px', boxSizing: 'border-box'}}
+      style={{ width: "100%", padding: "39px", boxSizing: "border-box" }}
       className="admin-courses"
     >
       <h2>All Courses ({courses.length})</h2>
@@ -86,7 +58,11 @@ const AdminCourses = () => {
       {courses.length > 0 ? (
         <div className="admin-courses-grid">
           {courses.map((course) => (
-            <div key={course._id} className="admin-course-card">
+            <div
+              key={course._id}
+              className="admin-course-card"
+              style={{ position: "relative", height: "27rem" }}
+            >
               {/* Course Image */}
               <div className="admin-course-image-container">
                 {course.image ? (
@@ -114,24 +90,26 @@ const AdminCourses = () => {
                   >
                     👁️
                   </button>
-                  <button
-                    onClick={() => deleteCourse(course._id)}
-                    className="admin-delete-btn"
-                    title="Delete Course"
-                  >
-                    🗑️
-                  </button>
                 </div>
               </div>
 
               {/* Course Info */}
               <div className="admin-course-info">
                 <h3 className="admin-course-title">{course.title}</h3>
-                <p className="admin-course-description">
+                <p
+                  className="admin-course-description"
+                  style={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                  }}
+                >
                   {course.description || "No description available"}
                 </p>
 
-                <div className="admin-course-details">
+                <div
+                  className="admin-course-details"
+                  // style={{ position: "absolute", left: "0px", bottom: "0px" }}
+                >
                   <div className="admin-course-detail-item">
                     <span className="detail-label">Teacher:</span>
                     <span className="detail-value">
@@ -156,13 +134,6 @@ const AdminCourses = () => {
                   )}
 
                   <div className="admin-course-detail-item">
-                    <span className="detail-label">Students:</span>
-                    <span className="detail-value">
-                      {course.students ? course.students.length : 0} enrolled
-                    </span>
-                  </div>
-
-                  <div className="admin-course-detail-item">
                     <span className="detail-label">Chapters:</span>
                     <span className="detail-value">
                       {course.chapters ? course.chapters.length : 0} chapters
@@ -170,18 +141,21 @@ const AdminCourses = () => {
                   </div>
                 </div>
 
-                <div className="admin-course-actions">
+                <div
+                  className="admin-course-actions"
+                  style={{
+                    position: "absolute",
+                    bottom: "0px",
+                    left: "0px",
+                    width: "100%",
+                    margin: "0 0 0 0",
+                  }}
+                >
                   <button
                     onClick={() => viewCourseDetails(course._id)}
                     className="admin-view-details-btn"
                   >
-                    View Details & Videos
-                  </button>
-                  <button
-                    onClick={() => deleteCourse(course._id)}
-                    className="admin-delete-course-btn"
-                  >
-                    Delete Course
+                    View
                   </button>
                 </div>
               </div>
@@ -199,4 +173,4 @@ const AdminCourses = () => {
   );
 };
 
-export default AdminCourses;
+export default StudentCourses;
