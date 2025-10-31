@@ -75,6 +75,31 @@ const Courses = () => {
                     <strong>Students Enrolled:</strong> {course.students.length}
                   </p>
                 )}
+                <button
+                  style={{ marginTop: "10px", width: "100%", background: "#2337ad", color: "white", padding: "8px 14px", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem("token");
+                      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+                      const res = await fetch(`${backendUrl}/cart/add/${course._id}`, {
+                        method: "POST",
+                        headers: {
+                          "Authorization": `Bearer ${token}`
+                        }
+                      });
+                      const data = await res.json();
+                      if (res.ok) {
+                        alert(`Added to cart! ${course._id}`);
+                      } else {
+                        alert(data.message || "Failed to add to cart");
+                      }
+                    } catch (err) {
+                      alert("Error adding to cart");
+                    }
+                  }}
+                >
+                  Add to Cart
+                </button>
               </div>
             </div>
           ))}
