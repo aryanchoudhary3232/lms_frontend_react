@@ -34,12 +34,12 @@ const Navbar = () => {
 
         <nav className="nav-links">
           {role === "Teacher" && (
-            <Link to={"/teacher/home"} className="nav-item">
+            <Link to={"/teacher/sidebar/dashboard"} className="nav-item">
               Dashboard
             </Link>
           )}
           {role === "Student" && (
-            <Link to={"/student/home"} className="nav-item">
+            <Link to={"/student/sidebar/dashboard"} className="nav-item">
               Dashboard
             </Link>
           )}
@@ -51,7 +51,7 @@ const Navbar = () => {
                 : role === "Admin"
                 ? "/admin/courses"
                 : role === "Student"
-                ? "/student/courses"
+                ? "/courses"
                 : "/teacher/courses"
             }
             className="nav-item"

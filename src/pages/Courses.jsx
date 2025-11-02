@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/admin/Admin.css";
+import { Link } from "react-router-dom";
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -40,48 +41,44 @@ const Courses = () => {
   }
 
   return (
-    <div
-      style={{ width: "84vw", marginLeft: "12px" }}
-      className="admin-courses"
-    >
-      <h2>All Courses ({courses.length})</h2>
+    <div className="courses-container">
+      <div className="courses-header">
+        <h1>Courses</h1>
+      
+      </div>
 
-      {courses.length > 0 ? (
-        <div className="admin-grid">
-          {courses.map((course) => (
-            <div key={course._id} className="admin-card course">
-              <div className="admin-course-info">
-                <h4>{course.title}</h4>
-                <p>
-                  <strong>Teacher:</strong>{" "}
-                  {course.teacher ? course.teacher.name : "No teacher assigned"}
-                </p>
-                <p>
-                  <strong>Description:</strong>{" "}
-                  {course.description || "No description"}
-                </p>
-                {course.category && (
-                  <p>
-                    <strong>Category:</strong> {course.category}
-                  </p>
-                )}
-                {course.level && (
-                  <p>
-                    <strong>Level:</strong> {course.level}
-                  </p>
-                )}
-                {course.students && (
-                  <p>
-                    <strong>Students Enrolled:</strong> {course.students.length}
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="admin-empty">No courses found</div>
-      )}
+      <div className="course-list">
+        {courses.length === 0 ? (
+          <p className="no-courses">No courses available. Add one!</p>
+        ) : (
+          courses.map((course) => (
+            <Link
+              style={{
+                textDecoration: "none",
+              }}
+              to={`/teacher/courses/${course._id}`}
+              key={course._id}
+              className="course-card"
+            >
+              <img src={course.image} />
+              <h2>{course.title}</h2>
+              <p>{course.description}</p>
+              <p>
+                <b>Category:</b> {course.category}
+              </p>
+              <p>
+                <b>Level:</b> {course.level}
+              </p>
+              <p>
+                <b>Duration:</b> {course.duration} hours
+              </p>
+              <p>
+                <b>Price:</b> ₹{course.price}
+              </p>
+            </Link>
+          ))
+        )}
+      </div>
     </div>
   );
 };

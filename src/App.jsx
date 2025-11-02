@@ -12,7 +12,6 @@ import Footer from "./components/common/Footer";
 import Student from "./components/student/Student";
 import StudentHome from "./components/student/Home";
 import StudentDashboard from "./components/student/StudentDashboard";
-import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import StudentQuiz from "./components/student/Quiz";
 import Quiz from "./components/student/Quiz";
@@ -57,9 +56,9 @@ function Main() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses" element={<Courses />} />
-  <Route path="/contact" element={<Contact />} />
-  {/* Cart currently not implemented - render 404 for now */}
-  <Route path="/cart" element={<NotFound />} />
+        <Route path="/contact" element={<Contact />} />
+        {/* Cart currently not implemented - render 404 for now */}
+        <Route path="/cart" element={<NotFound />} />
 
         {/* Teacher routes  */}
         <Route
@@ -78,7 +77,12 @@ function Main() {
             path="upload-qualification"
             element={<TeacherQualificationUpload />}
           />
-          {/* removed student/teacher sidebar routes to avoid showing admin components under their sidebar */}
+          <Route path="sidebar" element={<AdminSidebar />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="courses" element={<StudentCourses />} />
+            <Route path="streak" element={<Streak />} />
+          </Route>
         </Route>
 
         {/* Student routes  */}
