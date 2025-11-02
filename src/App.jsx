@@ -1,17 +1,27 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+//common routes
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Courses from "./pages/Courses";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
 import Navbar from "./components/common/Navbar";
+import Cart from "./components/student/Cart";
 import Footer from "./components/common/Footer";
+//student routes
 import Student from "./components/student/Student";
 import StudentHome from "./components/student/Home";
-import StudentCourses from "./components/student/Courses";
+import StudentDashboard from "./components/student/StudentDashboard";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import StudentQuiz from "./components/student/Quiz";
 import StudentAssignments from "./components/student/assignments/StudentAssignments";
 import SubmitAssignment from "./components/student/assignments/SubmitAssignment";
 import ViewSubmission from "./components/student/assignments/ViewSubmission";
+import Quiz from "./components/student/Quiz";
+import Streak from "./components/student/Streak";
+import StudentCourses from "./components/student/StudentCourses";
+//teacher routes
 import Teacher from "./components/teacher/Teacher";
 import TeacherHome from "./components/teacher/Home";
 import TeacherCourses from "./components/teacher/Courses";
@@ -28,9 +38,6 @@ import AdminCourses from "./components/admin/AdminCourses";
 import AdminCourseDetail from "./components/admin/AdminCourseDetail";
 import AdminTeacherDetail from "./components/admin/AdminTeacherDetail";
 import AdminSidebar from "./components/admin/AdminSidebar";
-import AddCourse from "./components/teacher/AddCourse";
-import Quiz from "./components/student/Quiz";
-import Courses from "./pages/Courses";
 
 function App() {
   return (
@@ -56,6 +63,8 @@ function Main() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/cart" element={<Cart />} />
 
         {/* Teacher routes  */}
         <Route
@@ -100,7 +109,7 @@ function Main() {
           }
         >
           <Route path="home" element={<StudentHome />} />
-          <Route path="courses" element={<StudentCourses />} />
+          <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
             path="courses/:courseId/:chapterId/:topicId/quiz"
@@ -124,14 +133,24 @@ function Main() {
           <Route path="courses" element={<AdminCourses />} />
         </Route>
 
-        {/* Admin routes  */}
-        <Route path="/admin" element={<AdminSidebar />}>
+        {/* Admin routes  - protect admin pages */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole={["Admin"]}>
+              <AdminSidebar />
+            </ProtectedRoute>
+          }
+        >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="teachers/:teacherId" element={<AdminTeacherDetail />} />
           <Route path="courses" element={<AdminCourses />} />
           <Route path="courses/:courseId" element={<AdminCourseDetail />} />
         </Route>
+
+        {/* Catch-all 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {!hideShell &&

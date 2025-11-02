@@ -17,7 +17,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="site-navbar">
+    <header className="site-navbar" style={{width: '100%'}}>
       <div className="container nav-inner">
         <Link
           to={
@@ -51,7 +51,7 @@ const Navbar = () => {
                 : role === "Admin"
                 ? "/admin/courses"
                 : role === "Student"
-                ? "/student/courses"
+                ? "/courses"
                 : "/teacher/courses"
             }
             className="nav-item"

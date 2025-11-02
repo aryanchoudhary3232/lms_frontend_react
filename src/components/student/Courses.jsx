@@ -2,8 +2,14 @@ import React, { useEffect, useState } from "react";
 import "../../css/teacher/Courses.css";
 import { Link } from "react-router-dom";
 
+const getToken = () => {
+  // Try to get token from localStorage (assume login stores it as 'token')
+  return localStorage.getItem('token') || '';
+};
+
 const Courses = () => {
   const [courses, setCourses] = useState([]);
+
 
   const getAllCourses = async () => {
     try {
@@ -21,7 +27,28 @@ const Courses = () => {
       console.log("error occurred", error);
     }
   };
-  console.log(courses);
+
+  // Add to Cart handler
+  const handleAddToCart = async (courseId) => {
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      const token = getToken();
+      const res = await fetch(`${backendUrl}/cart/add/${courseId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert("Added to cart!");
+      } else {
+        alert(data.message || "Failed to add to cart");
+      }
+    } catch (err) {
+      alert("Error adding to cart");
+    }
+  };
 
   useEffect(() => {
     getAllCourses();
@@ -38,30 +65,35 @@ const Courses = () => {
           <p className="no-courses">No courses available. Add one!</p>
         ) : (
           courses.map((course) => (
-            <Link
-              style={{
-                textDecoration: "none",
-              }}
-              to={`/student/courses/${course._id}`}
-              key={course._id}
-              className="course-card"
-            >
-              <img src={course.image} />
-              <h2>{course.title}</h2>
-              <p>{course.description}</p>
-              <p>
-                <b>Category:</b> {course.category}
-              </p>
-              <p>
-                <b>Level:</b> {course.level}
-              </p>
-              <p>
-                <b>Duration:</b> {course.duration} hours
-              </p>
-              <p>
-                <b>Price:</b> ₹{course.price}
-              </p>
-            </Link>
+            <div key={course._id} className="course-card">
+              <Link
+                style={{ textDecoration: "none" }}
+                to={`/student/courses/${course._id}`}
+              >
+                <img src={course.image} alt={course.title} />
+                <h2>{course.title}</h2>
+                <p>{course.description}</p>
+                <p>
+                  <b>Category:</b> {course.category}
+                </p>
+                <p>
+                  <b>Level:</b> {course.level}
+                </p>
+                <p>
+                  <b>Duration:</b> {course.duration} hours
+                </p>
+                <p>
+                  <b>Price:</b> ₹{course.price}
+                </p>
+              </Link>
+              <button
+                className="add-btn"
+                style={{ marginTop: "10px", width: "100%" }}
+                onClick={() => handleAddToCart(course._id)}
+              >
+                Add to Cart
+              </button>
+            </div>
           ))
         )}
       </div>

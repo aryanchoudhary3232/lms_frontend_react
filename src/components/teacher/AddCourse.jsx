@@ -33,14 +33,6 @@ const AddCourse = () => {
     });
   };
 
-  const handleSearchChangeTeacher = (e) => {
-    setSearchTeacher(e.target.value);
-  };
-
-  const handleSearchChangeStudent = (e) => {
-    setSearchStudent(e.target.value);
-  };
-
   useEffect(() => {
     async function fetchTeachers() {
       const response = await fetch(
@@ -64,14 +56,6 @@ const AddCourse = () => {
 
     fetchStudents();
   }, []);
-
-  const filterdTeachers = teachers.filter((teacher) =>
-    teacher.name.toLowerCase().includes(searchTeacher.toLowerCase())
-  );
-
-  const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(searchStudent.toLowerCase())
-  );
 
   const handleAddChapter = () => {
     setFormData({
@@ -182,7 +166,7 @@ const AddCourse = () => {
     data.append("price", formData.price);
     data.append("image", formData.image);
     data.append("video", formData.video);
-  if (formData.notes) data.append("notes", formData.notes);
+    if (formData.notes) data.append("notes", formData.notes);
     data.append("teacher", formData.teacher);
 
     const chaptersCopy = formData.chapters.map((chapter, chapterIdx) => {
@@ -211,7 +195,7 @@ const AddCourse = () => {
         `${import.meta.env.VITE_BACKEND_URL}/teacher/courses/create_course`,
         {
           method: "POST",
-          // headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
           body: data,
         }
       );
@@ -246,9 +230,8 @@ const AddCourse = () => {
           paddingTop: "16px",
           marginTop: "0",
           borderRadius: "12px",
-          marginLeft: "auto",
-          marginRight: "auto",
-          width: "825px",
+          marginLeft: "47px",
+          marginRight: "50px",
         }}
       >
         {" "}
@@ -458,44 +441,7 @@ const AddCourse = () => {
             borderRadius: "5px",
           }}
         />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-          htmlFor=""
-        >
-          Teacher
-        </label>
-        <input
-          type="text"
-          onChange={handleSearchChangeTeacher}
-          value={searchTeacher}
-          placeholder="Search teacher"
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
-        <select
-          name="teacher"
-          onChange={handleChange}
-          style={{
-            height: "41px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        >
-          <option>Select Teacher</option>
-          {filterdTeachers.map((teacher) => (
-            <option value={teacher._id} key={teacher._id}>
-              {teacher.name}
-            </option>
-          ))}
-        </select>
+
         <button
           type="button"
           onClick={handleAddChapter}
