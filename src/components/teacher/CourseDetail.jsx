@@ -6,7 +6,7 @@ const CourseDetail = () => {
   const [course, setCourse] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
-  const { id } = useParams();
+  const { courseId } = useParams();
 
   useEffect(() => {
     async function getCourseById() {
@@ -14,7 +14,7 @@ const CourseDetail = () => {
         const response = await fetch(
           `${
             import.meta.env.VITE_BACKEND_URL
-          }/teacher/courses/get_course_by_id/${id}`
+          }/teacher/courses/get_course_by_id/${courseId}`
         );
         const courseResponse = await response.json();
 

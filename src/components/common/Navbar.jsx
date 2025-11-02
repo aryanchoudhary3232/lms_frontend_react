@@ -58,6 +58,19 @@ const Navbar = () => {
           >
             Courses
           </Link>
+
+          {/* Assignments Link for Teacher and Student */}
+          {role === "Teacher" && (
+            <Link to="/teacher/assignments" className="nav-item">
+              Assignments
+            </Link>
+          )}
+          {role === "Student" && (
+            <Link to="/student/assignments" className="nav-item">
+              Assignments
+            </Link>
+          )}
+
           <Link to="/cart" className="nav-item">
             Cart
           </Link>
