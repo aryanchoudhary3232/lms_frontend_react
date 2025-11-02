@@ -7,11 +7,13 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
 import Navbar from "./components/common/Navbar";
+import Cart from "./components/student/Cart";
 import Footer from "./components/common/Footer";
 //student routes
 import Student from "./components/student/Student";
 import StudentHome from "./components/student/Home";
 import StudentDashboard from "./components/student/StudentDashboard";
+//import StudentCourses from "./components/student/Courses";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import StudentQuiz from "./components/student/Quiz";
 import Quiz from "./components/student/Quiz";
@@ -56,9 +58,8 @@ function Main() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses" element={<Courses />} />
-        <Route path="/contact" element={<Contact />} />
-        {/* Cart currently not implemented - render 404 for now */}
-        <Route path="/cart" element={<NotFound />} />
+  <Route path="/contact" element={<Contact />} />
+  <Route path="/cart" element={<Cart />} />
 
         {/* Teacher routes  */}
         <Route
