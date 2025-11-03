@@ -44,8 +44,7 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link
-            to={
+          <Link to={
               !token
                 ? "/courses"
                 : role === "Admin"
@@ -58,9 +57,11 @@ const Navbar = () => {
           >
             Courses
           </Link>
-          <Link to="/cart" className="nav-item">
-            Cart
-          </Link>
+          {token && role === "Student" && (
+            <Link to="/cart" className="nav-item">
+              Cart
+            </Link>
+          )}
 
           {token ? (
             // when logged in show Sign Out and role if available
