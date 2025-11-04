@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../css/teacher/Courses.css";
 import { Link } from "react-router-dom";
+import CourseCard from "./CourseCard";
+import {FaSearch, FaChevronDown} from "react-icons/fa";
 
 const getToken = () => {
   // Try to get token from localStorage (assume login stores it as 'token')
@@ -27,7 +29,6 @@ const Courses = () => {
     }
   };
 
-  // Add to Cart handler
   const handleAddToCart = async (courseId) => {
     try {
       const backendUrl =
@@ -60,7 +61,39 @@ const Courses = () => {
         <h1>Courses</h1>
       </div>
 
-      <div className="course-list">
+
+      {/* --- Filter Bar --- */}
+      <div className="courses-filter-bar">
+        <div className="filter-search">
+          <FaSearch className="filter-icon" />
+          <input type="text" placeholder="Search in your courses..." />
+        </div>
+        <div className="filter-dropdown">
+          <span>Sort by</span>
+          <FaChevronDown className="filter-icon-small" />
+        </div>
+        <div className="filter-dropdown">
+          <span>All Category</span>
+          <FaChevronDown className="filter-icon-small" />
+        </div>
+      </div>
+
+      {/* --- Courses Grid --- */}
+      <div className="courses-grid">
+        {courses.length === 0 ? (
+          <p className="no-courses">No courses available.</p>
+        ) : (
+          courses.map((course) => (
+            <CourseCard
+              key={course._id}
+              course={course}
+              onAddToCart={() => handleAddToCart(course._id)} // Pass handler
+            />
+          ))
+        )}
+      </div>
+
+      {/* <div className="course-list">
         {courses.length === 0 ? (
           <p className="no-courses">No courses available. Add one!</p>
         ) : (
@@ -115,7 +148,7 @@ const Courses = () => {
             </div>
           ))
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

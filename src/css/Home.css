@@ -1,111 +1,265 @@
-/* General */
+/* --- Global Styles & Variables --- */
+:root {
+  /* You can change this blue to match your #2337AD */
+  --primary-blue: #2337AD;
+  --secondary-yellow: #ffd700; /* From your old CSS */
+  --dark-text: #333;
+  --light-text: #555;
+  --light-gray-bg: #f9faff; /* Very similar to your #f9f9f9 */
+  --card-border: #e0e0e0;
+  --white: #ffffff;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
+  font-family: "Inter", "Arial", sans-serif; /* Using a more modern font stack */
+  color: var(--dark-text);
+  background-color: var(--white); /* Main background is white in the design */
 }
 
-/* Navbar */
-.navbar {
+.home-container {
+  width: 100%;
+}
+
+main {
+  /* Use max-width to keep content centered and readable on large screens */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- Hero Section --- */
+.hero-section {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
-  background: #2337AD;
-  color: white;
+  justify-content: space-between;
+  padding: 60px 0;
+  gap: 40px;
+  /* You can add your gradient back if you like */
+  /* background: linear-gradient(to right, #2337AD, #2337AD); */
+  /* color: white; */
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
+.hero-content {
+  flex: 1;
+  max-width: 50%;
 }
 
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 20px;
+.hero-content h1 {
+  font-size: 3rem; /* 48px */
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
 }
 
-.nav-links li a {
-  text-decoration: none;
-  color: white;
-  font-weight: 500;
-  transition: 0.3s;
-}
-
-.nav-links li a:hover {
-  color: #ffd700;
-}
-
-/* Hero Section */
-.hero {
-  text-align: center;
-  padding: 80px 20px;
-  background: linear-gradient(to right, #2337AD, #2337AD);
-  color: white;
-}
-
-.hero h2 {
-  font-size: 42px;
-  margin-bottom: 15px;
-}
-
-.hero p {
-  font-size: 18px;
-  margin-bottom: 25px;
-}
-
-.btn {
-  background: #ffd700;
-  color: black;
-  padding: 12px 25px;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  background: white;
-  color: #2337AD;
-}
-
-/* Courses Section */
-.courses-preview {
-  padding: 50px 20px;
-  text-align: center;
-}
-
-.courses-preview h2 {
-  font-size: 30px;
+.hero-content p {
+  font-size: 1.1rem; /* 18px */
+  color: var(--light-text);
   margin-bottom: 30px;
 }
 
-.courses-grid {
+.hero-buttons {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none; /* Added for consistency */
+}
+
+.btn-primary {
+  /* Using your blue */
+  background-color: var(--primary-blue);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: #1a298a; /* A darker blue */
+}
+
+.btn-secondary {
+  background-color: var(--white);
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+}
+
+.btn-secondary:hover {
+  background-color: #f0f7ff;
+}
+
+.hero-image {
+  flex: 1;
+  max-width: 45%;
+}
+
+.hero-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* --- Stats Bar --- */
+.stats-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 25px 20px;
+  margin: 20px 0 60px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--card-border);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.1rem;
+  color: var(--light-text);
+  text-align: left; /* Ensure text aligns left */
+}
+
+.stat-item .stat-icon {
+  font-size: 2.5rem; /* 40px */
+  color: var(--primary-blue);
+}
+
+.stat-item .stat-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-item strong {
+  display: block;
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  color: var(--dark-text);
+}
+
+/* --- Courses Section --- */
+.courses-section {
+  padding: 60px 0;
+  background-color: var(--light-gray-bg);
+  /* Make it full-width by overriding the main padding */
+  /* This creates the full-width background effect */
+  margin: 60px -100vw;
+  padding: 60px 100vw;
+}
+
+.courses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  /* Constrain the header to the max-width */
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px; /* Add padding to match main content */
+}
+
+.courses-header h2 {
+  font-size: 2.5rem; /* 40px */
+  margin: 0;
+}
+
+.view-all-link {
+  text-decoration: none;
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.courses-grid {
+  display: grid;
+  /* This creates a responsive grid */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  /* Constrain the grid to the max-width */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px; /* Add padding to match main content */
 }
 
 .course-card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 250px;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
+  background-color: var(--white);
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  overflow: hidden; /* To contain the image radius */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left; /* Override any centered text */
 }
 
 .course-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.course-card img {
+.course-image {
   width: 100%;
-  border-radius: 8px;
+  height: 200px;
+  object-fit: cover;
 }
 
-.course-card h3 {
-  margin: 15px 0 10px;
+.course-content {
+  padding: 20px;
+}
+
+.course-rating {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--dark-text); /* Ensure it's not light */
+}
+
+.course-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: var(--dark-text);
+}
+
+.course-instructor {
+  font-size: 0.9rem;
+  color: var(--light-text);
+  margin-bottom: 15px;
+}
+
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--light-text);
+  padding-top: 15px;
+  border-top: 1px solid var(--card-border);
+}
+
+.course-meta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.course-footer {
+  padding-top: 15px;
+  margin-top: 15px;
+  border-top: 1px solid var(--card-border);
+}
+
+.course-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-blue);
 }

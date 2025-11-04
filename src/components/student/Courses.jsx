@@ -91,7 +91,7 @@ const Courses = () => {
                 style={{ marginTop: "10px", width: "100%" }}
                 onClick={() => handleAddToCart(course._id)}
               >
-                Add to Cart
+                dd to Cart
               </button>
             </div>
           ))
