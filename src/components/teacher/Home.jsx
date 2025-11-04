@@ -8,7 +8,7 @@ function Home() {
     <div className="home-container">
       {/* Hero Section */}
       <header className="hero">
-        <h2>Welcome to MyLMS</h2>
+        <h2>Welcome to SeekhoBharat</h2>
         <p>Learn anytime, anywhere with our courses.</p>
         <Link to="/teacher/courses" className="btn">
           Explore Courses
