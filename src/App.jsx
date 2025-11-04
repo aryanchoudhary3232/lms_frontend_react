@@ -107,7 +107,7 @@ function Main() {
             element={<Quiz />}
           />
           <Route path="sidebar" element={<AdminSidebar />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="dashboard" element={<StudentDashboard />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="courses" element={<StudentCourses />} />
             <Route path="streak" element={<Streak />} />
