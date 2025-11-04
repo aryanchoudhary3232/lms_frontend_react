@@ -18,10 +18,11 @@ import StudentQuiz from "./components/student/Quiz";
 import Quiz from "./components/student/Quiz";
 import Streak from "./components/student/Streak";
 import StudentCourses from "./components/student/StudentCourses";
+import StudentAllCourses from "./components/student/StudentAllCourses";
 //teacher routes
 import Teacher from "./components/teacher/Teacher";
 import TeacherHome from "./components/teacher/Home";
-import TeacherCourses from "./components/teacher/Courses";
+import TeacherAllCourses from "./components/teacher/TeacherAllCourses";
 import TeacherCourseDetail from "./components/teacher/CourseDetail";
 import TeacherAddCourse from "./components/teacher/AddCourse";
 import TeacherChapters from "./components/teacher/Chapters";
@@ -70,8 +71,12 @@ function Main() {
           }
         >
           <Route path="home" element={<TeacherHome />}></Route>
-          <Route path="courses" element={<TeacherCourses />} />
+          <Route path="courses" element={<TeacherAllCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
+          <Route
+            path="courses/:courseId/:chapterId/:topicId/quiz"
+            element={<Quiz />}
+          />
           <Route path="courses/add" element={<AddCourse />} />
           <Route
             path="upload-qualification"
@@ -95,7 +100,7 @@ function Main() {
           }
         >
           <Route path="home" element={<StudentHome />} />
-          <Route path="courses" element={<Courses />} />
+          <Route path="courses" element={<StudentAllCourses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
             path="courses/:courseId/:chapterId/:topicId/quiz"
@@ -136,7 +141,9 @@ function Main() {
         !(location.pathname === "/admin/courses") &&
         !(location.pathname === "/student/dashboard") &&
         !(location.pathname === "/student/sidebar/courses") &&
-        !(location.pathname === "/teacher/dashboard") && <Footer />}
+        !(location.pathname === "/teacher/dashboard") &&
+        !location.pathname.includes("/student/courses/") &&
+        !location.pathname.includes("/teacher/courses/") && <Footer />}
     </div>
   );
 }

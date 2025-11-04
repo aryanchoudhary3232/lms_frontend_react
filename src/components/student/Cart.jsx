@@ -6,6 +6,8 @@ const Cart = () => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const token = localStorage.getItem("token");
+
   // Fetch cart from backend
   useEffect(() => {
     const fetchCart = async () => {
@@ -17,7 +19,7 @@ const Cart = () => {
         const data = await res.json();
 
         if (data.success && data.data.items) {
-          const items = data.data.items.map(i => ({
+          const items = data.data.items.map((i) => ({
             id: i.course._id,
             title: i.course.title,
             instructor: i.course.description, // adjust if needed
@@ -38,7 +40,7 @@ const Cart = () => {
 
     fetchCart();
   }, []);
-
+  console.log("....", cartItems);
   const calculateTotal = (items) => {
     const sum = items.reduce((acc, item) => acc + (item.price || 0), 0);
     setTotal(sum);
@@ -46,17 +48,33 @@ const Cart = () => {
 
   const removeFromCart = async (courseId) => {
     try {
-      const token = localStorage.getItem("token");
       await fetch(`http://localhost:3000/cart/remove/${courseId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const updated = cartItems.filter(item => item.id !== courseId);
+      const updated = cartItems.filter((item) => item.id !== courseId);
       setCartItems(updated);
       calculateTotal(updated);
     } catch (err) {
       console.error("Error removing course:", err);
     }
+  };
+
+  const handleCheckout = async () => {
+    const courseIds = cartItems.map((item) => item.id);
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/student/update-enrollCourses`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ courseIds: courseIds }),
+      }
+    );
+    const data = await response.json();
+    console.log("data....", data);
   };
 
   if (loading) return <div className="cart-container">Loading...</div>;
@@ -67,7 +85,10 @@ const Cart = () => {
       {cartItems.length === 0 ? (
         <div className="empty-cart">
           <p>Your cart is empty</p>
-          <button onClick={() => (window.location.href = "/courses")} className="browse-courses-btn">
+          <button
+            onClick={() => (window.location.href = "/courses")}
+            className="browse-courses-btn"
+          >
             Browse Courses
           </button>
         </div>
@@ -76,13 +97,20 @@ const Cart = () => {
           <div className="cart-items">
             {cartItems.map((item) => (
               <div key={item.id} className="cart-item">
-                <img src={item.thumbnail} alt={item.title} className="course-thumbnail" />
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  className="course-thumbnail"
+                />
                 <div className="item-details">
                   <h3>{item.title}</h3>
                   <p>{item.instructor}</p>
                   <p className="price">₹{item.price}</p>
                 </div>
-                <button onClick={() => removeFromCart(item.id)} className="remove-btn">
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="remove-btn"
+                >
                   Remove
                 </button>
               </div>
@@ -99,7 +127,9 @@ const Cart = () => {
               <span>Total Amount:</span>
               <span>₹{total}</span>
             </div>
-            <button className="checkout-btn">Proceed to Checkout</button>
+            <button className="checkout-btn" onClick={handleCheckout}>
+              Proceed to Checkout
+            </button>
           </div>
         </>
       )}

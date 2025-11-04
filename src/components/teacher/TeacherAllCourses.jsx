@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../css/teacher/Courses.css";
+import "../../css/teacher/Courses.css";
 import { Link } from "react-router-dom";
 
 const getToken = () => {
@@ -7,7 +7,7 @@ const getToken = () => {
   return localStorage.getItem("token") || "";
 };
 
-const Courses = () => {
+const TeacherAllCourses = () => {
   const [courses, setCourses] = useState([]);
 
   const getAllCourses = async () => {
@@ -24,29 +24,6 @@ const Courses = () => {
       }
     } catch (error) {
       console.log("error occurred", error);
-    }
-  };
-
-  // Add to Cart handler
-  const handleAddToCart = async (courseId) => {
-    try {
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-      const token = getToken();
-      const res = await fetch(`${backendUrl}/cart/add/${courseId}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert("Added to cart!");
-      } else {
-        alert(data.message || "Failed to add to cart");
-      }
-    } catch (err) {
-      alert("Error adding to cart");
     }
   };
 
@@ -99,19 +76,14 @@ const Courses = () => {
                   <b>Price:</b> ₹{course.price}
                 </p>
               </Link>
-              <button
-                className="add-btn"
-                style={{ marginTop: "10px", width: "100%" }}
-              >
-                View Course
-              </button>
-              <button
-                className="add-btn"
-                style={{ marginTop: "10px", width: "100%" }}
-                onClick={() => handleAddToCart(course._id)}
-              >
-                Add to Cart
-              </button>
+              <Link to={`/teacher/courses/${course._id}`}>
+                <button
+                  className="add-btn"
+                  style={{ marginTop: "10px", width: "100%" }}
+                >
+                  View Course
+                </button>
+              </Link>
             </div>
           ))
         )}
@@ -120,4 +92,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default TeacherAllCourses;

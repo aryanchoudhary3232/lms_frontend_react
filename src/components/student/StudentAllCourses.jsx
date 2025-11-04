@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../css/teacher/Courses.css";
+import "../../css/teacher/Courses.css";
 import { Link } from "react-router-dom";
 
 const getToken = () => {
@@ -7,7 +7,7 @@ const getToken = () => {
   return localStorage.getItem("token") || "";
 };
 
-const Courses = () => {
+const StudentAllCourses = () => {
   const [courses, setCourses] = useState([]);
 
   const getAllCourses = async () => {
@@ -99,12 +99,14 @@ const Courses = () => {
                   <b>Price:</b> ₹{course.price}
                 </p>
               </Link>
-              <button
-                className="add-btn"
-                style={{ marginTop: "10px", width: "100%" }}
-              >
-                View Course
-              </button>
+              <Link to={`/student/courses/${course._id}`}>
+                <button
+                  className="add-btn"
+                  style={{ marginTop: "10px", width: "100%" }}
+                >
+                  View Course
+                </button>
+              </Link>
               <button
                 className="add-btn"
                 style={{ marginTop: "10px", width: "100%" }}
@@ -120,4 +122,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default StudentAllCourses;
