@@ -34,23 +34,23 @@ const AdminSidebar = () => {
                 Dashboard
               </NavLink>
             </li>
-            <li className="admin-nav-item">
-              <NavLink
-                to={
-                  role === "Admin"
-                    ? "/admin/users"
-                    : role === "Teacher"
-                    ? "/teacher/sidebar/users"
-                    : "/student/sidebar/users"
-                }
-                className={({ isActive }) =>
-                  `admin-nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <span className="admin-nav-icon">👥</span>
-                Users
-              </NavLink>
-            </li>
+            {(role === "Admin" || role === "Teacher") && (
+              <li className="admin-nav-item">
+                <NavLink
+                  to={
+                    role === "Admin"
+                      ? "/admin/users"
+                      : "/teacher/sidebar/users"
+                  }
+                  className={({ isActive }) =>
+                    `admin-nav-link ${isActive ? "active" : ""}`
+                  }
+                >
+                  <span className="admin-nav-icon">👥</span>
+                  Users
+                </NavLink>
+              </li>
+            )}
             <li className="admin-nav-item">
               <NavLink
                 to={
