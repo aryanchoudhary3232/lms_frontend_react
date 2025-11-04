@@ -11,6 +11,42 @@ const getToken = () => {
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
+  const [searchParams, setSearchParams] = useState({
+  query: '',
+  category: '',
+  level: ''
+});
+const [loading, setLoading] = useState(false);
+
+const handleSearch = async (e) => {
+  const { name, value } = e.target;
+  setSearchParams(prev => ({
+    ...prev,
+    [name]: value
+  }));
+
+  try {
+    setLoading(true);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+    const queryString = new URLSearchParams({
+      ...searchParams,
+      [name]: value
+    }).toString();
+
+    const response = await fetch(`${backendUrl}/courses/search?${queryString}`);
+    const data = await response.json();
+
+    if (data.success) {
+      setCourses(data.data);
+    } else {
+      console.error("Error searching courses:", data.message);
+    }
+  } catch (error) {
+    console.error("Search error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getAllCourses = async () => {
     try {
@@ -55,6 +91,9 @@ const Courses = () => {
     getAllCourses();
   }, []);
 
+
+  
+
   return (
     <div className="courses-container">
       <div className="courses-header">
@@ -62,7 +101,7 @@ const Courses = () => {
       </div>
 
 
-      {/* --- Filter Bar --- */}
+      {/* --- Filter Bar --- 
       <div className="courses-filter-bar">
         <div className="filter-search">
           <FaSearch className="filter-icon" />
@@ -76,7 +115,50 @@ const Courses = () => {
           <span>All Category</span>
           <FaChevronDown className="filter-icon-small" />
         </div>
-      </div>
+      </div>*/}
+
+       <div className="courses-filter-bar">
+  <div className="filter-search">
+    <FaSearch className="filter-icon" />
+    <input 
+      type="text" 
+      name="query"
+      placeholder="Search in your courses..." 
+      value={searchParams.query}
+      onChange={handleSearch}
+    />
+  </div>
+  <div className="filter-dropdown">
+    <select 
+      name="category" 
+      value={searchParams.category}
+      onChange={handleSearch}
+    >
+      <option value="">All Category</option>
+      <option value="Programming">Programming</option>
+      <option value="Design">Design</option>
+      <option value="Business">Business</option>
+      <option value="Marketing">Marketing</option>
+      {/* Add more categories based on your data */}
+    </select>
+    <FaChevronDown className="filter-icon-small" />
+  </div>
+  <div className="filter-dropdown">
+    <select 
+      name="level" 
+      value={searchParams.level}
+      onChange={handleSearch}
+    >
+      <option value="">All Levels</option>
+      <option value="Beginner">Beginner</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Advance">Advance</option>
+    </select>
+    <FaChevronDown className="filter-icon-small" />
+  </div>
+</div>
+
+      
 
       {/* --- Courses Grid --- */}
       <div className="courses-grid">
