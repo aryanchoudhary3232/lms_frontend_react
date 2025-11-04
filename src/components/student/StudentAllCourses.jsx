@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../css/teacher/Courses.css";
+import "../../css/student/StudentAllCourses.css";
 import { Link } from "react-router-dom";
 
 const getToken = () => {
@@ -68,7 +68,7 @@ const StudentAllCourses = () => {
             <div
               key={course._id}
               className="course-card"
-              style={{ width: "22rem" }}
+              style={{ width: "22rem", }}
             >
               <Link
                 style={{ textDecoration: "none" }}

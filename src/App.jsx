@@ -139,7 +139,7 @@ function Main() {
         !(location.pathname === "/admin/dashboard") &&
         !(location.pathname === "/admin/users") &&
         !(location.pathname === "/admin/courses") &&
-        !(location.pathname === "/student/dashboard") &&
+        !location.pathname.includes("/student/sidebar") &&
         !(location.pathname === "/student/sidebar/courses") &&
         !(location.pathname === "/teacher/dashboard") &&
         !location.pathname.includes("/student/courses/") &&

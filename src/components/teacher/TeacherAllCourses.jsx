@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../css/teacher/Courses.css";
+import "../../css/teacher/TeacherAllCourses.css";
 import { Link } from "react-router-dom";
 
 const getToken = () => {
@@ -33,8 +33,29 @@ const TeacherAllCourses = () => {
 
   return (
     <div className="courses-container">
-      <div className="courses-header">
-        <h1>Courses</h1>
+      <div
+        className="courses-header"
+        style={{  position: "relative" }}
+      >
+        <h1 style={{ marginLeft: "30rem" }}>Courses</h1>
+        <Link  to={`/teacher/courses/add`}
+          style={{
+            textAlign: "center",
+            color: "white",
+            background: "#2337ad",
+            padding: "9px 23px",
+            marginTop: "0",
+            borderRadius: "12px",
+            marginLeft: "2rem",
+            marginRight: "50px",
+            fontSize: "26px",
+            marginRight: '-250px',
+            textDecoration: 'none'
+          }}
+        >
+          {" "}
+          Add New Course
+        </Link>
       </div>
 
       <div className="course-list">

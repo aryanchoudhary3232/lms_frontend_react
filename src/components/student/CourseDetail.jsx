@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../css/teacher/CourseDetail.css";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const CourseDetail = () => {
   const [course, setCourse] = useState({});

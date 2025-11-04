@@ -61,20 +61,27 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-    const courseIds = cartItems.map((item) => item.id);
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/student/update-enrollCourses`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ courseIds: courseIds }),
+    try {
+      const courseIds = cartItems.map((item) => item.id);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/cart/update-enroll-courses`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ courseIds: courseIds }),
+        }
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        window.location.href = "/student/home";
       }
-    );
-    const data = await response.json();
-    console.log("data....", data);
+    } catch (error) {
+      console.log("err occured...", error);
+    }
   };
 
   if (loading) return <div className="cart-container">Loading...</div>;
