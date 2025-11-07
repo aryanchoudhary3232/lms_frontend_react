@@ -101,22 +101,6 @@ const handleSearch = async (e) => {
       </div>
 
 
-      {/* --- Filter Bar --- 
-      <div className="courses-filter-bar">
-        <div className="filter-search">
-          <FaSearch className="filter-icon" />
-          <input type="text" placeholder="Search in your courses..." />
-        </div>
-        <div className="filter-dropdown">
-          <span>Sort by</span>
-          <FaChevronDown className="filter-icon-small" />
-        </div>
-        <div className="filter-dropdown">
-          <span>All Category</span>
-          <FaChevronDown className="filter-icon-small" />
-        </div>
-      </div>*/}
-
        <div className="courses-filter-bar">
   <div className="filter-search">
     <FaSearch className="filter-icon" />
@@ -174,63 +158,6 @@ const handleSearch = async (e) => {
           ))
         )}
       </div>
-
-      {/* <div className="course-list">
-        {courses.length === 0 ? (
-          <p className="no-courses">No courses available. Add one!</p>
-        ) : (
-          courses.map((course) => (
-            <div
-              key={course._id}
-              className="course-card"
-              style={{ width: "22rem" }}
-            >
-              <Link
-                style={{ textDecoration: "none" }}
-                to={`/student/courses/${course._id}`}
-              >
-                <img src={course.image} alt={course.title} />
-                <h2>{course.title}</h2>
-                <p
-                  style={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    WebkitLineClamp: 2,
-                    overflow: "hidden",
-                  }}
-                >
-                  {course.description}
-                </p>
-                <p>
-                  <b>Category:</b> {course.category}
-                </p>
-                <p>
-                  <b>Level:</b> {course.level}
-                </p>
-                <p>
-                  <b>Duration:</b> {course.duration} hours
-                </p>
-                <p>
-                  <b>Price:</b> ₹{course.price}
-                </p>
-              </Link>
-              <button
-                className="add-btn"
-                style={{ marginTop: "10px", width: "100%" }}
-              >
-                View Course
-              </button>
-              <button
-                className="add-btn"
-                style={{ marginTop: "10px", width: "100%" }}
-                onClick={() => handleAddToCart(course._id)}
-              >
-                Add to Cart
-              </button>
-            </div>
-          ))
-        )}
-      </div> */}
     </div>
   );
 };
