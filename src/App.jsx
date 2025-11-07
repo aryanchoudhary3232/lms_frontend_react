@@ -47,11 +47,10 @@ function App() {
 
 function Main() {
   const location = useLocation();
-  const hideShell = location.pathname === "/login";
 
   return (
     <div style={{ width: "100%" }}>
-      {!hideShell && !(location.pathname === "/teacher/courses/add") && (
+      {!(location.pathname === "/teacher/courses/add") && (
         <Navbar />
       )}
 
@@ -136,8 +135,7 @@ function Main() {
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {!hideShell &&
-        !(location.pathname === "/teacher/courses/add") &&
+      {!(location.pathname === "/teacher/courses/add") &&
         !(location.pathname === "/admin/dashboard") &&
         !(location.pathname === "/admin/users") &&
         !(location.pathname === "/admin/courses") &&
