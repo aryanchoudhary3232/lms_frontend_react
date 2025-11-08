@@ -2,6 +2,7 @@ import React from "react";
 import "../../css/Home.css";
 import Header from "../common/Header";
 
+import { Link } from "react-router-dom";
 
 import {
   FaStar,
