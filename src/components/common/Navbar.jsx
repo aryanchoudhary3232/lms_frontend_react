@@ -21,7 +21,9 @@ const Navbar = () => {
       <div className="container nav-inner">
         <Link
           to={
-            role === "Admin"
+            !role
+              ? "/"
+              : role === "Admin"
               ? "/admin/dashboard"
               : role === "Teacher"
               ? "/teacher/home"

@@ -11,7 +11,7 @@ const CourseCard = ({ course, onAddToCart }) => {
 
   return (
     <div className="course-card">
-      <Link to={`/student/courses/${course._id}`}>
+      <Link to={`/courses/${course._id}`}>
         <img
           src={course.image}
           alt={course.title}
@@ -31,7 +31,7 @@ const CourseCard = ({ course, onAddToCart }) => {
 
         <Link
           style={{ textDecoration: "none" }}
-          to={`/student/courses/${course._id}`}
+          to={`/courses/${course._id}`}
         >
           <h3 className="course-title">{course.title}</h3>
         </Link>

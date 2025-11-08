@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
@@ -46,11 +47,10 @@ function App() {
 
 function Main() {
   const location = useLocation();
-  const hideShell = location.pathname === "/login";
 
   return (
     <div style={{ width: "100%" }}>
-      {!hideShell && !(location.pathname === "/teacher/courses/add") && (
+      {!(location.pathname === "/teacher/courses/add") && (
         <Navbar />
       )}
 
@@ -58,6 +58,7 @@ function Main() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:courseId" element={<CourseDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
 
@@ -134,8 +135,7 @@ function Main() {
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {!hideShell &&
-        !(location.pathname === "/teacher/courses/add") &&
+      {!(location.pathname === "/teacher/courses/add") &&
         !(location.pathname === "/admin/dashboard") &&
         !(location.pathname === "/admin/users") &&
         !(location.pathname === "/admin/courses") &&

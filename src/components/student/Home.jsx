@@ -1,9 +1,17 @@
 import React from "react";
-import "../../css/teacher/Home.css";
-import { Link, useNavigate } from "react-router-dom";
+import "../../css/Home.css";
+import Header from "../common/Header";
+
+
+import {
+  FaStar,
+  FaUserFriends,
+  FaBook,
+  FaRegPlayCircle,
+  FaRegListAlt,
+} from "react-icons/fa";
 
 function Home() {
-
   return (
     <div className="home-container">
       {/* Hero Section */}

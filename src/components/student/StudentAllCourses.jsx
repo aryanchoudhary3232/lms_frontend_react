@@ -1,14 +1,52 @@
 import React, { useEffect, useState } from "react";
-import "../../css/student/StudentAllCourses.css";
+import "../../css/teacher/Courses.css";
 import { Link } from "react-router-dom";
+import CourseCard from "../../pages/CourseCard";
+import {FaSearch, FaChevronDown} from "react-icons/fa";
 
 const getToken = () => {
   // Try to get token from localStorage (assume login stores it as 'token')
   return localStorage.getItem("token") || "";
 };
 
-const StudentAllCourses = () => {
+const Courses = () => {
   const [courses, setCourses] = useState([]);
+  const [searchParams, setSearchParams] = useState({
+  query: '',
+  category: '',
+  level: ''
+});
+const [loading, setLoading] = useState(false);
+
+const handleSearch = async (e) => {
+  const { name, value } = e.target;
+  setSearchParams(prev => ({
+    ...prev,
+    [name]: value
+  }));
+
+  try {
+    setLoading(true);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+    const queryString = new URLSearchParams({
+      ...searchParams,
+      [name]: value
+    }).toString();
+
+    const response = await fetch(`${backendUrl}/courses/search?${queryString}`);
+    const data = await response.json();
+
+    if (data.success) {
+      setCourses(data.data);
+    } else {
+      console.error("Error searching courses:", data.message);
+    }
+  } catch (error) {
+    console.error("Search error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getAllCourses = async () => {
     try {
@@ -27,7 +65,6 @@ const StudentAllCourses = () => {
     }
   };
 
-  // Add to Cart handler
   const handleAddToCart = async (courseId) => {
     try {
       const backendUrl =
@@ -54,67 +91,70 @@ const StudentAllCourses = () => {
     getAllCourses();
   }, []);
 
+
+  
+
   return (
     <div className="courses-container">
       <div className="courses-header">
         <h1>Courses</h1>
       </div>
 
-      <div className="course-list">
+
+       <div className="courses-filter-bar">
+  <div className="filter-search">
+    <FaSearch className="filter-icon" />
+    <input 
+      type="text" 
+      name="query"
+      placeholder="Search in your courses..." 
+      value={searchParams.query}
+      onChange={handleSearch}
+    />
+  </div>
+  <div className="filter-dropdown">
+    <select 
+      name="category" 
+      value={searchParams.category}
+      onChange={handleSearch}
+    >
+      <option value="">All Category</option>
+      <option value="Programming">Programming</option>
+      <option value="Design">Design</option>
+      <option value="Business">Business</option>
+      <option value="Marketing">Marketing</option>
+      {/* Add more categories based on your data */}
+    </select>
+    <FaChevronDown className="filter-icon-small" />
+  </div>
+  <div className="filter-dropdown">
+    <select 
+      name="level" 
+      value={searchParams.level}
+      onChange={handleSearch}
+    >
+      <option value="">All Levels</option>
+      <option value="Beginner">Beginner</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Advance">Advance</option>
+    </select>
+    <FaChevronDown className="filter-icon-small" />
+  </div>
+</div>
+
+      
+
+      {/* --- Courses Grid --- */}
+      <div className="courses-grid">
         {courses.length === 0 ? (
-          <p className="no-courses">No courses available. Add one!</p>
+          <p className="no-courses">No courses available.</p>
         ) : (
           courses.map((course) => (
-            <div
+            <CourseCard
               key={course._id}
-              className="course-card"
-              style={{ width: "22rem", }}
-            >
-              <Link
-                style={{ textDecoration: "none" }}
-                to={`/student/courses/${course._id}`}
-              >
-                <img src={course.image} alt={course.title} />
-                <h2>{course.title}</h2>
-                <p
-                  style={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    WebkitLineClamp: 2,
-                    overflow: "hidden",
-                  }}
-                >
-                  {course.description}
-                </p>
-                <p>
-                  <b>Category:</b> {course.category}
-                </p>
-                <p>
-                  <b>Level:</b> {course.level}
-                </p>
-                <p>
-                  <b>Duration:</b> {course.duration} hours
-                </p>
-                <p>
-                  <b>Price:</b> ₹{course.price}
-                </p>
-              </Link>
-              <Link to={`/student/courses/${course._id}`}>
-                <button
-                  className="add-btn"
-                  style={{ marginTop: "10px", width: "100%" }}
-                >
-                  View Course
-                </button>
-              </Link>
-              <button
-                className="add-btn"
-                style={{ marginTop: "10px", width: "100%" }}
-                onClick={() => handleAddToCart(course._id)}
-              >
-                Add to Cart
-              </button>
-            </div>
+              course={course}
+              onAddToCart={() => handleAddToCart(course._id)} // Pass handler
+            />
           ))
         )}
       </div>
@@ -122,4 +162,4 @@ const StudentAllCourses = () => {
   );
 };
 
-export default StudentAllCourses;
+export default Courses;
