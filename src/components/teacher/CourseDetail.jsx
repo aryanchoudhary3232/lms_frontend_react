@@ -13,7 +13,9 @@ const CourseDetail = () => {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const response = await fetch(
-          `${backendUrl}/student/courses/${courseId}`
+          `${
+            import.meta.env.VITE_BACKEND_URL
+          }/teacher/courses/get_course_by_id/${courseId}`
         );
         const courseResponse = await response.json();
 

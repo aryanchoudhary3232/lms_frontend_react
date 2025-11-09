@@ -3,8 +3,10 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
+
 import CourseDetail from "./pages/CourseDetail";
 import Checkout from "./pages/Checkout";
+
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
@@ -17,19 +19,21 @@ import StudentHome from "./components/student/Home";
 import StudentDashboard from "./components/student/StudentDashboard";
 import StudentCourseDetail from "./components/student/CourseDetail";
 import StudentQuiz from "./components/student/Quiz";
-import Quiz from "./components/student/Quiz";
+import StudentAssignments from "./components/student/assignments/StudentAssignments";
+import SubmitAssignment from "./components/student/assignments/SubmitAssignment";
+import ViewSubmission from "./components/student/assignments/ViewSubmission";
 import Streak from "./components/student/Streak";
 import StudentCourses from "./components/student/StudentCourses";
-import StudentAllCourses from "./components/student/StudentAllCourses";
 //teacher routes
 import Teacher from "./components/teacher/Teacher";
 import TeacherHome from "./components/teacher/Home";
-import TeacherAllCourses from "./components/teacher/TeacherAllCourses";
 import TeacherCourseDetail from "./components/teacher/CourseDetail";
 import TeacherAddCourse from "./components/teacher/AddCourse";
 import TeacherChapters from "./components/teacher/Chapters";
 import TeacherQualificationUpload from "./components/teacher/TeacherQualificationUpload";
-import AddCourse from "./components/teacher/AddCourse";
+import TeacherAssignments from "./components/teacher/assignments/TeacherAssignments";
+import CreateAssignment from "./components/teacher/assignments/CreateAssignment";
+import AssignmentSubmissions from "./components/teacher/assignments/AssignmentSubmissions";
 //admin routes
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
@@ -48,18 +52,20 @@ function App() {
 
 function Main() {
   const location = useLocation();
+  const hideShell = location.pathname === "/login";
 
   return (
-    <div style={{ width: "100%" }}>
-      {!(location.pathname === "/teacher/courses/add") && (
-        <Navbar />
-      )}
+    <>
+      {!hideShell &&
+        !(location.pathname === "/teacher/courses/add") &&
+        !location.pathname.startsWith("/admin") &&
+        !location.pathname.startsWith("/teacher/sidebar") &&
+        !location.pathname.startsWith("/student/sidebar") && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses" element={<Courses />} />
-        <Route path="/courses/:courseId" element={<CourseDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
   <Route path="/checkout" element={<Checkout />} />
@@ -73,24 +79,28 @@ function Main() {
             </ProtectedRoute>
           }
         >
-          <Route path="home" element={<TeacherHome />}></Route>
-          <Route path="courses" element={<TeacherAllCourses />} />
+          <Route path="home" element={<TeacherHome />} />
+          <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
-          <Route
-            path="courses/:courseId/:chapterId/:topicId/quiz"
-            element={<Quiz />}
-          />
-          <Route path="courses/add" element={<AddCourse />} />
+          <Route path="courses/add" element={<TeacherAddCourse />} />
+          <Route path="chapters" element={<TeacherChapters />} />
           <Route
             path="upload-qualification"
             element={<TeacherQualificationUpload />}
           />
-          <Route path="sidebar" element={<AdminSidebar />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="courses" element={<StudentCourses />} />
-            <Route path="streak" element={<Streak />} />
-          </Route>
+          <Route path="assignments" element={<TeacherAssignments />} />
+          <Route path="assignments/create" element={<CreateAssignment />} />
+          <Route
+            path="assignments/:assignmentId/submissions"
+            element={<AssignmentSubmissions />}
+          />
+        </Route>
+
+        {/* Teacher Sidebar Dashboard (same layout as admin) */}
+        <Route path="/teacher/sidebar" element={<AdminSidebar />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="courses" element={<AdminCourses />} />
         </Route>
 
         {/* Student routes  */}
@@ -103,18 +113,28 @@ function Main() {
           }
         >
           <Route path="home" element={<StudentHome />} />
-          <Route path="courses" element={<StudentAllCourses />} />
+          <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
             path="courses/:courseId/:chapterId/:topicId/quiz"
-            element={<Quiz />}
+            element={<StudentQuiz />}
           />
-          <Route path="sidebar" element={<AdminSidebar />}>
-            <Route path="dashboard" element={<StudentDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="courses" element={<StudentCourses />} />
-            <Route path="streak" element={<Streak />} />
-          </Route>
+          <Route path="assignments" element={<StudentAssignments />} />
+          <Route
+            path="assignments/:assignmentId/submit"
+            element={<SubmitAssignment />}
+          />
+          <Route
+            path="assignments/:assignmentId/view"
+            element={<ViewSubmission />}
+          />
+        </Route>
+
+        {/* Student Sidebar Dashboard (same layout as admin) */}
+        <Route path="/student/sidebar" element={<AdminSidebar />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="courses" element={<AdminCourses />} />
         </Route>
 
         {/* Admin routes  - protect admin pages */}
@@ -137,16 +157,12 @@ function Main() {
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {!(location.pathname === "/teacher/courses/add") &&
-        !(location.pathname === "/admin/dashboard") &&
-        !(location.pathname === "/admin/users") &&
-        !(location.pathname === "/admin/courses") &&
-        !location.pathname.includes("/student/sidebar") &&
-        !(location.pathname === "/student/sidebar/courses") &&
-        !(location.pathname === "/teacher/dashboard") &&
-        !location.pathname.includes("/student/courses/") &&
-        !location.pathname.includes("/teacher/courses/") && <Footer />}
-    </div>
+      {!hideShell &&
+        !(location.pathname === "/teacher/courses/add") &&
+        !location.pathname.startsWith("/admin") &&
+        !location.pathname.startsWith("/teacher/sidebar") &&
+        !location.pathname.startsWith("/student/sidebar") && <Footer />}
+    </>
   );
 }
 
