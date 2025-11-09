@@ -18,6 +18,7 @@ import StudentQuiz from "./components/student/Quiz";
 import StudentAssignments from "./components/student/assignments/StudentAssignments";
 import SubmitAssignment from "./components/student/assignments/SubmitAssignment";
 import ViewSubmission from "./components/student/assignments/ViewSubmission";
+import Quiz from "./components/student/Quiz";
 import Streak from "./components/student/Streak";
 import StudentCourses from "./components/student/StudentCourses";
 //teacher routes
@@ -31,7 +32,6 @@ import TeacherQualificationUpload from "./components/teacher/TeacherQualificatio
 import TeacherAssignments from "./components/teacher/assignments/TeacherAssignments";
 import CreateAssignment from "./components/teacher/assignments/CreateAssignment";
 import AssignmentSubmissions from "./components/teacher/assignments/AssignmentSubmissions";
-//admin routes
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
 import AdminCourses from "./components/admin/AdminCourses";
