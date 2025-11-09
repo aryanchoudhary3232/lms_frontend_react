@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 const Student = () => {
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <Outlet />
     </div>
   );

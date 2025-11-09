@@ -13,8 +13,8 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className="" style={{ display: "flex", width: "100vw" }}>
-      <div style={{ width: "14vw" }} className="admin-sidebar">
+    <div className="" style={{ display: "flex", width: "100%" }}>
+      <div style={{ width: "15%" }} className="admin-sidebar">
         <nav className="admin-nav">
           <ul>
             <li className="admin-nav-item">
@@ -65,9 +65,22 @@ const AdminSidebar = () => {
                 }
               >
                 <span className="admin-nav-icon">📚</span>
-                Courses
+                {role === "Student" && "My"} Courses
               </NavLink>
             </li>
+            {role === "Student" && (
+              <li className="admin-nav-item">
+                <NavLink
+                  to={"/student/sidebar/streak"}
+                  className={({ isActive }) =>
+                    `admin-nav-link ${isActive ? "active" : ""}`
+                  }
+                >
+                  <span className="admin-nav-icon">🏅</span>
+                  Streak
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
 
@@ -78,7 +91,10 @@ const AdminSidebar = () => {
           </button>
         </div>
       </div>
-      <Outlet />
+      <div style={{ width: "85%" }}>
+        {" "}
+        <Outlet />
+      </div>
     </div>
   );
 };
