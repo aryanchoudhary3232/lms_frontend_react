@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
-import "../../css/teacher/Courses.css";
+import "../../css/teacher/TeacherAllCourses.css";
 import { Link } from "react-router-dom";
 
 const getToken = () => {
   // Try to get token from localStorage (assume login stores it as 'token')
-  return localStorage.getItem('token') || '';
+  return localStorage.getItem("token") || "";
 };
 
-const Courses = () => {
+const TeacherAllCourses = () => {
   const [courses, setCourses] = useState([]);
-
 
   const getAllCourses = async () => {
     try {
       const backendUrl =
         import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-      const response = await fetch(`${backendUrl}/student/courses`);
+      const response = await fetch(`${backendUrl}/courses`);
       const coursesResponse = await response.json();
 
       if (coursesResponse.success) {
@@ -28,36 +27,35 @@ const Courses = () => {
     }
   };
 
-  // Add to Cart handler
-  const handleAddToCart = async (courseId) => {
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-      const token = getToken();
-      const res = await fetch(`${backendUrl}/cart/add/${courseId}`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert("Added to cart!");
-      } else {
-        alert(data.message || "Failed to add to cart");
-      }
-    } catch (err) {
-      alert("Error adding to cart");
-    }
-  };
-
   useEffect(() => {
     getAllCourses();
   }, []);
 
   return (
     <div className="courses-container">
-      <div className="courses-header">
-        <h1>Courses</h1>
+      <div
+        className="courses-header"
+        style={{  position: "relative" }}
+      >
+        <h1 style={{ marginLeft: "30rem" }}>Courses</h1>
+        <Link  to={`/teacher/courses/add`}
+          style={{
+            textAlign: "center",
+            color: "white",
+            background: "#2337ad",
+            padding: "9px 23px",
+            marginTop: "0",
+            borderRadius: "12px",
+            marginLeft: "2rem",
+            marginRight: "50px",
+            fontSize: "26px",
+            marginRight: '-250px',
+            textDecoration: 'none'
+          }}
+        >
+          {" "}
+          Add New Course
+        </Link>
       </div>
 
       <div className="course-list">
@@ -65,14 +63,27 @@ const Courses = () => {
           <p className="no-courses">No courses available. Add one!</p>
         ) : (
           courses.map((course) => (
-            <div key={course._id} className="course-card">
+            <div
+              key={course._id}
+              className="course-card"
+              style={{ width: "22rem" }}
+            >
               <Link
                 style={{ textDecoration: "none" }}
                 to={`/student/courses/${course._id}`}
               >
                 <img src={course.image} alt={course.title} />
                 <h2>{course.title}</h2>
-                <p>{course.description}</p>
+                <p
+                  style={{
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: 2,
+                    overflow: "hidden",
+                  }}
+                >
+                  {course.description}
+                </p>
                 <p>
                   <b>Category:</b> {course.category}
                 </p>
@@ -86,13 +97,14 @@ const Courses = () => {
                   <b>Price:</b> ₹{course.price}
                 </p>
               </Link>
-              <button
-                className="add-btn"
-                style={{ marginTop: "10px", width: "100%" }}
-                onClick={() => handleAddToCart(course._id)}
-              >
-                dd to Cart
-              </button>
+              <Link to={`/teacher/courses/${course._id}`}>
+                <button
+                  className="add-btn"
+                  style={{ marginTop: "10px", width: "100%" }}
+                >
+                  View Course
+                </button>
+              </Link>
             </div>
           ))
         )}
@@ -101,4 +113,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default TeacherAllCourses;

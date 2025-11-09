@@ -21,7 +21,9 @@ const Navbar = () => {
       <div className="container nav-inner">
         <Link
           to={
-            role === "Admin"
+            !role
+              ? "/"
+              : role === "Admin"
               ? "/admin/dashboard"
               : role === "Teacher"
               ? "/teacher/home"
@@ -44,14 +46,13 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link
-            to={
+          <Link to={
               !token
                 ? "/courses"
                 : role === "Admin"
                 ? "/admin/courses"
                 : role === "Student"
-                ? "/courses"
+                ? "student/courses"
                 : "/teacher/courses"
             }
             className="nav-item"
@@ -71,9 +72,11 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link to="/cart" className="nav-item">
-            Cart
-          </Link>
+          {token && role === "Student" && (
+            <Link to="/cart" className="nav-item">
+              Cart
+            </Link>
+          )}
 
           {token ? (
             // when logged in show Sign Out and role if available

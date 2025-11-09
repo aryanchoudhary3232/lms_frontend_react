@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "../../css/teacher/CourseDetail.css";
-import { useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 const CourseDetail = () => {
   const [course, setCourse] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
-
   const { courseId } = useParams();
 
   useEffect(() => {
     async function getCourseById() {
       try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const response = await fetch(
           `${
             import.meta.env.VITE_BACKEND_URL
@@ -18,14 +19,19 @@ const CourseDetail = () => {
         );
         const courseResponse = await response.json();
 
-        if (response.ok) {
+        if (response.ok && courseResponse.success) {
           setCourse(courseResponse.data);
+        } else {
+          console.error("Error fetching course:", courseResponse.message);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log("err occurred...", error);
+      }
     }
 
     getCourseById();
   }, []);
+  console.log('course',course)
 
   useEffect(() => {
     // Page load pe default video = course intro
@@ -80,10 +86,30 @@ const CourseDetail = () => {
           display: "flex",
           flexDirection: "column",
           marginLeft: "53px",
+          marginTop: '12px'
         }}
       >
         <h2 className="course-title">{course.title}</h2>
         <p className="course-description">{course.description}</p>
+        {course.notes ? (
+          <div style={{ margin: "8px 0" }}>
+            <a
+              href={course.notes}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                background: "#2337ad",
+                color: "white",
+                borderRadius: "6px",
+                textDecoration: "none",
+              }}
+            >
+              View / Download Notes (PDF)
+            </a>
+          </div>
+        ) : null}
 
         <div
           className="chapters-list"
@@ -97,15 +123,27 @@ const CourseDetail = () => {
                 <h3>{chapter.title}</h3>
                 <ul>
                   {chapter.topics.map((topic, tpIdx) => (
-                    <li
-                      key={tpIdx}
-                      className={`topic-item ${
-                        selectedVideo === topic.video ? "active" : ""
-                      }`}
-                      onClick={() => handleTopicClick(topic.video)}
-                    >
-                      {topic.title}
-                    </li>
+                    <div key={tpIdx}>
+                      <li
+                        className={`topic-item ${
+                          selectedVideo === topic.video ? "active" : ""
+                        }`}
+                        onClick={() => handleTopicClick(topic.video)}
+                      >
+                        {topic.title}
+                      </li>
+                      <Link
+                        to={`/teacher/courses/${course._id}/${chapter._id}/${topic._id}/quiz`}
+                        style={{
+                          marginLeft: "12px",
+                          textDecoration: "none",
+                          color: "black",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Quiz
+                      </Link>
+                    </div>
                   ))}
                 </ul>
               </div>

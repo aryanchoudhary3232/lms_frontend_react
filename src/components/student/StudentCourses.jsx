@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../css/admin/Admin.css";
 
 const StudentCourses = () => {
@@ -39,10 +39,6 @@ const StudentCourses = () => {
   }, []);
 
   console.log("courses", courses);
-
-  const viewCourseDetails = (courseId) => {
-    navigate(`/admin/courses/${courseId}`);
-  };
 
   if (loading) {
     return <div className="admin-loading">Loading courses...</div>;
@@ -151,12 +147,13 @@ const StudentCourses = () => {
                     margin: "0 0 0 0",
                   }}
                 >
-                  <button
-                    onClick={() => viewCourseDetails(course._id)}
+                  <Link
+                    to={`/student/courses/${course._id}`}
+                    style={{ textAlign: "center", textDecoration: "none" }}
                     className="admin-view-details-btn"
                   >
                     View
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

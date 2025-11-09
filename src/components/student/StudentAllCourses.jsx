@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "../css/teacher/Courses.css";
+import "../../css/teacher/Courses.css";
 import { Link } from "react-router-dom";
-import CourseCard from "./CourseCard";
+import CourseCard from "../../pages/CourseCard";
 import {FaSearch, FaChevronDown} from "react-icons/fa";
 
 const getToken = () => {
@@ -99,6 +99,7 @@ const handleSearch = async (e) => {
       <div className="courses-header">
         <h1>Courses</h1>
       </div>
+
 
        <div className="courses-filter-bar">
   <div className="filter-search">
