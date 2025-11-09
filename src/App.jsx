@@ -3,6 +3,10 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
+
+import CourseDetail from "./pages/CourseDetail";
+import Checkout from "./pages/Checkout";
+
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./helper/ProtectedRoute";
@@ -64,6 +68,7 @@ function Main() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
+  <Route path="/checkout" element={<Checkout />} />
 
         {/* Teacher routes  */}
         <Route

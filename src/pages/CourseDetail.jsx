@@ -4,13 +4,17 @@ import { Link, useParams } from "react-router-dom";
 
 // Simple star rating component
 const StarRating = ({ rating }) => {
-  // Assuming rating is out of 5
+  // rating may be a number or an object { average, count }
+  const avg = rating && typeof rating === 'object' ? rating.average : rating;
+  const count = rating && typeof rating === 'object' ? rating.count : 0;
+  const num = Number(avg) || 0;
   return (
     <div className="star-rating">
       {[...Array(5)].map((_, index) => (
-        <span key={index}>{index < Math.round(rating) ? "⭐" : "☆"}</span>
+        <span key={index}>{index < Math.round(num) ? "⭐" : "☆"}</span>
       ))}
-      <span className="rating-text">{rating}</span>
+      <span className="rating-text" style={{ marginLeft: 8 }}>{num}</span>
+      {count ? <small style={{ marginLeft: 6, color: '#eee' }}>({count})</small> : null}
     </div>
   );
 };

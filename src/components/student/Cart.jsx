@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../css/student/Cart.css";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -7,6 +8,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   // Fetch cart from backend
   useEffect(() => {
@@ -61,27 +63,8 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-    try {
-      const courseIds = cartItems.map((item) => item.id);
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/cart/update-enroll-courses`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ courseIds: courseIds }),
-        }
-      );
-      const data = await response.json();
-
-      if (response.ok) {
-        window.location.href = "/student/home";
-      }
-    } catch (error) {
-      console.log("err occured...", error);
-    }
+    // Navigate to the checkout page and pass cart data via location state
+    navigate("/checkout", { state: { cartItems, total } });
   };
 
   if (loading) return <div className="cart-container">Loading...</div>;
