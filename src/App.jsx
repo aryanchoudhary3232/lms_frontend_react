@@ -23,7 +23,6 @@ import StudentCourses from "./components/student/StudentCourses";
 //teacher routes
 import Teacher from "./components/teacher/Teacher";
 import TeacherHome from "./components/teacher/Home";
-import TeacherCourses from "./components/teacher/Courses";
 import TeacherCourseDetail from "./components/teacher/CourseDetail";
 import TeacherAddCourse from "./components/teacher/AddCourse";
 import TeacherChapters from "./components/teacher/Chapters";
@@ -76,7 +75,7 @@ function Main() {
           }
         >
           <Route path="home" element={<TeacherHome />} />
-          <Route path="courses" element={<TeacherCourses />} />
+          <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
           <Route path="courses/add" element={<TeacherAddCourse />} />
           <Route path="chapters" element={<TeacherChapters />} />
