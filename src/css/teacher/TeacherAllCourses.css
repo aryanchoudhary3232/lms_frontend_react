@@ -21,13 +21,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .courses-header h1 {
   font-size: 2.5rem;
   margin: 0;
   color: var(--dark-text);
+}
+
+.courses-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px 0;
 }
 
 /* --- Filter Bar --- */
@@ -213,4 +221,25 @@
 
 .btn-add-to-cart:hover {
   background-color: var(--darker-blue);
+}
+
+.btn-add-course {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-add-course:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.btn-add-course:active {
+  transform: translateY(0);
 }
