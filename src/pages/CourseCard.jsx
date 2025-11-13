@@ -5,17 +5,26 @@ import { FaStar, FaUserFriends, FaShoppingCart } from "react-icons/fa";
 
 const CourseCard = ({ course, onAddToCart }) => {
   // --- Placeholders ---
-  const rating = course.rating || 4.5;
+  // course.rating may be an object { average, count } returned by backend
+  const ratingAverage = course && typeof course.rating === "object" ? course.rating.average : course.rating || 4.5;
+  const ratingCount = course && typeof course.rating === "object" ? course.rating.count : (course.ratingCount || 0);
   const studentCount = course.studentCount || "435,671";
+  // local inline SVG data URI placeholder to avoid external DNS issues
+  const svgPlaceholder =
+    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='250' height='150'><rect fill='%23e6e6e6' width='100%' height='100%'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23666' font-size='18'>No Image</text></svg>";
   // --------------------
 
   return (
     <div className="course-card">
       <Link to={`/courses/${course._id}`}>
         <img
-          src={course.image}
+          src={course.image || svgPlaceholder}
           alt={course.title}
           className="course-card-image"
+          onError={(e) => {
+            // fallback to inline SVG placeholder if external image fails
+            if (e && e.target) e.target.src = svgPlaceholder;
+          }}
         />
       </Link>
       <div className="course-card-content">
@@ -25,7 +34,10 @@ const CourseCard = ({ course, onAddToCart }) => {
           </span>
           <div className="course-rating">
             <FaStar style={{ color: "#f39c12" }} />
-            <span>{rating}</span>
+            <span style={{ marginLeft: 6 }}>{ratingAverage}</span>
+            {ratingCount ? (
+              <small style={{ marginLeft: 6, color: '#666' }}>({ratingCount})</small>
+            ) : null}
           </div>
         </div>
 

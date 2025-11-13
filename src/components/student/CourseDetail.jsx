@@ -16,7 +16,6 @@ const CourseDetail = () => {
   // 'materi' or 'komentar'
   const [activeTab, setActiveTab] = useState("materi");
   // Keep track of which chapters are open, start with first open
-  const [openChapters, setOpenChapters] = useState([0]);
 
   const { startTimer, stopTimer, seconds } = useLearningTimer();
   useEffect(() => {
@@ -28,6 +27,11 @@ const CourseDetail = () => {
     
   }, []);
   console.log('seconds', seconds)
+  const [openChapters, setOpenChapters] = useState([0]); 
+  const [ratingValue, setRatingValue] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [ratingSubmitting, setRatingSubmitting] = useState(false);
+  const [ratingMsg, setRatingMsg] = useState(null);
 
   useEffect(() => {
     async function getStudentProfile() {
@@ -92,6 +96,10 @@ const CourseDetail = () => {
   }, [course, studentId]);
 
   if (!course?.title) return <p>Loading...</p>; // Improved loading check
+
+  // computed average rating from course.rating (if provided by API)
+  const avgRating = course?.rating?.average || 0;
+  const ratingCount = course?.rating?.count || 0;
 
   const handleTopicClick = (tpVideo, chIdx, tpIdx) => {
     // Logic from image: First video (ch 0, tp 0) is always viewable
@@ -410,6 +418,95 @@ const CourseDetail = () => {
           <h2 className="course-title">{course.title}</h2>
           <p className="course-description">{course.description}</p>
 
+          {/* Rating summary */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12 }}>
+            <div style={{ fontWeight: 700, fontSize: 18 }}>{avgRating || "—"}</div>
+            <div style={{ display: "flex", gap: 6 }}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} style={{ color: i < Math.round(avgRating) ? "#ffd166" : "#ddd" }}>★</span>
+              ))}
+            </div>
+            <div style={{ color: "#666" }}>{ratingCount} ratings</div>
+          </div>
+
+          {/* Rating input for enrolled students */}
+          {isEnroll && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ marginBottom: 8, fontWeight: 600 }}>Rate this course</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const val = i + 1;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setRatingValue(val)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 20,
+                        color: val <= ratingValue ? "#ffd166" : "#ddd",
+                      }}
+                      aria-label={`Rate ${val} stars`}
+                    >
+                      ★
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={async () => {
+                    if (!ratingValue) {
+                      setRatingMsg("Please select a rating");
+                      return;
+                    }
+                    setRatingSubmitting(true);
+                    setRatingMsg(null);
+                    try {
+                      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+                      const token = localStorage.getItem("token");
+                      const res = await fetch(`${backendUrl}/courses/${courseId}/rate`, {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ rating: ratingValue, review: reviewText }),
+                      });
+                      const j = await res.json();
+                      if (j.success) {
+                        setRatingMsg("Thank you for your rating");
+                        // update local summary
+                        setCourse((c) => ({ ...c, rating: { average: j.data.average, count: j.data.count } }));
+                      } else {
+                        setRatingMsg(j.message || "Could not save rating");
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      setRatingMsg("Network error");
+                    } finally {
+                      setRatingSubmitting(false);
+                    }
+                  }}
+                  className="btn"
+                  style={{ marginLeft: 8 }}
+                >
+                  {ratingSubmitting ? "Saving..." : "Submit"}
+                </button>
+              </div>
+
+              <div style={{ marginTop: 8 }}>
+                <textarea
+                  placeholder="Leave an optional review"
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  style={{ width: "100%", minHeight: 60, padding: 8 }}
+                />
+              </div>
+
+              {ratingMsg && <div style={{ marginTop: 8, color: "#d97706" }}>{ratingMsg}</div>}
+            </div>
+          )}
+          
           {/* Notes Link (Retained as requested) */}
           {course.notes ? (
             <div style={{ margin: "16px 0" }}>
