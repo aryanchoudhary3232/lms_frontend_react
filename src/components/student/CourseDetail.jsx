@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 // Not importing CSS as all styles are now inline
-// import "../../css/teacher/CourseDetail.css"; 
+// import "../../css/teacher/CourseDetail.css";
 import { Link, useParams } from "react-router-dom";
+import useLearningTimer from "../../helper/customHooks/useLearningTimer";
 
 const CourseDetail = () => {
   const [course, setCourse] = useState({});
@@ -13,9 +14,20 @@ const CourseDetail = () => {
 
   // State for the new UI elements
   // 'materi' or 'komentar'
-  const [activeTab, setActiveTab] = useState("materi"); 
+  const [activeTab, setActiveTab] = useState("materi");
   // Keep track of which chapters are open, start with first open
-  const [openChapters, setOpenChapters] = useState([0]); 
+  const [openChapters, setOpenChapters] = useState([0]);
+
+  const { startTimer, stopTimer, seconds } = useLearningTimer();
+  useEffect(() => {
+    startTimer();
+
+    return () => {
+      stopTimer();
+    };
+    
+  }, []);
+  console.log('seconds', seconds)
 
   useEffect(() => {
     async function getStudentProfile() {
@@ -291,6 +303,7 @@ const CourseDetail = () => {
   // ----- RENDER -----
   return (
     <div style={styles.container}>
+      <h1>Seconds: {seconds}</h1>
       {/* ===== LEFT SIDEBAR ===== */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarTabs}>
@@ -346,7 +359,9 @@ const CourseDetail = () => {
                             {topic.title}
                           </li>
                           {/* Quiz Item */}
-                          <li style={{ ...styles.topicItem, cursor: "default" }}>
+                          <li
+                            style={{ ...styles.topicItem, cursor: "default" }}
+                          >
                             <Link
                               to={`/student/courses/${course._id}/${chapter._id}/${topic._id}/quiz`}
                               style={styles.quizLink}
@@ -376,7 +391,6 @@ const CourseDetail = () => {
 
       {/* ===== RIGHT MAIN CONTENT ===== */}
       <div style={styles.mainContent}>
-
         {/* Video Player */}
         <video
           src={selectedVideo}
@@ -395,7 +409,7 @@ const CourseDetail = () => {
         <div style={styles.contentDetails}>
           <h2 className="course-title">{course.title}</h2>
           <p className="course-description">{course.description}</p>
-          
+
           {/* Notes Link (Retained as requested) */}
           {course.notes ? (
             <div style={{ margin: "16px 0" }}>
