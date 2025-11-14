@@ -42,7 +42,7 @@ const Cart = () => {
     };
 
     fetchCart();
-  }, [backendUrl]);
+  }, []);
   console.log("....", cartItems);
   const calculateTotal = (items) => {
     const sum = items.reduce((acc, item) => acc + (item.price || 0), 0);
