@@ -80,7 +80,7 @@ const CourseDetail = () => {
   useEffect(() => {
     if (!studentId) return;
     const enrolledStudentIds = (course?.students || [])
-      .map(s => s._id || s)
+      .map(s => (s._id ? s._id.toString() : s.toString()))
       .filter(Boolean);
 
     setIsEnroll(enrolledStudentIds.includes(studentId.toString()));
