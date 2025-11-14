@@ -54,6 +54,8 @@ const Checkout = () => {
             "enrolledCourseIds",
             JSON.stringify(enrolledIds)
           );
+          // Notify other components that enrolledCourseIds has changed
+          window.dispatchEvent(new Event("enrolledCourseIdsUpdated"));
         }
 
         // Pass a query parameter to indicate successful enrollment
