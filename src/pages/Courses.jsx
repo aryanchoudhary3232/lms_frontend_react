@@ -1,57 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "../css/teacher/Courses.css";
-import { Link } from "react-router-dom";
 import CourseCard from "./CourseCard";
-import {FaSearch, FaChevronDown} from "react-icons/fa";
+import { FaSearch, FaChevronDown } from "react-icons/fa";
 
-const getToken = () => {
-  // Try to get token from localStorage (assume login stores it as 'token')
-  return localStorage.getItem("token") || "";
-};
+const getToken = () => localStorage.getItem("token") || "";
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
   const [searchParams, setSearchParams] = useState({
-  query: '',
-  category: '',
-  level: ''
-});
-const [loading, setLoading] = useState(false);
-
-const handleSearch = async (e) => {
-  const { name, value } = e.target;
-  setSearchParams(prev => ({
-    ...prev,
-    [name]: value
-  }));
-
-  try {
-    setLoading(true);
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-    const queryString = new URLSearchParams({
-      ...searchParams,
-      [name]: value
-    }).toString();
-
-    const response = await fetch(`${backendUrl}/courses/search?${queryString}`);
-    const data = await response.json();
-
-    if (data.success) {
-      setCourses(data.data);
-    } else {
-      console.error("Error searching courses:", data.message);
-    }
-  } catch (error) {
-    console.error("Search error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const getAllCourses = async () => {
+    query: "",
+    category: "",
+    level: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [ownedCourseIds, setOwnedCourseIds] = useState(() => {
     try {
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      const persisted = JSON.parse(localStorage.getItem("enrolledCourseIds") || "[]");
+      return new Set(persisted);
+    } catch (error) {
+      console.error('Failed to parse enrolledCourseIds from localStorage:', error);
+      return new Set();
+    }
+  });
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+  const handleSearch = async (e) => {
+    const { name, value } = e.target;
+    const nextParams = {
+      ...searchParams,
+      [name]: value,
+    };
+    setSearchParams(nextParams);
+
+    try {
+      setLoading(true);
+      const queryString = new URLSearchParams(nextParams).toString();
+
+      const response = await fetch(`${backendUrl}/courses/search?${queryString}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setCourses(data.data);
+      } else {
+        console.error("Error searching courses:", data.message);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAllCourses = useCallback(async () => {
+    try {
       const response = await fetch(`${backendUrl}/courses`);
       const coursesResponse = await response.json();
 
@@ -63,13 +64,49 @@ const handleSearch = async (e) => {
     } catch (error) {
       console.log("error occurred", error);
     }
-  };
+  }, [backendUrl]);
+
+  const loadOwnedCourses = useCallback(async () => {
+    try {
+      const token = getToken();
+      if (!token) return;
+      const response = await fetch(`${backendUrl}/student/enrolled-courses`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok && data.success && Array.isArray(data.data)) {
+        const ownedIds = data.data.map((course) => course._id);
+        setOwnedCourseIds(new Set(ownedIds));
+        localStorage.setItem("enrolledCourseIds", JSON.stringify(ownedIds));
+      }
+    } catch (error) {
+      console.error("Error fetching enrolled courses", error);
+    }
+  }, [backendUrl]);
+
+  useEffect(() => {
+    getAllCourses();
+  }, [getAllCourses]);
+
+  useEffect(() => {
+    loadOwnedCourses();
+  }, [loadOwnedCourses]);
 
   const handleAddToCart = async (courseId) => {
+    const token = getToken();
+    if (!token) {
+      alert("Please sign in to add courses to your cart");
+      return;
+    }
+
+    if (ownedCourseIds.has(courseId)) {
+      alert("You already own this course");
+      return;
+    }
+
     try {
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-      const token = getToken();
       const res = await fetch(`${backendUrl}/cart/add/${courseId}`, {
         method: "POST",
         headers: {
@@ -83,16 +120,9 @@ const handleSearch = async (e) => {
         alert(data.message || "Failed to add to cart");
       }
     } catch (err) {
-      alert("Error adding to cart");
+      alert("Error adding to cart", err);
     }
   };
-
-  useEffect(() => {
-    getAllCourses();
-  }, []);
-
-
-  
 
   return (
     <div className="courses-container">
@@ -100,59 +130,50 @@ const handleSearch = async (e) => {
         <h1>Courses</h1>
       </div>
 
-       <div className="courses-filter-bar">
-  <div className="filter-search">
-    <FaSearch className="filter-icon" />
-    <input 
-      type="text" 
-      name="query"
-      placeholder="Search in your courses..." 
-      value={searchParams.query}
-      onChange={handleSearch}
-    />
-  </div>
-  <div className="filter-dropdown">
-    <select 
-      name="category" 
-      value={searchParams.category}
-      onChange={handleSearch}
-    >
-      <option value="">All Category</option>
-      <option value="Programming">Programming</option>
-      <option value="Design">Design</option>
-      <option value="Business">Business</option>
-      <option value="Marketing">Marketing</option>
-      {/* Add more categories based on your data */}
-    </select>
-    <FaChevronDown className="filter-icon-small" />
-  </div>
-  <div className="filter-dropdown">
-    <select 
-      name="level" 
-      value={searchParams.level}
-      onChange={handleSearch}
-    >
-      <option value="">All Levels</option>
-      <option value="Beginner">Beginner</option>
-      <option value="Intermediate">Intermediate</option>
-      <option value="Advance">Advance</option>
-    </select>
-    <FaChevronDown className="filter-icon-small" />
-  </div>
-</div>
+      <div className="courses-filter-bar">
+        <div className="filter-search">
+          <FaSearch className="filter-icon" />
+          <input
+            type="text"
+            name="query"
+            placeholder="Search in your courses..."
+            value={searchParams.query}
+            onChange={handleSearch}
+          />
+        </div>
+        <div className="filter-dropdown">
+          <select name="category" value={searchParams.category} onChange={handleSearch}>
+            <option value="">All Category</option>
+            <option value="Programming">Programming</option>
+            <option value="Design">Design</option>
+            <option value="Business">Business</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+          <FaChevronDown className="filter-icon-small" />
+        </div>
+        <div className="filter-dropdown">
+          <select name="level" value={searchParams.level} onChange={handleSearch}>
+            <option value="">All Levels</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advance">Advance</option>
+          </select>
+          <FaChevronDown className="filter-icon-small" />
+        </div>
+      </div>
 
-      
-
-      {/* --- Courses Grid --- */}
       <div className="courses-grid">
-        {courses.length === 0 ? (
+        {loading ? (
+          <p className="no-courses">Searching...</p>
+        ) : courses.length === 0 ? (
           <p className="no-courses">No courses available.</p>
         ) : (
           courses.map((course) => (
             <CourseCard
               key={course._id}
               course={course}
-              onAddToCart={() => handleAddToCart(course._id)} // Pass handler
+              isOwned={ownedCourseIds.has(course._id)}
+              onAddToCart={() => handleAddToCart(course._id)}
             />
           ))
         )}

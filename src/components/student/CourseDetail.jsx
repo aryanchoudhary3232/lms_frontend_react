@@ -90,9 +90,12 @@ const CourseDetail = () => {
   }, [courseId]); // Changed dependency to courseId
 
   useEffect(() => {
-    if (course?.students && studentId) {
-      setIsEnroll(course.students.includes(studentId));
-    }
+    if (!studentId) return;
+    const enrolledStudentIds = (course?.students || [])
+      .map(s => (s._id ? s._id.toString() : s.toString()))
+      .filter(Boolean);
+
+    setIsEnroll(enrolledStudentIds.includes(studentId.toString()));
   }, [course, studentId]);
 
   if (!course?.title) return <p>Loading...</p>; // Improved loading check
@@ -533,15 +536,20 @@ const CourseDetail = () => {
               <span>to watch the video</span>
             </h2>
             <div style={styles.modalButtonContainer}>
-              <Link to={``} style={styles.modalEnrollLink}>
+              <Link to={`/cart`} style={styles.modalEnrollLink}>
                 Enroll Now
               </Link>
-              <button
-                style={styles.modalCancelButton}
-                onClick={() => setShowPopUp(false)}
+              <Link
+                to={`/courses/${courseId}`}
+                style={{
+                  ...styles.modalCancelButton,
+                  textDecoration: "none",
+                  display: "inline-block",
+                  textAlign: "center",
+                }}
               >
                 Cancel
-              </button>
+              </Link>
             </div>
           </div>
         </div>
