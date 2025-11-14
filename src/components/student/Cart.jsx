@@ -9,13 +9,14 @@ const Cart = () => {
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
   // Fetch cart from backend
   useEffect(() => {
     const fetchCart = async () => {
       try {
         const token = localStorage.getItem("token"); // JWT from login
-        const res = await fetch("http://localhost:3000/cart", {
+        const res = await fetch(`${backendUrl}/cart`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -41,7 +42,7 @@ const Cart = () => {
     };
 
     fetchCart();
-  }, []);
+  }, [backendUrl]);
   console.log("....", cartItems);
   const calculateTotal = (items) => {
     const sum = items.reduce((acc, item) => acc + (item.price || 0), 0);
@@ -50,7 +51,7 @@ const Cart = () => {
 
   const removeFromCart = async (courseId) => {
     try {
-      await fetch(`http://localhost:3000/cart/remove/${courseId}`, {
+      await fetch(`${backendUrl}/cart/remove/${courseId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -11,6 +11,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const cartItems = (location.state && location.state.cartItems) || [];
   const total = (location.state && location.state.total) || 0;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
   const [cardNumber, setCardNumber] = useState("");
   const [cvv, setCvv] = useState("");
@@ -34,7 +35,7 @@ const Checkout = () => {
       const token = localStorage.getItem("token");
       const courseIds = cartItems.map((i) => i.id);
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"}/cart/update-enroll-courses`, {
+      const response = await fetch(`${backendUrl}/cart/update-enroll-courses`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -44,9 +45,19 @@ const Checkout = () => {
       });
 
       const json = await response.json();
-      if (response.ok) {
-        // Simple success flow: redirect to student home
-        navigate("/student/home");
+      if (response.ok && json.success) {
+        if (json.data?.enrolledCourses) {
+          const enrolledIds = json.data.enrolledCourses
+            .map((course) => course?._id)
+            .filter(Boolean);
+          localStorage.setItem(
+            "enrolledCourseIds",
+            JSON.stringify(enrolledIds)
+          );
+        }
+
+        // Pass a query parameter to indicate successful enrollment
+        navigate("/student/courses?enrolled=success");
       } else {
         setErrors({ form: json.message || "Checkout failed" });
       }
