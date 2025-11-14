@@ -26,7 +26,7 @@ const FlashcardDeckList = ({ decks, onEdit, onDelete }) => {
           )}
 
           <div className="deck-meta">
-            <span className="course-name">📖 {deck.courseId?.name}</span>
+            <span className="course-name">📖 {deck.courseId?.title}</span> {/* FIX: title */}
             <span className="card-count">🎴 {deck.cards?.length || 0} cards</span>
             <span className="visibility">👁️ {deck.visibility}</span>
           </div>

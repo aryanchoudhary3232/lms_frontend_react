@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddCard from './AddCard';
 import CardEditor from './CardEditor';
@@ -9,20 +9,40 @@ const EditDeck = ({ deck, onClose, onUpdate }) => {
   const [showAddCard, setShowAddCard] = useState(false);
   const [editingCardIndex, setEditingCardIndex] = useState(null);
   const [deckPublished, setDeckPublished] = useState(deck.isPublished);
+  const [deckInfo, setDeckInfo] = useState(deck); // FIX: hold fetched details
 
-  const API_URL = 'http://localhost:3000/api/flashcards';
+  const API_URL = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/api/flashcards`; // FIX
   const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    async function loadDetails() {
+      try {
+        const resp = await axios.get(`${API_URL}/${deck._id}/details`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const fullDeck = resp.data.data;
+        setDeckInfo(fullDeck);
+        setCards(fullDeck.cards || []);
+        setDeckPublished(!!fullDeck.isPublished);
+      } catch (err) {
+        console.error('Failed to load deck details', err);
+      }
+    }
+    loadDetails();
+  }, [API_URL, deck._id, token]);
 
   const handleAddCard = async (cardData) => {
     try {
-      await axios.post(`${API_URL}/${deck._id}/cards`, { cards: [cardData] }, {
+      const resp = await axios.post(`${API_URL}/${deck._id}/cards`, { cards: [cardData] }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setCards([...cards, cardData]);
+      // Use server state so new cards have _id
+      setCards(resp.data.data.cards || []);
       setShowAddCard(false);
       alert('Card added successfully!');
     } catch (err) {
       alert('Failed to add card');
+      console.error(err);
     }
   };
 
@@ -33,12 +53,14 @@ const EditDeck = ({ deck, onClose, onUpdate }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const newCards = [...cards];
-      newCards[editingCardIndex] = updatedCard;
+      // Preserve original _id if not included in updatedCard
+      newCards[editingCardIndex] = { ...newCards[editingCardIndex], ...updatedCard };
       setCards(newCards);
       setEditingCardIndex(null);
       alert('Card updated successfully!');
     } catch (err) {
       alert('Failed to update card');
+      console.error(err);
     }
   };
 
@@ -54,6 +76,7 @@ const EditDeck = ({ deck, onClose, onUpdate }) => {
       alert('Card deleted!');
     } catch (err) {
       alert('Failed to delete card');
+      console.error(err);
     }
   };
 
@@ -72,6 +95,7 @@ const EditDeck = ({ deck, onClose, onUpdate }) => {
       onUpdate();
     } catch (err) {
       alert('Failed to publish deck');
+      console.error(err);
     }
   };
 
@@ -84,7 +108,7 @@ const EditDeck = ({ deck, onClose, onUpdate }) => {
         </div>
 
         <div className="deck-info">
-          <p><strong>Course:</strong> {deck.courseId?.name}</p>
+          <p><strong>Course:</strong> {deckInfo.courseId?.title}</p> {/* FIX: title */}
           <p><strong>Status:</strong> {deckPublished ? '✓ Published' : '○ Draft'}</p>
           <p><strong>Cards:</strong> {cards.length}</p>
         </div>
@@ -150,8 +174,8 @@ const EditDeck = ({ deck, onClose, onUpdate }) => {
                     )}
                   </div>
                 </div>
-              ))
-            )}
+              )))
+            }
           </div>
         </div>
 

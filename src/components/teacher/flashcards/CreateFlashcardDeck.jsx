@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './Modal.css';
 
-const CreateFlashcardDeck = ({ onClose, onCreate }) => {
+const CreateFlashcardDeck = ({ onClose, onCreate, initialCourseId }) => {
   const [courses, setCourses] = useState([]);
   const [formData, setFormData] = useState({
     courseId: '',
@@ -14,22 +14,32 @@ const CreateFlashcardDeck = ({ onClose, onCreate }) => {
 
   const token = localStorage.getItem('token');
 
-  useEffect(() => {
-    fetchTeacherCourses();
-  }, []);
-
-  const fetchTeacherCourses = async () => {
+  const fetchTeacherCourses = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:3000/teacher/courses', {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/teacher/courses`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCourses(response.data.data);
     } catch (err) {
       alert('Failed to load courses');
+      console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchTeacherCourses();
+  }, [fetchTeacherCourses]);
+
+  // Preselect course when initialCourseId provided and courses loaded
+  useEffect(() => {
+    if (initialCourseId && courses.length > 0) {
+      setFormData(prev => ({ ...prev, courseId: initialCourseId }));
+    }
+  }, [initialCourseId, courses]);
+
+  // replaced with useCallback version above
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,7 +81,7 @@ const CreateFlashcardDeck = ({ onClose, onCreate }) => {
                 <option value="">-- Choose a course --</option>
                 {courses.map(course => (
                   <option key={course._id} value={course._id}>
-                    {course.name}
+                    {course.title || course.name}
                   </option>
                 ))}
               </select>

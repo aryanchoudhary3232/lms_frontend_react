@@ -34,6 +34,8 @@ import TeacherQualificationUpload from "./components/teacher/TeacherQualificatio
 import TeacherAssignments from "./components/teacher/assignments/TeacherAssignments";
 import CreateAssignment from "./components/teacher/assignments/CreateAssignment";
 import AssignmentSubmissions from "./components/teacher/assignments/AssignmentSubmissions";
+import TeacherAllCourses from "./components/teacher/TeacherAllCourses";
+import TeacherFlashcards from "./components/teacher/flashcards/TeacherFlashcards";
 //admin routes
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
@@ -80,9 +82,10 @@ function Main() {
           }
         >
           <Route path="home" element={<TeacherHome />} />
-          <Route path="courses" element={<Courses />} />
+          <Route path="courses" element={<TeacherAllCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
           <Route path="courses/add" element={<TeacherAddCourse />} />
+          <Route path="flashcards" element={<TeacherFlashcards />} />
           <Route path="chapters" element={<TeacherChapters />} />
           <Route
             path="upload-qualification"

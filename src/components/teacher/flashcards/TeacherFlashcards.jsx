@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import './TeacherFlashcards.css';
 import CreateFlashcardDeck from './CreateFlashcardDeck';
@@ -11,36 +12,48 @@ const TeacherFlashcards = () => {
   const [editingDeck, setEditingDeck] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [preselectedCourseId, setPreselectedCourseId] = useState(null);
+  const [searchParams] = useSearchParams();
 
-  const API_URL = 'http://localhost:3000/api/flashcards';
+  const API_URL = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/api/flashcards`; // FIX: env
   const token = localStorage.getItem('token');
 
-  useEffect(() => {
-    fetchDecks();
-  }, []);
-
-  const fetchDecks = async () => {
+  const fetchDecks = useCallback(async () => {
     try {
       setLoading(true);
+      if (!token) {
+        setError('Not authenticated');
+        return;
+      }
       const response = await axios.get(`${API_URL}/teacher/decks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDecks(response.data.data);
       setError(null);
     } catch (err) {
-      setError('Failed to load flashcard decks');
-      console.error(err);
+      const msg = err.response?.data?.message || 'Failed to load flashcard decks';
+      setError(msg);
+      console.error('fetchDecks error:', err.response?.data || err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL, token]);
+
+  useEffect(() => {
+    fetchDecks();
+    const qsCourseId = searchParams.get('courseId');
+    if (qsCourseId) {
+      setPreselectedCourseId(qsCourseId);
+      setShowCreateModal(true);
+    }
+  }, [searchParams, fetchDecks]);
 
   const handleCreateDeck = async (deckData) => {
     try {
-      const response = await axios.post(`${API_URL}/create`, deckData, {
+      await axios.post(`${API_URL}/create`, deckData, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setDecks([...decks, response.data.data]);
+      await fetchDecks(); // FIX: ensure populated list
       setShowCreateModal(false);
       alert('Flashcard deck created successfully!');
     } catch (err) {
@@ -59,6 +72,7 @@ const TeacherFlashcards = () => {
       alert('Deck deleted successfully!');
     } catch (err) {
       alert('Failed to delete deck');
+      console.error(err);
     }
   };
 
@@ -80,6 +94,7 @@ const TeacherFlashcards = () => {
 
       {showCreateModal && (
         <CreateFlashcardDeck
+          initialCourseId={preselectedCourseId}
           onClose={() => setShowCreateModal(false)}
           onCreate={handleCreateDeck}
         />
