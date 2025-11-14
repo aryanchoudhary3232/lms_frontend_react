@@ -57,7 +57,7 @@ const Checkout = () => {
         }
 
         // Pass a query parameter to indicate successful enrollment
-        navigate("/student/courses?enrolled=success");
+        navigate("/student/enrolled-courses?enrolled=success");
       } else {
         setErrors({ form: json.message || "Checkout failed" });
       }
