@@ -49,7 +49,7 @@ const Checkout = () => {
         if (json.data?.enrolledCourses) {
           const enrolledIds = json.data.enrolledCourses
             .map((course) => course?._id)
-            .filter(Boolean);
+            .filter(id => typeof id === 'string' && id.trim().length > 0);
           localStorage.setItem(
             "enrolledCourseIds",
             JSON.stringify(enrolledIds)
