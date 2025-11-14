@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../css/teacher/AddCourse.css";
 
 const AddCourse = () => {
@@ -17,10 +18,9 @@ const AddCourse = () => {
     teacher: "",
     chapters: [],
   });
-  const [searchTeacher, setSearchTeacher] = useState("");
-  const [searchStudent, setSearchStudent] = useState("");
-  const [teachers, setTeachers] = useState([]);
-  const [students, setStudents] = useState([]);
+  // Removed unused teacher/student search & lists to satisfy lint
+  const [createFlashcards, setCreateFlashcards] = useState(false); // optional flashcard creation toggle
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -33,29 +33,7 @@ const AddCourse = () => {
     });
   };
 
-  useEffect(() => {
-    async function fetchTeachers() {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/teacher`
-      );
-      const data = await response.json();
-      setTeachers(data.data);
-    }
-
-    fetchTeachers();
-  }, []);
-
-  useEffect(() => {
-    async function fetchStudents() {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/student`
-      );
-      const data = await response.json();
-      setStudents(data.data);
-    }
-
-    fetchStudents();
-  }, []);
+  // (Potential future enhancement: allow selecting teacher/students here)
 
   const handleAddChapter = () => {
     setFormData({
@@ -202,7 +180,14 @@ const AddCourse = () => {
       const coursesResponse = await response.json();
 
       if (response.ok) {
-        window.location.href = "/teacher/courses";
+        // Assume API returns created course object under data
+        const newCourseId = coursesResponse?.data?._id;
+        if (createFlashcards && newCourseId) {
+          // Redirect directly to flashcards management with preselected course
+            navigate(`/teacher/flashcards?courseId=${newCourseId}`);
+        } else {
+            navigate("/teacher/courses");
+        }
       }
     } catch (err) {
       console.log("error occured", err);
@@ -480,8 +465,7 @@ const AddCourse = () => {
                 height: "26px",
                 margin: "0 0 12px 0",
                 padding: "11px 3px",
-                borderRadius: "5px",
-                height: "26px",
+                borderRadius: "5px"
               }}
               type="text"
               placeholder="Chapter title"
@@ -512,8 +496,7 @@ const AddCourse = () => {
                     height: "26px",
                     margin: "0 0 12px 0",
                     padding: "9px 3px",
-                    borderRadius: "5px",
-                    height: "26px",
+                    borderRadius: "5px"
                   }}
                   type="text"
                   placeholder="Enter title"
@@ -535,8 +518,7 @@ const AddCourse = () => {
                     height: "26px",
                     margin: "0 0 -4px 0",
                     padding: "11px 3px",
-                    borderRadius: "5px",
-                    height: "26px",
+                    borderRadius: "5px"
                   }}
                   type="file"
                 />
@@ -578,8 +560,7 @@ const AddCourse = () => {
                         height: "26px",
                         margin: "0 0 14px 0",
                         padding: "9px 3px",
-                        borderRadius: "5px",
-                        height: "26px",
+                        borderRadius: "5px"
                       }}
                       type="text"
                       name=""
@@ -621,8 +602,7 @@ const AddCourse = () => {
                             height: "26px",
                             margin: "0 0 14px 5px",
                             padding: "6px 3px",
-                            borderRadius: "5px",
-                            height: "26px",
+                            borderRadius: "5px"
                           }}
                           type="text"
                           placeholder={`Enter option ${quizOptionIdx + 1}`}
@@ -654,8 +634,7 @@ const AddCourse = () => {
                         height: "26px",
                         margin: "0 0 9px 0",
                         padding: "9px 3px",
-                        borderRadius: "5px",
-                        height: "26px",
+                        borderRadius: "5px"
                       }}
                       type="text"
                       name=""
@@ -691,6 +670,22 @@ const AddCourse = () => {
             </button>
           </div>
         ))}
+        <div style={{
+            display: "flex",
+            alignItems: "center",
+            margin: "0 42px 12px 42px",
+            gap: "8px"
+        }}>
+          <input
+            type="checkbox"
+            id="createFlashcards"
+            checked={createFlashcards}
+            onChange={(e) => setCreateFlashcards(e.target.checked)}
+          />
+          <label htmlFor="createFlashcards" style={{ fontSize: "0.9rem" }}>
+            After creating the course, go to Flashcards to create a deck
+          </label>
+        </div>
         <button
           type="submit"
           style={{

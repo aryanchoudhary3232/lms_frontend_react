@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../css/teacher/CourseDetail.css";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const CourseDetail = () => {
   const [course, setCourse] = useState([]);
@@ -10,8 +10,6 @@ const CourseDetail = () => {
   useEffect(() => {
     async function getCourseById() {
       try {
-        const backendUrl =
-          import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const response = await fetch(
           `${
             import.meta.env.VITE_BACKEND_URL
@@ -30,7 +28,7 @@ const CourseDetail = () => {
     }
 
     getCourseById();
-  }, []);
+  }, [courseId]);
   console.log('course',course)
 
   useEffect(() => {
@@ -110,6 +108,21 @@ const CourseDetail = () => {
             </a>
           </div>
         ) : null}
+        <div style={{ margin: '8px 0', display: 'flex', gap: '8px' }}>
+          <Link
+            to={`/teacher/flashcards?courseId=${course._id}`}
+            style={{
+              display: 'inline-block',
+              padding: '8px 12px',
+              background: '#2337ad',
+              color: 'white',
+              borderRadius: '6px',
+              textDecoration: 'none'
+            }}
+          >
+            Manage Flashcards
+          </Link>
+        </div>
 
         <div
           className="chapters-list"

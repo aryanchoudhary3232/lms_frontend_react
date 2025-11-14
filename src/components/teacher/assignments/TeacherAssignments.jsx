@@ -23,6 +23,9 @@ const TeacherAssignments = () => {
       const response = await fetch(`${BACKEND_URL}/teacher/courses`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       if (data.success) {
         setCourses(data.data);
@@ -44,6 +47,9 @@ const TeacherAssignments = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       if (data.success) {
         setAssignments(data.data);
