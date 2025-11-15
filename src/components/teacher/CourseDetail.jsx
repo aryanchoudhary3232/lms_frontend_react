@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-// Not importing CSS as all styles are now inline
-// import "../../css/teacher/CourseDetail.css";
+import "../../css/teacher/CourseDetail.css";
 import { Link, useParams } from "react-router-dom";
 import useLearningTimer from "../../helper/customHooks/useLearningTimer";
 
@@ -24,9 +23,8 @@ const CourseDetail = () => {
     return () => {
       stopTimer();
     };
-    
   }, []);
-  const [openChapters, setOpenChapters] = useState([0]); 
+  const [openChapters, setOpenChapters] = useState([0]);
   const [ratingValue, setRatingValue] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
@@ -58,8 +56,6 @@ const CourseDetail = () => {
   useEffect(() => {
     async function getCourseById() {
       try {
-        const backendUrl =
-          import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const response = await fetch(
           `${backendUrl}/student/courses/${courseId}`
         );
@@ -415,22 +411,54 @@ const CourseDetail = () => {
         <div style={styles.contentDetails}>
           <h2 className="course-title">{course.title}</h2>
           <p className="course-description">{course.description}</p>
-
           {/* Rating summary */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12 }}>
-            <div style={{ fontWeight: 700, fontSize: 18 }}>{avgRating || "—"}</div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginTop: 12,
+            }}
+          >
+            <div style={{ fontWeight: 700, fontSize: 18 }}>
+              {avgRating || "—"}
+            </div>
             <div style={{ display: "flex", gap: 6 }}>
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} style={{ color: i < Math.round(avgRating) ? "#ffd166" : "#ddd" }}>★</span>
+                <span
+                  key={i}
+                  style={{
+                    color: i < Math.round(avgRating) ? "#ffd166" : "#ddd",
+                  }}
+                >
+                  ★
+                </span>
               ))}
             </div>
             <div style={{ color: "#666" }}>{ratingCount} ratings</div>
           </div>
 
+          <div style={{ margin: "8px 0", display: "flex", gap: "8px" }}>
+            <Link
+              to={`/teacher/flashcards?courseId=${course._id}`}
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                background: "#2337ad",
+                color: "white",
+                borderRadius: "6px",
+                textDecoration: "none",
+              }}
+            >
+              Manage Flashcards
+            </Link>
+          </div>
           {/* Rating input for enrolled students */}
           {isEnroll && (
             <div style={{ marginTop: 14 }}>
-              <div style={{ marginBottom: 8, fontWeight: 600 }}>Rate this course</div>
+              <div style={{ marginBottom: 8, fontWeight: 600 }}>
+                Rate this course
+              </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 {Array.from({ length: 5 }).map((_, i) => {
                   const val = i + 1;
@@ -460,21 +488,35 @@ const CourseDetail = () => {
                     setRatingSubmitting(true);
                     setRatingMsg(null);
                     try {
-                      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+                      const backendUrl =
+                        import.meta.env.VITE_BACKEND_URL ||
+                        "http://localhost:3000";
                       const token = localStorage.getItem("token");
-                      const res = await fetch(`${backendUrl}/courses/${courseId}/rate`, {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                          Authorization: `Bearer ${token}`,
-                        },
-                        body: JSON.stringify({ rating: ratingValue, review: reviewText }),
-                      });
+                      const res = await fetch(
+                        `${backendUrl}/courses/${courseId}/rate`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                          },
+                          body: JSON.stringify({
+                            rating: ratingValue,
+                            review: reviewText,
+                          }),
+                        }
+                      );
                       const j = await res.json();
                       if (j.success) {
                         setRatingMsg("Thank you for your rating");
                         // update local summary
-                        setCourse((c) => ({ ...c, rating: { average: j.data.average, count: j.data.count } }));
+                        setCourse((c) => ({
+                          ...c,
+                          rating: {
+                            average: j.data.average,
+                            count: j.data.count,
+                          },
+                        }));
                       } else {
                         setRatingMsg(j.message || "Could not save rating");
                       }
@@ -501,10 +543,13 @@ const CourseDetail = () => {
                 />
               </div>
 
-              {ratingMsg && <div style={{ marginTop: 8, color: "#d97706" }}>{ratingMsg}</div>}
+              {ratingMsg && (
+                <div style={{ marginTop: 8, color: "#d97706" }}>
+                  {ratingMsg}
+                </div>
+              )}
             </div>
           )}
-          
           {/* Notes Link (Retained as requested) */}
           {course.notes ? (
             <div style={{ margin: "16px 0" }}>

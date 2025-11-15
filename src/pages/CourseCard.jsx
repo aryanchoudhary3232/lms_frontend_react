@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaStar, FaUserFriends, FaShoppingCart } from "react-icons/fa";
+import { FaStar, FaUserFriends, FaShoppingCart, FaPlay } from "react-icons/fa";
 // Make sure you have "../css/teacher/Courses.css" linked in the parent
 
-const CourseCard = ({ course, onAddToCart }) => {
+const CourseCard = ({ course, onAddToCart, isOwned = false }) => {
   // --- Placeholders ---
   // course.rating may be an object { average, count } returned by backend
   const ratingAverage = course && typeof course.rating === "object" ? course.rating.average : course.rating || 4.5;
@@ -60,9 +60,18 @@ const CourseCard = ({ course, onAddToCart }) => {
         {/* --- Add to Cart Button --- */}
         {/* We add it after the bottom border, as in your original code */}
         <div className="course-card-action">
-          <button className="btn-add-to-cart" onClick={onAddToCart}>
-            <FaShoppingCart /> Add to Cart
-          </button>
+          {isOwned ? (
+            <Link
+              className="btn-add-to-cart owned-course-btn"
+              to={`/student/courses/${course._id}`}
+            >
+              <FaPlay /> Go to Course
+            </Link>
+          ) : (
+            <button className="btn-add-to-cart" onClick={onAddToCart}>
+              <FaShoppingCart /> Add to Cart
+            </button>
+          )}
         </div>
       </div>
     </div>
