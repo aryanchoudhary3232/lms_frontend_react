@@ -52,8 +52,7 @@ const StudentDashboard = () => {
       };
     })
     .reverse();
-
-
+console.log(formattedProgressData)
   return (
     <div
       style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}
@@ -148,14 +147,19 @@ const StudentDashboard = () => {
               </div>
               <div
                 className=""
-                style={{ display: "flex", gap: "18px", marginTop: "-6px" }}
+                style={{
+                  display: "flex",
+                  gap: "18px",
+                  marginTop: "-6px",
+                  // flexWrap: "wrap",
+                }}
               >
                 {student?.enrolledCourses?.map((course) => (
                   <div className="" key={course._id}>
                     {" "}
                     <img
                       style={{
-                        width: "216px",
+                        width: "100%",
                         borderRadius: "4px",
                       }}
                       src={course.image}
@@ -167,7 +171,8 @@ const StudentDashboard = () => {
                   </div>
                 ))}
               </div>
-              <Link to={`/student/sidebar/courses`}
+              <Link
+                to={`/student/sidebar/courses`}
                 style={{
                   background: "#2337AD",
                   border: "none",
@@ -182,8 +187,8 @@ const StudentDashboard = () => {
                   fontSize: "19px",
                   marginBottom: "12px",
                   cursor: "pointer",
-                  textDecoration: 'none',
-                  textAlign: 'center'
+                  textDecoration: "none",
+                  textAlign: "center",
                 }}
               >
                 Continue
