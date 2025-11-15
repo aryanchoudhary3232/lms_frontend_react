@@ -55,7 +55,6 @@ const Quiz = () => {
     getCourseById();
   }, [courseId, chapterId, topicId]);
 
-  console.log(quiz);
 
   const handleTickOption = (questionIdx, option) => {
     setUserAnswers((prev) => {
@@ -74,7 +73,6 @@ const Quiz = () => {
     });
   };
 
-  console.log("answerQuiz", answerQuiz);
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
@@ -98,20 +96,17 @@ const Quiz = () => {
     );
 
     const data = await response.json();
-    console.log("data", data.data);
 
     if (response.ok) {
       setResult(data.data);
       setIsSubmitted(true);
     }
   };
-  console.log("result", result);
 
   return !isSubmitted ? (
     <div
       style={{ display: "flex", flexDirection: "column", marginTop: "22px" }}
     >
-      <h1>{seconds}</h1>
       <h2 style={{ textAlign: "center" }}>Topic: {quizTitle}</h2>
       <form
         onSubmit={handleOnSubmit}

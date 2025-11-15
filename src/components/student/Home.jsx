@@ -11,7 +11,6 @@ import {
   FaRegPlayCircle,
   FaRegListAlt,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
 
 function Home() {
   return (

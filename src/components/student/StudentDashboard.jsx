@@ -36,7 +36,6 @@ const StudentDashboard = () => {
         }
       );
       const data = await response.json();
-      console.log(data.data);
       setStudent(data.data);
     };
 
@@ -53,8 +52,7 @@ const StudentDashboard = () => {
       };
     })
     .reverse();
-  console.log(formattedProgressData);
-  console.log(student?.studentProgress?.slice(-2));
+
 
   return (
     <div
@@ -153,7 +151,7 @@ const StudentDashboard = () => {
                 style={{ display: "flex", gap: "18px", marginTop: "-6px" }}
               >
                 {student?.enrolledCourses?.map((course) => (
-                  <div className="">
+                  <div className="" key={course._id}>
                     {" "}
                     <img
                       style={{

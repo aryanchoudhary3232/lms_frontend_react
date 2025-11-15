@@ -26,7 +26,6 @@ const CourseDetail = () => {
     };
     
   }, []);
-  console.log('seconds', seconds)
   const [openChapters, setOpenChapters] = useState([0]); 
   const [ratingValue, setRatingValue] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -311,7 +310,6 @@ const CourseDetail = () => {
   // ----- RENDER -----
   return (
     <div style={styles.container}>
-      <h1>Seconds: {seconds}</h1>
       {/* ===== LEFT SIDEBAR ===== */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarTabs}>

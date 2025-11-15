@@ -42,6 +42,9 @@ import AdminCourseDetail from "./components/admin/AdminCourseDetail";
 import AdminTeacherDetail from "./components/admin/AdminTeacherDetail";
 import AdminSidebar from "./components/admin/AdminSidebar";
 import useLearningTimer from "./helper/customHooks/useLearningTimer";
+import TeacherCourses from "./components/teacher/TeacherCourses";
+import TeacherDashboard from "./components/teacher/TeacherDashboard";
+import StudentsEnrolled from "./components/teacher/StudentsEnrolled";
 
 function App() {
   return (
@@ -69,7 +72,7 @@ function Main() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
-  <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout" element={<Checkout />} />
 
         {/* Teacher routes  */}
         <Route
@@ -83,6 +86,10 @@ function Main() {
           <Route path="home" element={<TeacherHome />} />
           <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
+          <Route
+            path="courses/:courseId/:chapterId/:topicId/quiz"
+            element={<StudentQuiz />}
+          />
           <Route path="courses/add" element={<TeacherAddCourse />} />
           <Route path="chapters" element={<TeacherChapters />} />
           <Route
@@ -99,9 +106,9 @@ function Main() {
 
         {/* Teacher Sidebar Dashboard (same layout as admin) */}
         <Route path="/teacher/sidebar" element={<AdminSidebar />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="courses" element={<AdminCourses />} />
+          <Route path="dashboard" element={<TeacherDashboard />} />
+          <Route path="users" element={<StudentsEnrolled />} />
+          <Route path="courses" element={<TeacherCourses />} />
         </Route>
 
         {/* Student routes  */}
@@ -133,9 +140,9 @@ function Main() {
 
         {/* Student Sidebar Dashboard (same layout as admin) */}
         <Route path="/student/sidebar" element={<AdminSidebar />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="courses" element={<AdminCourses />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="courses" element={<StudentCourses />} />
+          <Route path="streak" element={<Streak />} />
         </Route>
 
         {/* Admin routes  - protect admin pages */}
