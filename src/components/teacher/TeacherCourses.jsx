@@ -17,7 +17,7 @@ const TeacherCourses = () => {
       );
 
       const data = await response.json();
-      setCourses(data.data.courses);
+      setCourses(data.data);
     }
     fetchTeacherCourses();
   }, []);
@@ -27,11 +27,11 @@ const TeacherCourses = () => {
       style={{ width: "100%", padding: "39px", boxSizing: "border-box" }}
       className="admin-courses"
     >
-      <h2>All Courses ({courses.length})</h2>
+      <h2>All Courses ({courses?.length})</h2>
 
-      {courses.length > 0 ? (
+      {courses?.length > 0 ? (
         <div className="admin-courses-grid">
-          {courses.map((course) => (
+          {courses?.map((course) => (
             <div
               key={course._id}
               className="admin-course-card"
@@ -93,14 +93,14 @@ const TeacherCourses = () => {
                     </span>
                   </div>
 
-                  {course.category && (
+                  {course?.category && (
                     <div className="admin-course-detail-item">
                       <span className="detail-label">Category:</span>
                       <span className="detail-value">{course.category}</span>
                     </div>
                   )}
 
-                  {course.level && (
+                  {course?.level && (
                     <div className="admin-course-detail-item">
                       <span className="detail-label">Level:</span>
                       <span className="detail-value">{course.level}</span>
@@ -110,7 +110,7 @@ const TeacherCourses = () => {
                   <div className="admin-course-detail-item">
                     <span className="detail-label">Chapters:</span>
                     <span className="detail-value">
-                      {course.chapters ? course.chapters.length : 0} chapters
+                      {course?.chapters ? course.chapters.length : 0} chapters
                     </span>
                   </div>
                 </div>
