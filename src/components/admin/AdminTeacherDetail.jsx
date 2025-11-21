@@ -9,6 +9,11 @@ const AdminTeacherDetail = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [approvalNotes, setApprovalNotes] = useState("");
+  const [rejectionNotes, setRejectionNotes] = useState("");
+  const [processing, setProcessing] = useState(false);
 
   const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
@@ -74,6 +79,70 @@ const AdminTeacherDetail = () => {
     } finally {
       setDeleting(false);
       setShowDeleteModal(false);
+    }
+  };
+
+  const handleApproveTeacher = async () => {
+    setProcessing(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${BACKEND_URL}/admin/teachers/${teacherId}/approve`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ notes: approvalNotes }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        alert("Teacher verification approved successfully!");
+        setShowApproveModal(false);
+        fetchTeacherDetails(); // Refresh data
+      } else {
+        alert("Error: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error approving teacher:", error);
+      alert("Failed to approve teacher");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleRejectTeacher = async () => {
+    setProcessing(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${BACKEND_URL}/admin/teachers/${teacherId}/reject`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ notes: rejectionNotes }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        alert("Teacher verification rejected.");
+        setShowRejectModal(false);
+        fetchTeacherDetails(); // Refresh data
+      } else {
+        alert("Error: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error rejecting teacher:", error);
+      alert("Failed to reject teacher");
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -187,6 +256,24 @@ const AdminTeacherDetail = () => {
                 {teacher.verificationStatus}
               </span>
             </div>
+
+            {/* Approve/Reject Buttons */}
+            {teacher.verificationStatus === "Pending" && teacher.qualificationDoc?.url && (
+              <div className="verification-actions">
+                <button
+                  onClick={() => setShowApproveModal(true)}
+                  className="btn-approve"
+                >
+                  ✅ Approve Verification
+                </button>
+                <button
+                  onClick={() => setShowRejectModal(true)}
+                  className="btn-reject"
+                >
+                  ❌ Reject Verification
+                </button>
+              </div>
+            )}
 
             {teacher.verificationNotes && (
               <div className="notes-section">
@@ -345,6 +432,87 @@ const AdminTeacherDetail = () => {
                 disabled={deleting}
               >
                 {deleting ? "Deleting..." : "Yes, Delete Teacher"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Approve Verification Modal */}
+      {showApproveModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>✅ Approve Teacher Verification</h3>
+            <p>
+              Are you sure you want to approve <strong>{teacher.name}</strong>'s qualification?
+            </p>
+            <div className="modal-input">
+              <label>Approval Notes (Optional):</label>
+              <textarea
+                value={approvalNotes}
+                onChange={(e) => setApprovalNotes(e.target.value)}
+                placeholder="Add any notes for the teacher..."
+                rows="4"
+              />
+            </div>
+            <div className="modal-actions">
+              <button
+                onClick={() => {
+                  setShowApproveModal(false);
+                  setApprovalNotes("");
+                }}
+                className="btn-cancel"
+                disabled={processing}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleApproveTeacher}
+                className="btn-approve"
+                disabled={processing}
+              >
+                {processing ? "Approving..." : "Approve Verification"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Verification Modal */}
+      {showRejectModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>❌ Reject Teacher Verification</h3>
+            <p>
+              Are you sure you want to reject <strong>{teacher.name}</strong>'s qualification?
+            </p>
+            <div className="modal-input">
+              <label>Rejection Reason (Required):</label>
+              <textarea
+                value={rejectionNotes}
+                onChange={(e) => setRejectionNotes(e.target.value)}
+                placeholder="Explain why the qualification was rejected..."
+                rows="4"
+                required
+              />
+            </div>
+            <div className="modal-actions">
+              <button
+                onClick={() => {
+                  setShowRejectModal(false);
+                  setRejectionNotes("");
+                }}
+                className="btn-cancel"
+                disabled={processing}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRejectTeacher}
+                className="btn-reject"
+                disabled={processing || !rejectionNotes.trim()}
+              >
+                {processing ? "Rejecting..." : "Reject Verification"}
               </button>
             </div>
           </div>
