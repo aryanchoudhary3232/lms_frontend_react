@@ -21,7 +21,23 @@ const StudentDashboard = () => {
     { day: "Sun", minutes: 30 },
   ];
 
-  const [student, setStudent] = useState([]);
+  const [student, setStudent] = useState(null);
+
+  // Calculation for Dashboard Cards
+  const enrolledCount = student?.enrolledCourses?.length || 0;
+
+  // Calculate global average across all courses
+  const globalQuizAverage = student?.enrolledCourses?.length 
+    ? Math.round(
+        student.enrolledCourses.reduce((acc, item) => acc + (item.avgQuizScore || 0), 0) / 
+        student.enrolledCourses.length
+      )
+    : 0;
+
+  const totalQuizzesTaken = student?.enrolledCourses?.reduce(
+    (acc, item) => acc + (item.completedQuizzes || 0), 
+    0
+  );
 
   useEffect(() => {
     const fetchStudentProgress = async () => {
@@ -52,7 +68,8 @@ const StudentDashboard = () => {
       };
     })
     .reverse();
-console.log(formattedProgressData)
+    
+// console.log(formattedProgressData)
   return (
     <div
       style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}
@@ -87,7 +104,7 @@ console.log(formattedProgressData)
               }}
             >
               <span style={{ fontSize: "37px", fontWeight: "bold" }}>
-                {student?.enrolledCourses?.length}
+                {enrolledCount}
               </span>
 
               <span
@@ -114,7 +131,9 @@ console.log(formattedProgressData)
                 gap: "10px",
               }}
             >
-              <span style={{ fontSize: "37px", fontWeight: "bold" }}>2</span>
+              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
+                {student?.streak || 0} 🔥
+              </span>
               <span
                 style={{
                   paddingTop: "3px",
@@ -122,7 +141,7 @@ console.log(formattedProgressData)
                   fontWeight: 500,
                 }}
               >
-                Completed
+                Current Streak
               </span>
             </div>
           </div>
@@ -154,19 +173,21 @@ console.log(formattedProgressData)
                   // flexWrap: "wrap",
                 }}
               >
-                {student?.enrolledCourses?.map((course) => (
-                  <div className="" key={course._id}>
-                    {" "}
+                {student?.enrolledCourses?.map((item) => (
+                  <div className="" key={item.course._id}>
                     <img
                       style={{
                         width: "100%",
                         borderRadius: "4px",
                       }}
-                      src={course.image}
+                      src={item.course.image}
                       alt=""
                     />
                     <div style={{ fontSize: "17px", fontWeight: "550" }}>
-                      {course.title}
+                      {item.course.title}
+                    </div>
+                    <div className="course-score">
+                      Quiz Avg: {item.avgQuizScore}%
                     </div>
                   </div>
                 ))}
@@ -225,7 +246,7 @@ console.log(formattedProgressData)
                     color: "#4f46e5",
                   }}
                 >
-                  2
+                  {totalQuizzesTaken}
                 </span>
                 <span>Attempts</span>
               </div>{" "}
@@ -240,7 +261,7 @@ console.log(formattedProgressData)
                     color: "#4f46e5",
                   }}
                 >
-                  80%
+                  {globalQuizAverage}%
                 </span>
                 <span>Average accuracy</span>
               </div>{" "}
