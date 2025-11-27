@@ -11,71 +11,86 @@ import {
 } from "recharts";
 
 const StudentDashboard = () => {
-  const data = [
-    { day: "Mon", minutes: 45 },
-    { day: "Tue", minutes: 60 },
-    { day: "Wed", minutes: 70 },
-    { day: "Thu", minutes: 90 },
-    { day: "Fri", minutes: 65 },
-    { day: "Sat", minutes: 45 },
-    { day: "Sun", minutes: 30 },
-  ];
-
   const [student, setStudent] = useState(null);
-
-  // Calculation for Dashboard Cards
-  const enrolledCount = student?.enrolledCourses?.length || 0;
-
-  // Calculate global average across all courses
-  const globalQuizAverage = student?.enrolledCourses?.length 
-    ? Math.round(
-        student.enrolledCourses.reduce((acc, item) => acc + (item.avgQuizScore || 0), 0) / 
-        student.enrolledCourses.length
-      )
-    : 0;
-
-  const totalQuizzesTaken = student?.enrolledCourses?.reduce(
-    (acc, item) => acc + (item.completedQuizzes || 0), 
-    0
-  );
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStudentProgress = async () => {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/student/profile`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/student/dashboard`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const data = await response.json();
+        
+        if (data.success) {
+          setDashboardData(data.data);
+          setStudent(data.data); // Keep for backward compatibility
+        } else {
+          console.error("Failed to fetch dashboard data:", data.message);
         }
-      );
-      const data = await response.json();
-      setStudent(data.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchStudentProgress();
+    fetchDashboardData();
   }, []);
-  const formattedProgressData = student?.studentProgress
-    ?.slice(-7)
-    .map((data) => {
-      return {
-        day: new Date(data.date).toLocaleDateString("en-us", {
-          weekday: "short",
-        }),
-        minutes: data.minutes,
-      };
-    })
-    .reverse();
-    
-// console.log(formattedProgressData)
+
+  // Get data from dashboardData with fallbacks
+  const enrolledCount = dashboardData?.dashboardStats?.totalEnrolledCourses || 0;
+  const currentStreak = dashboardData?.dashboardStats?.currentStreak || 0;
+  const totalQuizzesTaken = dashboardData?.dashboardStats?.totalQuizzesTaken || 0;
+  const globalQuizAverage = dashboardData?.dashboardStats?.globalQuizAverage || 0;
+  const highestQuizScore = dashboardData?.dashboardStats?.highestQuizScore || 0;
+  const studentName = dashboardData?.studentInfo?.name || "Student";
+  
+  // Format progress data for chart
+  const formattedProgressData = dashboardData?.studentProgress?.length > 0
+    ? dashboardData.studentProgress
+        .slice(-7)
+        .map((data) => ({
+          day: new Date(data.date).toLocaleDateString("en-us", {
+            weekday: "short",
+          }),
+          minutes: data.minutes,
+        }))
+        .reverse()
+    : [
+        { day: "Mon", minutes: 0 },
+        { day: "Tue", minutes: 0 },
+        { day: "Wed", minutes: 0 },
+        { day: "Thu", minutes: 0 },
+        { day: "Fri", minutes: 0 },
+        { day: "Sat", minutes: 0 },
+        { day: "Sun", minutes: 0 },
+      ];
+
+  if (loading) {
+    return (
+      <div style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}>
+        <div style={{ textAlign: "center", marginTop: "50px", fontSize: "18px" }}>
+          Loading dashboard...
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}
     >
       <div className="heading" style={{ height: "4rem" }}>
-        <div style={{ fontSize: "27px", fontWeight: 700 }}>Hi, Aryan</div>
+        <div style={{ fontSize: "27px", fontWeight: 700 }}>Hi, {studentName}</div>
         <div style={{ marginTop: "5px", marginBottom: "12px" }}>
           Keep Learning!
         </div>
@@ -87,7 +102,7 @@ const StudentDashboard = () => {
         >
           <div
             className=""
-            style={{ display: "flex", gap: "16px", marginTop: "26px" }}
+            style={{ display: "flex", gap: "16px", marginTop: "26px", flexWrap: "wrap" }}
           >
             <div
               className=""
@@ -95,7 +110,7 @@ const StudentDashboard = () => {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "42%",
+                width: "30%",
                 height: "83px",
                 padding: "12px 20px",
                 justifyContent: "center",
@@ -123,7 +138,7 @@ const StudentDashboard = () => {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "42%",
+                width: "30%",
                 height: "83px",
                 padding: "12px 20px",
                 justifyContent: "center",
@@ -132,7 +147,7 @@ const StudentDashboard = () => {
               }}
             >
               <span style={{ fontSize: "37px", fontWeight: "bold" }}>
-                {student?.streak || 0} 🔥
+                {currentStreak} 🔥
               </span>
               <span
                 style={{
@@ -142,6 +157,33 @@ const StudentDashboard = () => {
                 }}
               >
                 Current Streak
+              </span>
+            </div>
+            <div
+              className=""
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
+                width: "30%",
+                height: "83px",
+                padding: "12px 20px",
+                justifyContent: "center",
+                borderRadius: "4px",
+                gap: "10px",
+              }}
+            >
+              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
+                {dashboardData?.dashboardStats?.totalWeeklyMinutes || 0}
+              </span>
+              <span
+                style={{
+                  paddingTop: "3px",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                }}
+              >
+                Weekly Minutes
               </span>
             </div>
           </div>
@@ -173,7 +215,7 @@ const StudentDashboard = () => {
                   // flexWrap: "wrap",
                 }}
               >
-                {student?.enrolledCourses?.map((item) => (
+                {dashboardData?.enrolledCourses?.map((item) => (
                   <div className="" key={item.course._id}>
                     <img
                       style={{
@@ -276,7 +318,7 @@ const StudentDashboard = () => {
                     color: "#4f46e5",
                   }}
                 >
-                  10
+                  {highestQuizScore}%
                 </span>
                 <span>Highest score</span>
               </div>
