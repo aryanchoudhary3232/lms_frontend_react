@@ -15,35 +15,61 @@ const StudentDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/student/dashboard`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const data = await response.json();
-        
-        if (data.success) {
-          setDashboardData(data.data);
-          setStudent(data.data); // Keep for backward compatibility
-        } else {
-          console.error("Failed to fetch dashboard data:", data.message);
+  // Function to manually add learning minutes (for testing)
+  const addLearningMinutes = async (minutes) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/student/progress`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ minutes }),
         }
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
+      );
+      
+      if (response.ok) {
+        // Refresh dashboard data
+        fetchDashboardData();
+      } else {
+        console.error("Failed to add learning minutes");
       }
-    };
+    } catch (error) {
+      console.error("Error adding learning minutes:", error);
+    }
+  };
 
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/student/dashboard`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      
+      if (data.success) {
+        setDashboardData(data.data);
+        setStudent(data.data); // Keep for backward compatibility
+      } else {
+        console.error("Failed to fetch dashboard data:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchDashboardData();
   }, []);
 
@@ -57,24 +83,26 @@ const StudentDashboard = () => {
   
   // Format progress data for chart
   const formattedProgressData = dashboardData?.studentProgress?.length > 0
-    ? dashboardData.studentProgress
-        .slice(-7)
-        .map((data) => ({
-          day: new Date(data.date).toLocaleDateString("en-us", {
-            weekday: "short",
-          }),
-          minutes: data.minutes,
-        }))
-        .reverse()
-    : [
-        { day: "Mon", minutes: 0 },
-        { day: "Tue", minutes: 0 },
-        { day: "Wed", minutes: 0 },
-        { day: "Thu", minutes: 0 },
-        { day: "Fri", minutes: 0 },
-        { day: "Sat", minutes: 0 },
-        { day: "Sun", minutes: 0 },
-      ];
+    ? dashboardData.studentProgress.map((data) => ({
+        day: new Date(data.date).toLocaleDateString("en-us", {
+          weekday: "short",
+        }),
+        minutes: data.minutes || 0,
+      }))
+    : (() => {
+        // Generate fallback data for the last 7 days
+        const fallbackData = [];
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(today.getDate() - i);
+          fallbackData.push({
+            day: date.toLocaleDateString("en-us", { weekday: "short" }),
+            minutes: 0
+          });
+        }
+        return fallbackData;
+      })();
 
   if (loading) {
     return (
@@ -346,9 +374,44 @@ const StudentDashboard = () => {
               className=""
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <span style={{ fontSize: "24px", fontWeight: 600 }}>
-                Progress Chart
-              </span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "24px", fontWeight: 600 }}>
+                  Progress Chart
+                </span>
+                {/* Test button for adding minutes - can be removed in production */}
+                <div style={{ display: "flex", gap: "5px" }}>
+                  <button 
+                    onClick={() => addLearningMinutes(15)}
+                    style={{
+                      background: "#4F46E5",
+                      color: "white",
+                      border: "none",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "12px"
+                    }}
+                    title="Add 15 minutes (test)"
+                  >
+                    +15min
+                  </button>
+                  <button 
+                    onClick={() => addLearningMinutes(30)}
+                    style={{
+                      background: "#4F46E5",
+                      color: "white",
+                      border: "none",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "12px"
+                    }}
+                    title="Add 30 minutes (test)"
+                  >
+                    +30min
+                  </button>
+                </div>
+              </div>
               <span style={{ marginTop: "23px" }}>Weekly Learning Minutes</span>
             </div>
             <div className="">
