@@ -8,6 +8,9 @@ const CourseDetail = () => {
   const [course, setCourse] = useState({});
   const [studentId, setStudentId] = useState("");
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedChapterId, setSelectedChapterId] = useState(null);
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
+  const [completedTopics, setCompletedTopics] = useState([]);
   const [isEnroll, setIsEnroll] = useState(false);
   const [showPopUp, setShowPopUp] = useState(false);
   const { courseId } = useParams();
@@ -70,13 +73,20 @@ const CourseDetail = () => {
           // Set default video on load
           if (courseResponse.data.video) {
             setSelectedVideo(courseResponse.data.video);
+            // For main course video, we don't have specific chapter/topic
+            setSelectedChapterId(null);
+            setSelectedTopicId(null);
           } else if (
             courseResponse.data.chapters &&
             courseResponse.data.chapters[0] &&
             courseResponse.data.chapters[0].topics[0]
           ) {
             // If no main course video, set first topic's video
-            setSelectedVideo(courseResponse.data.chapters[0].topics[0].video);
+            const firstChapter = courseResponse.data.chapters[0];
+            const firstTopic = firstChapter.topics[0];
+            setSelectedVideo(firstTopic.video);
+            setSelectedChapterId(firstChapter._id);
+            setSelectedTopicId(firstTopic._id);
           }
         } else {
           console.error("Error fetching course:", courseResponse.message);
@@ -94,8 +104,119 @@ const CourseDetail = () => {
       .map(s => (s._id ? s._id.toString() : s.toString()))
       .filter(Boolean);
 
-    setIsEnroll(enrolledStudentIds.includes(studentId.toString()));
-  }, [course, studentId]);
+    const isStudentEnrolled = enrolledStudentIds.includes(studentId.toString());
+    setIsEnroll(isStudentEnrolled);
+
+    // Fetch completion status if enrolled
+    if (isStudentEnrolled && courseId) {
+      fetchCompletionStatus();
+    }
+  }, [course, studentId, courseId]);
+
+  // Function to fetch topic completion status
+  const fetchCompletionStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/student/topic-completion?courseId=${courseId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setCompletedTopics(data.data.completedTopics || []);
+      }
+    } catch (error) {
+      console.error("Error fetching completion status:", error);
+    }
+  };
+
+  // Function to mark topic as complete
+  const markTopicAsComplete = async () => {
+    console.log('🚨 MARK AS COMPLETE BUTTON CLICKED!');
+    console.log('Selected chapter ID:', selectedChapterId);
+    console.log('Selected topic ID:', selectedTopicId);
+    console.log('Course ID:', courseId);
+    console.log('Is enrolled:', isEnroll);
+    console.log('Button disabled?', !selectedChapterId || !selectedTopicId || !isEnroll);
+    
+    if (!selectedChapterId || !selectedTopicId) {
+      console.log('❌ No chapter/topic selected');
+      alert("Please select a topic to mark as complete");
+      return;
+    }
+
+    if (!isEnroll) {
+      console.log('❌ Not enrolled');
+      alert("You need to be enrolled in this course to mark topics as complete");
+      return;
+    }
+    
+    console.log('✅ All checks passed, making API call...');
+
+    try {
+      const token = localStorage.getItem("token");
+      console.log('Making API request to mark topic complete...');
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/student/mark-topic-complete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            courseId,
+            chapterId: selectedChapterId,
+            topicId: selectedTopicId,
+          }),
+        }
+      );
+      
+      console.log('Response status:', response.status);
+      const data = await response.json();
+      console.log('Response data:', data);
+      
+      if (data.success) {
+        // Update local state
+        const newCompletion = {
+          chapterId: selectedChapterId,
+          topicId: selectedTopicId,
+          completedAt: new Date().toISOString(),
+        };
+        setCompletedTopics(prev => {
+          // Check if already exists
+          const exists = prev.some(ct => 
+            ct.chapterId === selectedChapterId && ct.topicId === selectedTopicId
+          );
+          if (!exists) {
+            return [...prev, newCompletion];
+          }
+          return prev;
+        });
+        alert("Topic marked as complete!");
+      } else {
+        console.error('API error:', data);
+        alert(data.message || "Failed to mark topic as complete");
+      }
+    } catch (error) {
+      console.error("Error marking topic as complete:", error);
+      alert("Error marking topic as complete: " + error.message);
+    }
+  };
+
+  // Function to check if a topic is completed
+  const isTopicCompleted = (chapterId, topicId) => {
+    return completedTopics.some(
+      (ct) => ct.chapterId === chapterId && ct.topicId === topicId
+    );
+  };
 
   if (!course?.title) return <p>Loading...</p>; // Improved loading check
 
@@ -103,13 +224,23 @@ const CourseDetail = () => {
   const avgRating = course?.rating?.average || 0;
   const ratingCount = course?.rating?.count || 0;
 
-  const handleTopicClick = (tpVideo, chIdx, tpIdx) => {
+  const handleTopicClick = (tpVideo, chIdx, tpIdx, chapterId, topicId) => {
+    console.log('🎯 Topic clicked!');
+    console.log('Chapter ID:', chapterId);
+    console.log('Topic ID:', topicId);
+    console.log('Video:', tpVideo);
+    console.log('Is enrolled:', isEnroll);
+    
     // Logic from image: First video (ch 0, tp 0) is always viewable
     if (isEnroll || (chIdx === 0 && tpIdx === 0)) {
       if (tpVideo) {
+        console.log('✅ Setting selected video and IDs');
         setSelectedVideo(tpVideo);
+        setSelectedChapterId(chapterId);
+        setSelectedTopicId(topicId);
       }
     } else if (!isEnroll) {
+      console.log('❌ Not enrolled, showing popup');
       setShowPopUp(true);
     }
   };
@@ -361,11 +492,14 @@ const CourseDetail = () => {
                                 : {}),
                             }}
                             onClick={() =>
-                              handleTopicClick(topic.video, chIdx, tpIdx)
+                              handleTopicClick(topic.video, chIdx, tpIdx, chapter._id, topic._id)
                             }
                           >
                             <span>🎥</span>
                             {topic.title}
+                            {isTopicCompleted(chapter._id, topic._id) && (
+                              <span style={{ color: 'green', marginLeft: '8px' }}>✓</span>
+                            )}
                           </li>
                           {/* Quiz Item */}
                           <li
@@ -411,7 +545,29 @@ const CourseDetail = () => {
         {/* Actions Below Video */}
         <div style={styles.videoActions}>
           <span style={styles.transcriptTab}>Transcript</span>
-          <button style={styles.completeButton}>Mark as Complete</button>
+          <button 
+            style={{
+              ...styles.completeButton,
+              backgroundColor: selectedChapterId && selectedTopicId && isTopicCompleted(selectedChapterId, selectedTopicId) 
+                ? '#28a745' 
+                : '#007bff',
+              opacity: (!selectedChapterId || !selectedTopicId || !isEnroll) ? 0.5 : 1,
+              cursor: (!selectedChapterId || !selectedTopicId || !isEnroll) ? 'not-allowed' : 'pointer'
+            }}
+            onClick={markTopicAsComplete}
+            disabled={!selectedChapterId || !selectedTopicId || !isEnroll}
+            title={
+              !isEnroll ? 'You need to enroll to mark topics as complete' :
+              !selectedChapterId || !selectedTopicId ? 'Please select a topic first' :
+              'Click to mark this topic as complete'
+            }
+          >
+            {!selectedChapterId || !selectedTopicId ? 'Select Topic First' :
+             selectedChapterId && selectedTopicId && isTopicCompleted(selectedChapterId, selectedTopicId) 
+              ? 'Completed ✓' 
+              : 'Mark as Complete'
+            }
+          </button>
         </div>
 
         {/* Content Details (Title, Desc, Notes) */}

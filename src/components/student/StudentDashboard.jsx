@@ -11,38 +11,41 @@ import {
 } from "recharts";
 
 const StudentDashboard = () => {
-  const data = [
-    { day: "Mon", minutes: 45 },
-    { day: "Tue", minutes: 60 },
-    { day: "Wed", minutes: 70 },
-    { day: "Thu", minutes: 90 },
-    { day: "Fri", minutes: 65 },
-    { day: "Sat", minutes: 45 },
-    { day: "Sun", minutes: 30 },
-  ];
-
   const [student, setStudent] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Calculation for Dashboard Cards
-  const enrolledCount = student?.enrolledCourses?.length || 0;
-
-  // Calculate global average across all courses
-  const globalQuizAverage = student?.enrolledCourses?.length 
-    ? Math.round(
-        student.enrolledCourses.reduce((acc, item) => acc + (item.avgQuizScore || 0), 0) / 
-        student.enrolledCourses.length
-      )
-    : 0;
-
-  const totalQuizzesTaken = student?.enrolledCourses?.reduce(
-    (acc, item) => acc + (item.completedQuizzes || 0), 
-    0
-  );
-
-  useEffect(() => {
-    const fetchStudentProgress = async () => {
+  // Function to manually add learning minutes (for testing)
+  const addLearningMinutes = async (minutes) => {
+    try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/student/profile`,
+        `${import.meta.env.VITE_BACKEND_URL}/student/progress`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ minutes }),
+        }
+      );
+      
+      if (response.ok) {
+        // Refresh dashboard data
+        fetchDashboardData();
+      } else {
+        console.error("Failed to add learning minutes");
+      }
+    } catch (error) {
+      console.error("Error adding learning minutes:", error);
+    }
+  };
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/student/dashboard`,
         {
           method: "GET",
           headers: {
@@ -52,30 +55,70 @@ const StudentDashboard = () => {
         }
       );
       const data = await response.json();
-      setStudent(data.data);
-    };
+      
+      if (data.success) {
+        setDashboardData(data.data);
+        setStudent(data.data); // Keep for backward compatibility
+      } else {
+        console.error("Failed to fetch dashboard data:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchStudentProgress();
+  useEffect(() => {
+    fetchDashboardData();
   }, []);
-  const formattedProgressData = student?.studentProgress
-    ?.slice(-7)
-    .map((data) => {
-      return {
+
+  // Get data from dashboardData with fallbacks
+  const enrolledCount = dashboardData?.dashboardStats?.totalEnrolledCourses || 0;
+  const currentStreak = dashboardData?.dashboardStats?.currentStreak || 0;
+  const totalQuizzesTaken = dashboardData?.dashboardStats?.totalQuizzesTaken || 0;
+  const globalQuizAverage = dashboardData?.dashboardStats?.globalQuizAverage || 0;
+  const highestQuizScore = dashboardData?.dashboardStats?.highestQuizScore || 0;
+  const studentName = dashboardData?.studentInfo?.name || "Student";
+  
+  // Format progress data for chart
+  const formattedProgressData = dashboardData?.studentProgress?.length > 0
+    ? dashboardData.studentProgress.map((data) => ({
         day: new Date(data.date).toLocaleDateString("en-us", {
           weekday: "short",
         }),
-        minutes: data.minutes,
-      };
-    })
-    .reverse();
-    
-// console.log(formattedProgressData)
+        minutes: data.minutes || 0,
+      }))
+    : (() => {
+        // Generate fallback data for the last 7 days
+        const fallbackData = [];
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(today.getDate() - i);
+          fallbackData.push({
+            day: date.toLocaleDateString("en-us", { weekday: "short" }),
+            minutes: 0
+          });
+        }
+        return fallbackData;
+      })();
+
+  if (loading) {
+    return (
+      <div style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}>
+        <div style={{ textAlign: "center", marginTop: "50px", fontSize: "18px" }}>
+          Loading dashboard...
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}
     >
       <div className="heading" style={{ height: "4rem" }}>
-        <div style={{ fontSize: "27px", fontWeight: 700 }}>Hi, Aryan</div>
+        <div style={{ fontSize: "27px", fontWeight: 700 }}>Hi, {studentName}</div>
         <div style={{ marginTop: "5px", marginBottom: "12px" }}>
           Keep Learning!
         </div>
@@ -87,7 +130,7 @@ const StudentDashboard = () => {
         >
           <div
             className=""
-            style={{ display: "flex", gap: "16px", marginTop: "26px" }}
+            style={{ display: "flex", gap: "16px", marginTop: "26px", flexWrap: "wrap" }}
           >
             <div
               className=""
@@ -95,7 +138,7 @@ const StudentDashboard = () => {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "42%",
+                width: "22%",
                 height: "83px",
                 padding: "12px 20px",
                 justifyContent: "center",
@@ -123,7 +166,7 @@ const StudentDashboard = () => {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "42%",
+                width: "22%",
                 height: "83px",
                 padding: "12px 20px",
                 justifyContent: "center",
@@ -132,7 +175,7 @@ const StudentDashboard = () => {
               }}
             >
               <span style={{ fontSize: "37px", fontWeight: "bold" }}>
-                {student?.streak || 0} 🔥
+                {currentStreak} 🔥
               </span>
               <span
                 style={{
@@ -142,6 +185,60 @@ const StudentDashboard = () => {
                 }}
               >
                 Current Streak
+              </span>
+            </div>
+            <div
+              className=""
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
+                width: "22%",
+                height: "83px",
+                padding: "12px 20px",
+                justifyContent: "center",
+                borderRadius: "4px",
+                gap: "10px",
+              }}
+            >
+              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
+                {dashboardData?.dashboardStats?.totalWeeklyMinutes || 0}
+              </span>
+              <span
+                style={{
+                  paddingTop: "3px",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                }}
+              >
+                Weekly Minutes
+              </span>
+            </div>
+            <div
+              className=""
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
+                width: "22%",
+                height: "83px",
+                padding: "12px 20px",
+                justifyContent: "center",
+                borderRadius: "4px",
+                gap: "10px",
+              }}
+            >
+              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
+                {dashboardData?.dashboardStats?.overallCompletionPercentage || 0}%
+              </span>
+              <span
+                style={{
+                  paddingTop: "3px",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                }}
+              >
+                Course Completion
               </span>
             </div>
           </div>
@@ -173,7 +270,7 @@ const StudentDashboard = () => {
                   // flexWrap: "wrap",
                 }}
               >
-                {student?.enrolledCourses?.map((item) => (
+                {dashboardData?.enrolledCourses?.map((item) => (
                   <div className="" key={item.course._id}>
                     <img
                       style={{
@@ -188,6 +285,9 @@ const StudentDashboard = () => {
                     </div>
                     <div className="course-score">
                       Quiz Avg: {item.avgQuizScore}%
+                    </div>
+                    <div className="course-progress" style={{ fontSize: "14px", color: "#666" }}>
+                      Progress: {item.completedTopics || 0}/{item.totalTopics || 0} topics ({item.completionPercentage || 0}%)
                     </div>
                   </div>
                 ))}
@@ -276,7 +376,7 @@ const StudentDashboard = () => {
                     color: "#4f46e5",
                   }}
                 >
-                  10
+                  {highestQuizScore}%
                 </span>
                 <span>Highest score</span>
               </div>
@@ -304,9 +404,44 @@ const StudentDashboard = () => {
               className=""
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <span style={{ fontSize: "24px", fontWeight: 600 }}>
-                Progress Chart
-              </span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "24px", fontWeight: 600 }}>
+                  Progress Chart
+                </span>
+                {/* Test button for adding minutes - can be removed in production */}
+                <div style={{ display: "flex", gap: "5px" }}>
+                  <button 
+                    onClick={() => addLearningMinutes(15)}
+                    style={{
+                      background: "#4F46E5",
+                      color: "white",
+                      border: "none",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "12px"
+                    }}
+                    title="Add 15 minutes (test)"
+                  >
+                    +15min
+                  </button>
+                  <button 
+                    onClick={() => addLearningMinutes(30)}
+                    style={{
+                      background: "#4F46E5",
+                      color: "white",
+                      border: "none",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "12px"
+                    }}
+                    title="Add 30 minutes (test)"
+                  >
+                    +30min
+                  </button>
+                </div>
+              </div>
               <span style={{ marginTop: "23px" }}>Weekly Learning Minutes</span>
             </div>
             <div className="">
