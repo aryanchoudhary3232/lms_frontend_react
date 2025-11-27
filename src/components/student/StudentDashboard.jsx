@@ -138,7 +138,7 @@ const StudentDashboard = () => {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "30%",
+                width: "22%",
                 height: "83px",
                 padding: "12px 20px",
                 justifyContent: "center",
@@ -166,7 +166,7 @@ const StudentDashboard = () => {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "30%",
+                width: "22%",
                 height: "83px",
                 padding: "12px 20px",
                 justifyContent: "center",
@@ -193,7 +193,7 @@ const StudentDashboard = () => {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "30%",
+                width: "22%",
                 height: "83px",
                 padding: "12px 20px",
                 justifyContent: "center",
@@ -212,6 +212,33 @@ const StudentDashboard = () => {
                 }}
               >
                 Weekly Minutes
+              </span>
+            </div>
+            <div
+              className=""
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
+                width: "22%",
+                height: "83px",
+                padding: "12px 20px",
+                justifyContent: "center",
+                borderRadius: "4px",
+                gap: "10px",
+              }}
+            >
+              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
+                {dashboardData?.dashboardStats?.overallCompletionPercentage || 0}%
+              </span>
+              <span
+                style={{
+                  paddingTop: "3px",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                }}
+              >
+                Course Completion
               </span>
             </div>
           </div>
@@ -258,6 +285,9 @@ const StudentDashboard = () => {
                     </div>
                     <div className="course-score">
                       Quiz Avg: {item.avgQuizScore}%
+                    </div>
+                    <div className="course-progress" style={{ fontSize: "14px", color: "#666" }}>
+                      Progress: {item.completedTopics || 0}/{item.totalTopics || 0} topics ({item.completionPercentage || 0}%)
                     </div>
                   </div>
                 ))}
