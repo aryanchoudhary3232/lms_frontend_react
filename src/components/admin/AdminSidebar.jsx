@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "../../css/admin/Admin.css";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false); // State for mobile menu
   const role = localStorage.getItem("role");
 
   const handleLogout = () => {
@@ -12,9 +13,32 @@ const AdminSidebar = () => {
     navigate("/login");
   };
 
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Close sidebar when a link is clicked (for mobile UX)
+  const closeSidebar = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <div className="" style={{ display: "flex", width: "100%" }}>
-      <div style={{ width: "15%" }} className="admin-sidebar">
+    <div className="admin-layout-container">
+      {/* Mobile Hamburger Button */}
+      <button className="mobile-menu-btn" onClick={toggleSidebar}>
+        {isOpen ? "✕" : "☰"}
+      </button>
+
+      {/* Overlay for mobile (clicks close the menu) */}
+      {isOpen && <div className="sidebar-overlay" onClick={closeSidebar}></div>}
+
+      {/* Sidebar - Note the dynamic class 'open' */}
+      <div className={`admin-sidebar ${isOpen ? "open" : ""}`}>
+        
+        <div className="admin-sidebar-header">
+           <h3>SeekhoBharat</h3>
+        </div>
+
         <nav className="admin-nav">
           <ul>
             <li className="admin-nav-item">
@@ -29,6 +53,7 @@ const AdminSidebar = () => {
                 className={({ isActive }) =>
                   `admin-nav-link ${isActive ? "active" : ""}`
                 }
+                onClick={closeSidebar}
               >
                 <span className="admin-nav-icon">📊</span>
                 Dashboard
@@ -45,6 +70,7 @@ const AdminSidebar = () => {
                   className={({ isActive }) =>
                     `admin-nav-link ${isActive ? "active" : ""}`
                   }
+                  onClick={closeSidebar}
                 >
                   <span className="admin-nav-icon">👥</span>
                   Users
@@ -63,6 +89,7 @@ const AdminSidebar = () => {
                 className={({ isActive }) =>
                   `admin-nav-link ${isActive ? "active" : ""}`
                 }
+                onClick={closeSidebar}
               >
                 <span className="admin-nav-icon">📚</span>
                 {role === "Student" && "My"} Courses
@@ -75,6 +102,7 @@ const AdminSidebar = () => {
                   className={({ isActive }) =>
                     `admin-nav-link ${isActive ? "active" : ""}`
                   }
+                  onClick={closeSidebar}
                 >
                   <span className="admin-nav-icon">🏅</span>
                   Streak
@@ -91,8 +119,9 @@ const AdminSidebar = () => {
           </button>
         </div>
       </div>
-      <div style={{ width: "85%" }}>
-        {" "}
+
+      {/* Main Content Area */}
+      <div className="admin-main-content">
         <Outlet />
       </div>
     </div>

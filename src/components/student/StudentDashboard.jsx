@@ -6,9 +6,11 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
 } from "recharts";
+
+// Import the CSS file (adjust path if needed)
+import "../common/StudentDashboard.css"; 
 
 const StudentDashboard = () => {
   const [student, setStudent] = useState(null);
@@ -31,7 +33,6 @@ const StudentDashboard = () => {
       );
       
       if (response.ok) {
-        // Refresh dashboard data
         fetchDashboardData();
       } else {
         console.error("Failed to add learning minutes");
@@ -58,7 +59,7 @@ const StudentDashboard = () => {
       
       if (data.success) {
         setDashboardData(data.data);
-        setStudent(data.data); // Keep for backward compatibility
+        setStudent(data.data); 
       } else {
         console.error("Failed to fetch dashboard data:", data.message);
       }
@@ -73,7 +74,7 @@ const StudentDashboard = () => {
     fetchDashboardData();
   }, []);
 
-  // Get data from dashboardData with fallbacks
+  // Data extractors
   const enrolledCount = dashboardData?.dashboardStats?.totalEnrolledCourses || 0;
   const currentStreak = dashboardData?.dashboardStats?.currentStreak || 0;
   const totalQuizzesTaken = dashboardData?.dashboardStats?.totalQuizzesTaken || 0;
@@ -81,7 +82,7 @@ const StudentDashboard = () => {
   const highestQuizScore = dashboardData?.dashboardStats?.highestQuizScore || 0;
   const studentName = dashboardData?.studentInfo?.name || "Student";
   
-  // Format progress data for chart
+  // Chart Data Logic
   const formattedProgressData = dashboardData?.studentProgress?.length > 0
     ? dashboardData.studentProgress.map((data) => ({
         day: new Date(data.date).toLocaleDateString("en-us", {
@@ -90,7 +91,6 @@ const StudentDashboard = () => {
         minutes: data.minutes || 0,
       }))
     : (() => {
-        // Generate fallback data for the last 7 days
         const fallbackData = [];
         const today = new Date();
         for (let i = 6; i >= 0; i--) {
@@ -106,393 +106,149 @@ const StudentDashboard = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}>
-        <div style={{ textAlign: "center", marginTop: "50px", fontSize: "18px" }}>
+      <div className="dashboard-container">
+        <div style={{ textAlign: "center", marginTop: "50px", fontSize: "18px", color: "#666" }}>
           Loading dashboard...
         </div>
       </div>
     );
   }
-  return (
-    <div
-      style={{ padding: "12px 47px", width: "100%", boxSizing: "border-box" }}
-    >
-      <div className="heading" style={{ height: "4rem" }}>
-        <div style={{ fontSize: "27px", fontWeight: 700 }}>Hi, {studentName}</div>
-        <div style={{ marginTop: "5px", marginBottom: "12px" }}>
-          Keep Learning!
-        </div>
-      </div>
-      <div className="" style={{ display: "flex" }}>
-        <div
-          className="left-part"
-          style={{ width: "50%", boxSizing: "border-box" }}
-        >
-          <div
-            className=""
-            style={{ display: "flex", gap: "16px", marginTop: "26px", flexWrap: "wrap" }}
-          >
-            <div
-              className=""
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "22%",
-                height: "83px",
-                padding: "12px 20px",
-                justifyContent: "center",
-                borderRadius: "4px",
-                gap: "10px",
-              }}
-            >
-              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
-                {enrolledCount}
-              </span>
 
-              <span
-                style={{
-                  paddingTop: "3px",
-                  fontSize: "18px",
-                  fontWeight: 500,
-                }}
-              >
-                Courses Enrolled
-              </span>
+  return (
+    <div className="dashboard-container">
+      {/* Header */}
+      <div className="dashboard-header">
+        <h1>Hi, {studentName}</h1>
+        <p>Keep Learning!</p>
+      </div>
+
+      <div className="dashboard-content">
+        
+        {/* --- LEFT COLUMN --- */}
+        <div className="left-column">
+          
+          {/* Stats Grid */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <span className="stat-value">{enrolledCount}</span>
+              <span className="stat-label">Enrolled</span>
             </div>
-            <div
-              className=""
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "22%",
-                height: "83px",
-                padding: "12px 20px",
-                justifyContent: "center",
-                borderRadius: "4px",
-                gap: "10px",
-              }}
-            >
-              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
-                {currentStreak} 🔥
-              </span>
-              <span
-                style={{
-                  paddingTop: "3px",
-                  fontSize: "18px",
-                  fontWeight: 500,
-                }}
-              >
-                Current Streak
-              </span>
+            <div className="stat-card">
+              <span className="stat-value">{currentStreak} 🔥</span>
+              <span className="stat-label">Streak</span>
             </div>
-            <div
-              className=""
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "22%",
-                height: "83px",
-                padding: "12px 20px",
-                justifyContent: "center",
-                borderRadius: "4px",
-                gap: "10px",
-              }}
-            >
-              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
-                {dashboardData?.dashboardStats?.totalWeeklyMinutes || 0}
-              </span>
-              <span
-                style={{
-                  paddingTop: "3px",
-                  fontSize: "18px",
-                  fontWeight: 500,
-                }}
-              >
-                Weekly Minutes
-              </span>
+            <div className="stat-card">
+              <span className="stat-value">{dashboardData?.dashboardStats?.totalWeeklyMinutes || 0}</span>
+              <span className="stat-label">Mins/Week</span>
             </div>
-            <div
-              className=""
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "22%",
-                height: "83px",
-                padding: "12px 20px",
-                justifyContent: "center",
-                borderRadius: "4px",
-                gap: "10px",
-              }}
-            >
-              <span style={{ fontSize: "37px", fontWeight: "bold" }}>
-                {dashboardData?.dashboardStats?.overallCompletionPercentage || 0}%
-              </span>
-              <span
-                style={{
-                  paddingTop: "3px",
-                  fontSize: "18px",
-                  fontWeight: 500,
-                }}
-              >
-                Course Completion
-              </span>
+            <div className="stat-card">
+              <span className="stat-value">{dashboardData?.dashboardStats?.overallCompletionPercentage || 0}%</span>
+              <span className="stat-label">Completion</span>
             </div>
           </div>
-          <div className="">
-            <div
-              className=""
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "23px",
-                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "90%",
-                padding: "16px 25px",
-                marginTop: "23px",
-                borderRadius: "4px",
-                position: "relative",
-                height: "300px",
-              }}
-            >
-              <div className="" style={{ fontSize: "24px", fontWeight: 600 }}>
-                My courses
-              </div>
-              <div
-                className=""
-                style={{
-                  display: "flex",
-                  gap: "18px",
-                  marginTop: "-6px",
-                  // flexWrap: "wrap",
-                }}
-              >
-                {dashboardData?.enrolledCourses?.map((item) => (
-                  <div className="" key={item.course._id}>
+
+          {/* My Courses */}
+          <div className="dashboard-card" style={{ minHeight: '300px' }}>
+            <div className="card-title">My courses</div>
+            
+            <div className="courses-list">
+              {dashboardData?.enrolledCourses?.length > 0 ? (
+                dashboardData.enrolledCourses.map((item) => (
+                  <div className="course-item" key={item.course._id}>
                     <img
-                      style={{
-                        width: "100%",
-                        borderRadius: "4px",
-                      }}
                       src={item.course.image}
-                      alt=""
+                      alt={item.course.title}
+                      onError={(e) => (e.target.src = "https://via.placeholder.com/150?text=Course")}
                     />
-                    <div style={{ fontSize: "17px", fontWeight: "550" }}>
-                      {item.course.title}
-                    </div>
-                    <div className="course-score">
-                      Quiz Avg: {item.avgQuizScore}%
-                    </div>
-                    <div className="course-progress" style={{ fontSize: "14px", color: "#666" }}>
-                      Progress: {item.completedTopics || 0}/{item.totalTopics || 0} topics ({item.completionPercentage || 0}%)
+                    <div className="course-item-title">{item.course.title}</div>
+                    <div className="course-meta">Quiz Avg: {item.avgQuizScore}%</div>
+                    <div className="course-meta">
+                      {item.completedTopics || 0}/{item.totalTopics || 0} topics
                     </div>
                   </div>
-                ))}
-              </div>
-              <Link
-                to={`/student/sidebar/courses`}
-                style={{
-                  background: "#2337AD",
-                  border: "none",
-                  color: "white",
-                  width: "20%",
-                  padding: "6px 6px",
-                  borderRadius: "4px",
-                  position: "absolute",
-                  right: "33px",
-                  bottom: "0px",
-                  marginTop: "13px",
-                  fontSize: "19px",
-                  marginBottom: "12px",
-                  cursor: "pointer",
-                  textDecoration: "none",
-                  textAlign: "center",
-                }}
-              >
-                Continue
-              </Link>
+                ))
+              ) : (
+                <div style={{color: '#999', fontStyle: 'italic'}}>No courses enrolled yet.</div>
+              )}
             </div>
+
+            <Link to="/student/courses" className="continue-btn">
+              Continue Learning
+            </Link>
           </div>
-          <div
-            className=""
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "38px",
-              boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-              width: "90%",
-              padding: "16px 25px",
-              marginTop: "23px",
-              borderRadius: "4px",
-              position: "relative",
-              height: "163px",
-            }}
-          >
-            <div className="" style={{ fontSize: "24px", fontWeight: 600 }}>
-              Quiz Summary
-            </div>
-            <div className="" style={{ display: "flex", gap: "66px" }}>
-              <div
-                className=""
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <span
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "28px",
-                    color: "#4f46e5",
-                  }}
-                >
-                  {totalQuizzesTaken}
-                </span>
-                <span>Attempts</span>
-              </div>{" "}
-              <div
-                className=""
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <span
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "28px",
-                    color: "#4f46e5",
-                  }}
-                >
-                  {globalQuizAverage}%
-                </span>
-                <span>Average accuracy</span>
-              </div>{" "}
-              <div
-                className=""
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <span
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "28px",
-                    color: "#4f46e5",
-                  }}
-                >
-                  {highestQuizScore}%
-                </span>
-                <span>Highest score</span>
+
+          {/* Quiz Summary */}
+          <div className="dashboard-card">
+            <div className="card-title">Quiz Summary</div>
+            <div className="quiz-stats-row">
+              <div className="quiz-stat-item">
+                <span className="quiz-stat-value">{totalQuizzesTaken}</span>
+                <span className="quiz-stat-label">Attempts</span>
+              </div>
+              <div className="quiz-stat-item">
+                <span className="quiz-stat-value">{globalQuizAverage}%</span>
+                <span className="quiz-stat-label">Avg Accuracy</span>
+              </div>
+              <div className="quiz-stat-item">
+                <span className="quiz-stat-value">{highestQuizScore}%</span>
+                <span className="quiz-stat-label">Best Score</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="right-part" style={{ width: "50%" }}>
-          <div
-            className=""
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "23px",
-              boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-              width: "94%",
-              padding: "16px 25px",
-              marginTop: "27px",
-              borderRadius: "4px",
-              position: "relative",
-              height: "320px",
-            }}
-          >
-            {" "}
-            <div
-              className=""
-              style={{ display: "flex", flexDirection: "column" }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "24px", fontWeight: 600 }}>
-                  Progress Chart
-                </span>
-                {/* Test button for adding minutes - can be removed in production */}
-                <div style={{ display: "flex", gap: "5px" }}>
-                  <button 
-                    onClick={() => addLearningMinutes(15)}
-                    style={{
-                      background: "#4F46E5",
-                      color: "white",
-                      border: "none",
-                      padding: "4px 8px",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "12px"
-                    }}
-                    title="Add 15 minutes (test)"
-                  >
-                    +15min
-                  </button>
-                  <button 
-                    onClick={() => addLearningMinutes(30)}
-                    style={{
-                      background: "#4F46E5",
-                      color: "white",
-                      border: "none",
-                      padding: "4px 8px",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "12px"
-                    }}
-                    title="Add 30 minutes (test)"
-                  >
-                    +30min
-                  </button>
-                </div>
+
+        {/* --- RIGHT COLUMN --- */}
+        <div className="right-column">
+          
+          {/* Progress Chart */}
+          <div className="dashboard-card" style={{ minHeight: '350px' }}>
+            <div className="chart-header">
+              <div className="card-title" style={{marginBottom: 0}}>Progress</div>
+              
+              {/* Test Buttons - Optional */}
+              <div className="test-btn-group">
+                <button 
+                  onClick={() => addLearningMinutes(15)}
+                  style={{
+                    background: "#e0e7ff", color: "#4338ca", border: "none",
+                    padding: "4px 8px", borderRadius: "4px", cursor: "pointer", fontSize: "11px"
+                  }}
+                >
+                  +15m
+                </button>
               </div>
-              <span style={{ marginTop: "23px" }}>Weekly Learning Minutes</span>
             </div>
-            <div className="">
-              <ResponsiveContainer width={"100%"} height={250}>
+            
+            <p style={{marginBottom: '20px', color: '#666', fontSize: '14px'}}>
+                Weekly Learning Minutes
+            </p>
+
+            <div style={{ width: '100%', height: '250px' }}>
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={formattedProgressData}>
-                  <XAxis dataKey={"day"} />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey={"minutes"} fill="#4F46E5" />
+                  <XAxis dataKey="day" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                  <Tooltip 
+                    cursor={{fill: '#f3f4f6'}}
+                    contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
+                  />
+                  <Bar dataKey="minutes" fill="#2337AD" radius={[4, 4, 0, 0]} barSize={30} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
-          <div
-            className=""
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "23px",
-              boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-              width: "93%",
-              padding: "16px 25px",
-              marginTop: "16px",
-              borderRadius: "4px",
-              position: "relative",
-              height: "320px",
-            }}
-          >
-            <span style={{ fontSize: "24px", fontWeight: 600 }}>
-              Anouncements
-            </span>
-            <div
-              className=""
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "23px",
-                boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                width: "93%",
-                padding: "16px 25px",
-                marginTop: "16px",
-                borderRadius: "4px",
-                position: "relative",
-                height: "177px",
-              }}
-            >
-              <span style={{ fontSize: "21px", fontWeight: 600 }}>
-                New course: Advanced Python
-              </span>
+
+          {/* Announcements */}
+          <div className="dashboard-card">
+            <div className="card-title">Announcements</div>
+            <div className="announcement-item">
+              New course available: Advanced Python
+            </div>
+            <div className="announcement-item" style={{marginTop: '10px', borderLeftColor: '#ffd700'}}>
+               System Maintenance scheduled for Sunday.
             </div>
           </div>
+
         </div>
       </div>
     </div>

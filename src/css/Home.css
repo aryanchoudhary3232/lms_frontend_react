@@ -1,21 +1,25 @@
 /* --- Global Styles & Variables --- */
 :root {
-  /* You can change this blue to match your #2337AD */
   --primary-blue: #2337AD;
-  --secondary-yellow: #ffd700; /* From your old CSS */
+  --secondary-yellow: #ffd700;
   --dark-text: #333;
   --light-text: #555;
-  --light-gray-bg: #f9faff; /* Very similar to your #f9f9f9 */
+  --light-gray-bg: #f9faff;
   --card-border: #e0e0e0;
   --white: #ffffff;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+* {
+  box-sizing: border-box; /* Crucial for responsive padding */
+}
+
 body {
   margin: 0;
-  font-family: "Inter", "Arial", sans-serif; /* Using a more modern font stack */
+  font-family: "Inter", "Arial", sans-serif;
   color: var(--dark-text);
-  background-color: var(--white); /* Main background is white in the design */
+  background-color: var(--white);
+  overflow-x: hidden; /* Prevents horizontal scroll from full-width sections */
 }
 
 .home-container {
@@ -23,7 +27,6 @@ body {
 }
 
 main {
-  /* Use max-width to keep content centered and readable on large screens */
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
@@ -36,9 +39,6 @@ main {
   justify-content: space-between;
   padding: 60px 0;
   gap: 40px;
-  /* You can add your gradient back if you like */
-  /* background: linear-gradient(to right, #2337AD, #2337AD); */
-  /* color: white; */
 }
 
 .hero-content {
@@ -47,14 +47,14 @@ main {
 }
 
 .hero-content h1 {
-  font-size: 3rem; /* 48px */
+  font-size: 3rem; 
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 20px;
 }
 
 .hero-content p {
-  font-size: 1.1rem; /* 18px */
+  font-size: 1.1rem;
   color: var(--light-text);
   margin-bottom: 30px;
 }
@@ -62,9 +62,11 @@ main {
 .hero-buttons {
   display: flex;
   gap: 15px;
+  flex-wrap: wrap; /* Allows buttons to stack on very small screens */
 }
 
 .btn {
+  display: inline-block;
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -72,17 +74,17 @@ main {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-decoration: none; /* Added for consistency */
+  text-decoration: none;
+  text-align: center;
 }
 
 .btn-primary {
-  /* Using your blue */
   background-color: var(--primary-blue);
   color: var(--white);
 }
 
 .btn-primary:hover {
-  background-color: #1a298a; /* A darker blue */
+  background-color: #1a298a;
 }
 
 .btn-secondary {
@@ -111,26 +113,29 @@ main {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
   background-color: var(--white);
   border-radius: 12px;
   padding: 25px 20px;
   margin: 20px 0 60px;
   box-shadow: var(--shadow);
   border: 1px solid var(--card-border);
+  gap: 20px; /* Space between items when wrapped */
 }
 
 .stat-item {
   display: flex;
   align-items: center;
   gap: 15px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--light-text);
-  text-align: left; /* Ensure text aligns left */
+  text-align: left;
 }
 
 .stat-item .stat-icon {
-  font-size: 2.5rem; /* 40px */
+  font-size: 2.5rem;
   color: var(--primary-blue);
+  flex-shrink: 0; /* Prevents icon from shrinking */
 }
 
 .stat-item .stat-text {
@@ -140,7 +145,7 @@ main {
 
 .stat-item strong {
   display: block;
-  font-size: 1.5rem; /* 24px */
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--dark-text);
 }
@@ -149,10 +154,10 @@ main {
 .courses-section {
   padding: 60px 0;
   background-color: var(--light-gray-bg);
-  /* Make it full-width by overriding the main padding */
-  /* This creates the full-width background effect */
+  /* Full width background hack */
   margin: 60px -100vw;
   padding: 60px 100vw;
+  position: relative;
 }
 
 .courses-header {
@@ -160,15 +165,14 @@ main {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  /* Constrain the header to the max-width */
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 20px; /* Add padding to match main content */
+  padding: 0 20px; 
 }
 
 .courses-header h2 {
-  font-size: 2.5rem; /* 40px */
+  font-size: 2.5rem;
   margin: 0;
 }
 
@@ -176,17 +180,17 @@ main {
   text-decoration: none;
   color: var(--primary-blue);
   font-weight: 600;
+  white-space: nowrap; /* Prevents text breaking */
 }
 
 .courses-grid {
   display: grid;
-  /* This creates a responsive grid */
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  /* Reduced min-width to 280px to fit smaller phones */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
-  /* Constrain the grid to the max-width */
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px; /* Add padding to match main content */
+  padding: 0 20px;
 }
 
 .course-card {
@@ -194,9 +198,11 @@ main {
   border-radius: 12px;
   border: 1px solid var(--card-border);
   box-shadow: var(--shadow);
-  overflow: hidden; /* To contain the image radius */
+  overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: left; /* Override any centered text */
+  display: flex;
+  flex-direction: column; /* Ensures footer sticks to bottom if needed */
+  height: 100%; /* Makes all cards same height */
 }
 
 .course-card:hover {
@@ -212,6 +218,9 @@ main {
 
 .course-content {
   padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .course-rating {
@@ -221,7 +230,7 @@ main {
   display: flex;
   align-items: center;
   gap: 5px;
-  color: var(--dark-text); /* Ensure it's not light */
+  color: var(--dark-text);
 }
 
 .course-title {
@@ -240,49 +249,29 @@ main {
 .course-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--light-text);
   padding-top: 15px;
+  margin-top: auto; /* Pushes meta to bottom of content area */
   border-top: 1px solid var(--card-border);
 }
 
 .course-meta span {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
 }
 
 .course-footer {
-  padding-top: 15px;
-  margin-top: 15px;
-  border-top: 1px solid var(--card-border);
+  padding-top: 10px;
+  margin-top: 10px;
 }
 
 .course-price {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--primary-blue);
-}
-
-/* Additional styles for dynamic courses */
-.course-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--card-border);
-}
-
-.course-meta small {
-  color: var(--light-text);
-  font-size: 0.85rem;
-}
-
-.course-meta .price {
-  color: var(--primary-blue);
-  font-weight: 600;
-  font-size: 1.1rem;
+  display: block;
 }
 
 .loading-message {
@@ -292,21 +281,90 @@ main {
   padding: 40px 0;
 }
 
-.course-card img {
+.no-courses {
+  text-align: center;
   width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px 8px 0 0;
-}
-
-.course-card h3 {
-  margin: 15px 0 8px 0;
-  font-size: 1.2rem;
-  color: var(--dark-text);
-}
-
-.course-card p {
+  grid-column: 1 / -1;
+  padding: 40px;
   color: var(--light-text);
-  margin: 0 0 10px 0;
-  line-height: 1.5;
+}
+
+/* =========================================
+   RESPONSIVE BREAKPOINTS (MEDIA QUERIES)
+   ========================================= */
+
+/* Tablet and below (max-width: 992px) */
+@media (max-width: 992px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+}
+
+/* Mobile Devices (max-width: 768px) */
+@media (max-width: 768px) {
+  /* Hero: Stack items vertically */
+  .hero-section {
+    flex-direction: column-reverse; /* Image on top, Text on bottom? Or normal column */
+    flex-direction: column; 
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  .hero-content, 
+  .hero-image {
+    max-width: 100%;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  /* Stats: 2x2 Grid */
+  .stats-bar {
+    justify-content: center;
+  }
+  
+  .stat-item {
+    width: 45%; /* Two items per row */
+    justify-content: center; /* Center content in the item */
+  }
+
+  /* Courses Header */
+  .courses-header h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Small Mobile Devices (max-width: 480px) */
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  /* Stats: 1 per row */
+  .stat-item {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 20px;
+  }
+
+  /* Courses Grid */
+  .courses-grid {
+    grid-template-columns: 1fr; /* Single column */
+  }
+  
+  .courses-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
