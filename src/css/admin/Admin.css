@@ -1,25 +1,71 @@
 /* --- Admin Layout Structure --- */
-.admin-layout-container {
+/* .admin-layout-container {
   display: flex;
   width: 100%;
   min-height: 100vh;
   position: relative;
   background-color: #f9f9f9;
+}*/
+
+.admin-layout-container {
+  display: flex;
+  width: 100%;
+  /* Calculate height: 100vh minus the approx height of Navbar (approx 65px) */
+  min-height: calc(100vh - 65px); 
+  position: relative;
+  background-color: #f9f9f9;
 }
 
+
+
 /* Sidebar Styles */
-.admin-sidebar {
-  width: 250px; /* Fixed width on desktop */
+/* .admin-sidebar {
+  width: 250px; 
   background: linear-gradient(135deg, #2337AD 0%, #1a2a88 100%);
   color: white;
   display: flex;
   flex-direction: column;
-  position: sticky; /* Sticks while scrolling on desktop */
+  position: sticky;
   top: 0;
   height: 100vh;
   z-index: 1000;
   transition: transform 0.3s ease-in-out;
-  flex-shrink: 0; /* Prevents shrinking */
+  flex-shrink: 0; 
+} */
+
+/* Sidebar Styles */
+.admin-sidebar {
+  width: 250px;
+  background: linear-gradient(135deg, #2337AD 0%, #1a2a88 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0; 
+  /* Adjust height to fit within the viewport minus navbar */
+  height: calc(100vh - 65px); 
+  z-index: 900; /* Lower than Navbar (which is usually 1000) */
+  transition: transform 0.3s ease-in-out;
+  flex-shrink: 0;
+}
+
+
+/* --- Mobile Specific Adjustments --- */
+@media (max-width: 992px) {
+  .admin-sidebar {
+    position: fixed;
+    top: 0; /* On mobile, we want it to cover the full screen top-to-bottom */
+    height: 100vh;
+    z-index: 2000; /* Must be on top of everything including Navbar */
+  }
+
+  /* Push the hamburger button down slightly so it doesn't overlap 
+     if the Navbar is sticky, or just to give it breathing room.
+  */
+  .mobile-menu-btn {
+    top: 15px; 
+    left: 15px;
+  }
 }
 
 /* Main Content Styles */
