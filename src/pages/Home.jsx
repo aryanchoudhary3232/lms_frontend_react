@@ -1,7 +1,7 @@
-import React from "react";
-import "../css/Home.css";
-import Header from "../components/common/Header";
-
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Use Link for internal navigation
+import "../css/Home.css"; // Ensure this path matches your folder structure
+// If your file is in 'student/home.jsx', use "../../css/Home.css"
 
 import {
   FaStar,
@@ -12,29 +12,55 @@ import {
 } from "react-icons/fa";
 
 function Home() {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/student/courses`);
+      const data = await response.json();
+
+      if (data.success) {
+        // Get first 3 courses for home page preview
+        setCourses(data.data.slice(0, 3));
+      } else {
+        console.error("Failed to fetch courses:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="home-container">
-      {/* <Header /> */}
-
+      
       <main>
-
         {/* --- Hero Section --- */}
         <section className="hero-section">
           <div className="hero-content">
             <h1>Welcome to SeekhoBharat</h1>
-            <p>
-              Learn anytime, anywhere — courses for every learner.
-            </p>
+            <p>Learn anytime, anywhere — courses for every learner.</p>
             <div className="hero-buttons">
-              <button className="btn btn-primary">Get Started</button>
-              <button className="btn btn-secondary">Browse all Course</button>
+               {/* Updated buttons to Links for better navigation */}
+              <Link to="/student/courses" className="btn btn-primary">
+                Get Started
+              </Link>
+              <Link to="/student/courses" className="btn btn-secondary">
+                Browse all Courses
+              </Link>
             </div>
           </div>
           <div className="hero-image">
-            {/* Using a placeholder. Replace with your actual image. */}
             <img
-              src="https://via.placeholder.com/550x450.png?text=Hero+Image"
-              alt="Students"
+              src="https://via.placeholder.com/550x450.png?text=Learn+Today"
+              alt="Students Learning"
+              // Optional: Add onError fallback if you have a real image later
             />
           </div>
         </section>
@@ -50,126 +76,98 @@ function Home() {
           </div>
           <div className="stat-item">
             <FaUserFriends className="stat-icon" />
-            <strong>30+</strong>
-            <span>Instructors</span>
+            <div className="stat-text">
+              <strong>30+</strong>
+              <span>Instructors</span>
+            </div>
           </div>
           <div className="stat-item">
             <FaRegPlayCircle className="stat-icon" />
-            <strong>200+</strong>
-            <span>Learning Videos</span>
+            <div className="stat-text">
+              <strong>200+</strong>
+              <span>Videos</span>
+            </div>
           </div>
           <div className="stat-item">
             <FaRegListAlt className="stat-icon" />
-            <strong>100+</strong>
-            <span>Study Materials</span>
+            <div className="stat-text">
+              <strong>100+</strong>
+              <span>Materials</span>
+            </div>
           </div>
         </section>
 
         {/* --- Courses Section --- */}
         <section className="courses-section">
           <div className="courses-header">
-            <h2>Courses</h2>
-            <a href="/courses" className="view-all-link">
-              View All (12) &rarr;
-            </a>
+            <h2>Popular Courses</h2>
+            <Link to="/student/courses" className="view-all-link">
+              View All &rarr;
+            </Link>
           </div>
-          <div className="courses-grid">
-            {/* Example Course Card 1 */}
-            <div className="course-card">
-              <img
-                src="https://via.placeholder.com/350x200.png?text=Course+Image"
-                alt="Moral Foundation of Law"
-                className="course-image"
-              />
-              <div className="course-content">
-                <div className="course-rating">
-                  <FaStar style={{ color: "#f39c12" }} /> 5.0 (144)
-                </div>
-                <h3 className="course-title">Moral Foundation of Law</h3>
-                <p className="course-instructor">Member: Guy Hawkins</p>
-                <div className="course-meta">
-                  <span>
-                    <FaBook /> 21 Lessons
-                  </span>
-                  <span>
-                    <FaUserFriends /> 800+ Students
-                  </span>
-                </div>
-                <div className="course-footer">
-                  <span className="course-price">$350</span>
-                  {/* Add to cart/wishlist icon would go here */}
-                </div>
-              </div>
+
+          {loading ? (
+            <div className="loading-message" style={{textAlign: 'center', padding: '2rem'}}>
+                Loading amazing courses...
             </div>
+          ) : (
+            <div className="courses-grid">
+              {courses.length > 0 ? (
+                courses.map((course, index) => (
+                  <div key={course._id || index} className="course-card">
+                    {/* Course Image */}
+                    <img
+                      src={
+                        course.image ||
+                        `https://via.placeholder.com/350x200.png?text=${encodeURIComponent(
+                          course.title
+                        )}`
+                      }
+                      alt={course.title}
+                      className="course-image"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://via.placeholder.com/350x200.png?text=No+Image")
+                      }
+                    />
 
-            {/* Example Course Card 2 */}
-            <div className="course-card">
-              <img
-                src="https://via.placeholder.com/350x200.png?text=Course+Image"
-                alt="International Human Rights"
-                className="course-image"
-              />
-              <div className="course-content">
-                <div className="course-rating">
-                  <FaStar style={{ color: "#f39c12" }} /> 5.0 (122)
-                </div>
-                <h3 className="course-title">International Human Rights</h3>
-                <p className="course-instructor">Member: Esther Howard</p>
-                <div className="course-meta">
-                  <span>
-                    <FaBook /> 18 Lessons
-                  </span>
-                  <span>
-                    <FaUserFriends /> 450+ Students
-                  </span>
-                </div>
-                <div className="course-footer">
-                  <span className="course-price">$499</span>
-                </div>
-              </div>
+                    <div className="course-content">
+                      {/* Rating (Static Fallback if API doesn't have it yet) */}
+                      <div className="course-rating">
+                        <FaStar style={{ color: "#f39c12" }} /> 
+                        {course.rating || "4.8"} ({course.reviews || "50"})
+                      </div>
+
+                      <h3 className="course-title">{course.title}</h3>
+                      
+                      <p className="course-instructor">
+                        Member: {course.teacher ? course.teacher.name : "Top Instructor"}
+                      </p>
+
+                      <div className="course-meta">
+                        <span>
+                          <FaBook /> {course.lessons || "12"} Lessons
+                        </span>
+                        <span>
+                          <FaUserFriends /> {course.studentCount || "100+"} Students
+                        </span>
+                      </div>
+
+                      <div className="course-footer">
+                        {/* Display Price */}
+                        <span className="course-price">
+                           {course.price ? `₹${course.price}` : "Free"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="no-courses">No courses found.</div>
+              )}
             </div>
-
-            {/* Example Course Card 3 */}
-            <div className="course-card">
-              <img
-                src="https://via.placeholder.com/350x200.png?text=Course+Image"
-                alt="International Law"
-                className="course-image"
-              />
-              <div className="course-content">
-                <div className="course-rating">
-                  <FaStar style={{ color: "#f39c12" }} /> 5.0 (144)
-                </div>
-                <h3 className="course-title">International Law</h3>
-                <p className="course-instructor">Member: Brooklyn Simmons</p>
-                <div className="course-meta">
-                  <span>
-                    <FaBook /> 24 Lessons
-                  </span>
-                  <span>
-                    <FaUserFriends /> 1.2k+ Students
-                  </span>
-                </div>
-                <div className="course-footer">
-                  <span className="course-price">$699</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </section>
-
-        {/* You can continue adding other sections here... */}
-        {/* <section className="why-different-section">
-          <h2>Why We're Different From Others</h2>
-          ...
-        </section>
-        
-        <section className="testimonials-section">
-          <h2>What Our Students Say</h2>
-          ...
-        </section>
-        */}
-
       </main>
     </div>
   );
