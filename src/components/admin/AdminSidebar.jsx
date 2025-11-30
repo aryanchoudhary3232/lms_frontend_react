@@ -114,6 +114,46 @@ const AdminSidebar = () => {
                   </NavLink>
                 </li>
               )}
+
+              {/* Profile - Available for all roles */}
+              <li className="admin-nav-item">
+                <NavLink
+                  to={
+                    role === "Admin"
+                      ? "/admin/profile"
+                      : role === "Teacher"
+                      ? "/teacher/sidebar/profile"
+                      : "/student/sidebar/profile"
+                  }
+                  className={({ isActive }) =>
+                    `admin-nav-link ${isActive ? "active" : ""}`
+                  }
+                  onClick={closeSidebar}
+                >
+                  <span className="admin-nav-icon">👤</span>
+                  Profile
+                </NavLink>
+              </li>
+
+              {/* Settings - Available for all roles */}
+              <li className="admin-nav-item">
+                <NavLink
+                  to={
+                    role === "Admin"
+                      ? "/admin/settings"
+                      : role === "Teacher"
+                      ? "/teacher/sidebar/settings"
+                      : "/student/sidebar/settings"
+                  }
+                  className={({ isActive }) =>
+                    `admin-nav-link ${isActive ? "active" : ""}`
+                  }
+                  onClick={closeSidebar}
+                >
+                  <span className="admin-nav-icon">⚙️</span>
+                  Settings
+                </NavLink>
+              </li>
             </ul>
           </nav>
 
