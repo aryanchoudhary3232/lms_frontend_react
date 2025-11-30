@@ -92,7 +92,6 @@ const AdminSidebar = () => {
         </div>
       </div>
       <div style={{ width: "85%" }}>
-        {" "}
         <Outlet />
       </div>
     </div>

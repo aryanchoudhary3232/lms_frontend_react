@@ -64,9 +64,7 @@ function Main() {
     <>
       {!hideShell &&
         !(location.pathname === "/teacher/courses/add") &&
-        !location.pathname.startsWith("/admin") &&
-        !location.pathname.startsWith("/teacher/sidebar") &&
-        !location.pathname.startsWith("/student/sidebar") && <Navbar />}
+        !location.pathname.startsWith("/admin") && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -124,6 +122,7 @@ function Main() {
           }
         >
           <Route path="home" element={<StudentHome />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
