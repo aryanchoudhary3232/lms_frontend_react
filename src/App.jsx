@@ -129,6 +129,7 @@ function Main() {
           }
         >
           <Route path="home" element={<StudentHome />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
