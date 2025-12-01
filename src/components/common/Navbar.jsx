@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../common/layout.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -14,10 +15,17 @@ const Navbar = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     navigate("/login");
+    setIsMenuOpen(false); // Close menu on logout
   };
 
+  // Helper to close menu when a link is clicked
+  const closeMenu = () => setIsMenuOpen(false);
+
+  // Toggle function
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   return (
-    <header className="site-navbar" style={{width: '100%'}}>
+    <header className="site-navbar" style={{ width: '100%' }}>
       <div className="container nav-inner">
         <Link
           to={
@@ -30,23 +38,33 @@ const Navbar = () => {
               : "/student/home"
           }
           className="brand"
+          onClick={closeMenu}
         >
           SeekhoBharat
         </Link>
 
-        <nav className="nav-links">
+        {/* Hamburger Icon (Visible on Mobile) */}
+        <div className="hamburger" onClick={toggleMenu}>
+          <span className={isMenuOpen ? "bar active" : "bar"}></span>
+          <span className={isMenuOpen ? "bar active" : "bar"}></span>
+          <span className={isMenuOpen ? "bar active" : "bar"}></span>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className={`nav-links ${isMenuOpen ? "active" : ""}`}>
           {role === "Teacher" && (
-            <Link to={"/teacher/sidebar/dashboard"} className="nav-item">
+            <Link to={"/teacher/sidebar/dashboard"} className="nav-item" onClick={closeMenu}>
               Dashboard
             </Link>
           )}
           {role === "Student" && (
-            <Link to={"/student/sidebar/dashboard"} className="nav-item">
+            <Link to={"/student/sidebar/dashboard"} className="nav-item" onClick={closeMenu}>
               Dashboard
             </Link>
           )}
 
-          <Link to={
+          <Link
+            to={
               !token
                 ? "/courses"
                 : role === "Admin"
@@ -56,24 +74,25 @@ const Navbar = () => {
                 : "/teacher/courses"
             }
             className="nav-item"
+            onClick={closeMenu}
           >
             Courses
           </Link>
 
           {/* Assignments Link for Teacher and Student */}
           {role === "Teacher" && (
-            <Link to="/teacher/assignments" className="nav-item">
+            <Link to="/teacher/assignments" className="nav-item" onClick={closeMenu}>
               Assignments
             </Link>
           )}
           {role === "Student" && (
-            <Link to="/student/assignments" className="nav-item">
+            <Link to="/student/assignments" className="nav-item" onClick={closeMenu}>
               Assignments
             </Link>
           )}
 
           {token && role === "Student" && (
-            <Link to="/cart" className="nav-item">
+            <Link to="/cart" className="nav-item" onClick={closeMenu}>
               Cart
             </Link>
           )}
@@ -82,7 +101,7 @@ const Navbar = () => {
             // when logged in show Sign Out and role if available
             <>
               {role && (
-                <span className="nav-item" style={{ opacity: 0.9 }}>
+                <span className="nav-item role-badge">
                   {role}
                 </span>
               )}
@@ -91,7 +110,7 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <Link to="/login" className="nav-item action">
+            <Link to="/login" className="nav-item action" onClick={closeMenu}>
               Login / Register
             </Link>
           )}
