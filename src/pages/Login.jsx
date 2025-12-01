@@ -103,132 +103,139 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-page">
-      <div className="loginform">
-        <div className={`container ${isSignup ? "active" : ""}`} id="container">
-          <div className="form-container sign-up">
-            <form onSubmit={handleSubmitSignUp} id="signup_form">
-              <h1 style={{ color: "black" }}>Create Account</h1>
-              <div className="social-icons">
-                <a href="#" className="icons">
-                  <i className="bx bxl-google"></i>
-                </a>
-                <a href="#" className="icons">
-                  <i className="bx bxl-facebook"></i>
-                </a>
-                <a href="#" className="icons">
-                  <i className="bx bxl-github"></i>
-                </a>
-                <a href="#" className="icons">
-                  <i className="bx bxl-linkedin"></i>
-                </a>
-              </div>
-              <input
-                onChange={handleOnChange}
-                name="name"
-                value={formData.name}
-                type="text"
-                placeholder="Name"
-                required
-              />
-              <input
-                onChange={handleOnChange}
-                name="email"
-                value={formData.email}
-                type="email"
-                placeholder="Enter E-mail"
-                required
-              />
-              <input
-                onChange={handleOnChange}
-                name="password"
-                value={formData.password}
-                type="password"
-                placeholder="Enter Password"
-                required
-              />
-              <select
-                onChange={handleOnChange}
-                name="role"
-                value={formData.role}
-                required
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-content">
+          
+          {/* Left Panel - Info Panel */}
+          <div className="info-panel">
+            <div className="info-content">
+              <h1 className="brand-title">
+                {isSignup ? "Welcome To SeekoBharat" : "Hi Scholars!"}
+              </h1>
+              <p className="brand-subtitle">
+                {isSignup 
+                  ? "Sign in With ID & Password" 
+                  : "Join SeekoBharat to Improve Your Knowledge"
+                }
+              </p>
+              <button 
+                className="switch-btn"
+                onClick={() => setIsSignup(!isSignup)}
               >
-                <option value="">...Choose role...</option>
-                <option value="Student">Student</option>
-                <option value="Teacher">Teacher</option>
-                <option value="Admin">Admin</option>
-              </select>
-
-              <button type="submit">Sign Up</button>
-            </form>
-          </div>
-
-          <div className="form-container sign-in">
-            <form onSubmit={handleSubmitLogin} id="login_form">
-              <h1 style={{ color: "black" }}>Sign In</h1>
-              <div className="social-icons">
-                <a href="#" className="icons">
-                  <i className="bx bxl-google"></i>
-                </a>
-                <a href="#" className="icons">
-                  <i className="bx bxl-facebook"></i>
-                </a>
-                <a href="#" className="icons">
-                  <i className="bx bxl-github"></i>
-                </a>
-                <a href="#" className="icons">
-                  <i className="bx bxl-linkedin"></i>
-                </a>
-              </div>
-              <input
-                onChange={handleOnChange}
-                name="email"
-                value={formData.email}
-                type="email"
-                id="login_email"
-                placeholder="Enter E-mail"
-                required
-              />
-              <input
-                onChange={handleOnChange}
-                name="password"
-                value={formData.password}
-                type="password"
-                id="login_password"
-                placeholder="Enter Password"
-              />
-              <a href="#" title="We got you covered">
-                Forget Password?
-              </a>
-              <button type="submit">Sign In</button>
-            </form>
-          </div>
-
-          <div className="toggle-container">
-            <div className="toggle">
-              <div
-                className={`toggle-panel toggle-left ${
-                  isSignup ? "active" : ""
-                }`}
-              >
-                <h1>
-                  Welcome To <br />
-                  SeekoBharat
-                </h1>
-                <p>Sign in With ID & Password</p>
-                <button onClick={() => setIsSignup(false)} id="login">
-                  Sign In
-                </button>
-              </div>
-              <div className="toggle-panel toggle-right">
-                <h1>Hii Scholars!</h1>
-                <p>Join SeekoBharat to Improve Your knowledge</p>
-                <button onClick={() => setIsSignup(true)} id="register">
-                  Sign Up
-                </button>
-              </div>
+                {isSignup ? "Sign In" : "Sign Up"}
+              </button>
             </div>
           </div>
+
+          {/* Right Panel - Form Panel */}
+          <div className="form-panel">
+            <div className="form-content">
+              
+              {/* Sign In Form */}
+              {!isSignup && (
+                <form onSubmit={handleSubmitLogin} className="auth-form">
+                  <h2 className="form-title">Sign In</h2>
+                  
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleOnChange}
+                      placeholder="Enter E-mail"
+                      required
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleOnChange}
+                      placeholder="Enter Password"
+                      required
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="forgot-password">
+                    <a href="#" className="forgot-link">Forgot Password?</a>
+                  </div>
+
+                  <button type="submit" className="submit-btn">
+                    Sign In
+                  </button>
+                </form>
+              )}
+
+              {/* Sign Up Form */}
+              {isSignup && (
+                <form onSubmit={handleSubmitSignUp} className="auth-form">
+                  <h2 className="form-title">Create Account</h2>
+                  
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleOnChange}
+                      placeholder="Name"
+                      required
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleOnChange}
+                      placeholder="Enter E-mail"
+                      required
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleOnChange}
+                      placeholder="Enter Password"
+                      required
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleOnChange}
+                      required
+                      className="form-select"
+                    >
+                      <option value="">...Choose role...</option>
+                      <option value="Student">Student</option>
+                      <option value="Teacher">Teacher</option>
+                      <option value="Admin">Admin</option>
+                    </select>
+                  </div>
+
+                  <button type="submit" className="submit-btn">
+                    Sign Up
+                  </button>
+                </form>
+              )}
+
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
