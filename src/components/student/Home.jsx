@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Use Link for internal navigation
-import "../css/Home.css"; // Ensure this path matches your folder structure
+import "../../css/Home.css"; // Ensure this path matches your folder structure
 // If your file is in 'student/home.jsx', use "../../css/Home.css"
 
 import {
