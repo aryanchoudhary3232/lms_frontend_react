@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import "../css/teacher/Courses.css";
 import CourseCard from "./CourseCard";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCourses } from "../features/courses/coursesSlice";
 
 const getToken = () => localStorage.getItem("token") || "";
 
@@ -15,14 +17,29 @@ const Courses = () => {
   const [loading, setLoading] = useState(false);
   const [ownedCourseIds, setOwnedCourseIds] = useState(() => {
     try {
-      const persisted = JSON.parse(localStorage.getItem("enrolledCourseIds") || "[]");
+      const persisted = JSON.parse(
+        localStorage.getItem("enrolledCourseIds") || "[]"
+      );
       return new Set(persisted);
     } catch (error) {
-      console.error('Failed to parse enrolledCourseIds from localStorage:', error);
+      console.error(
+        "Failed to parse enrolledCourseIds from localStorage:",
+        error
+      );
       return new Set();
     }
   });
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCourses());
+  }, [dispatch]);
+
+  const coursesList = useSelector((state) => state.courses.list);
+  
 
   const handleSearch = async (e) => {
     const { name, value } = e.target;
@@ -36,7 +53,9 @@ const Courses = () => {
       setLoading(true);
       const queryString = new URLSearchParams(nextParams).toString();
 
-      const response = await fetch(`${backendUrl}/courses/search?${queryString}`);
+      const response = await fetch(
+        `${backendUrl}/courses/search?${queryString}`
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -51,20 +70,7 @@ const Courses = () => {
     }
   };
 
-  const getAllCourses = useCallback(async () => {
-    try {
-      const response = await fetch(`${backendUrl}/courses`);
-      const coursesResponse = await response.json();
-
-      if (coursesResponse.success) {
-        setCourses(coursesResponse.data);
-      } else {
-        console.error("Error fetching courses:", coursesResponse.message);
-      }
-    } catch (error) {
-      console.log("error occurred", error);
-    }
-  }, [backendUrl]);
+ 
 
   const loadOwnedCourses = useCallback(async () => {
     try {
@@ -86,9 +92,7 @@ const Courses = () => {
     }
   }, [backendUrl]);
 
-  useEffect(() => {
-    getAllCourses();
-  }, [getAllCourses]);
+
 
   useEffect(() => {
     loadOwnedCourses();
@@ -142,7 +146,11 @@ const Courses = () => {
           />
         </div>
         <div className="filter-dropdown">
-          <select name="category" value={searchParams.category} onChange={handleSearch}>
+          <select
+            name="category"
+            value={searchParams.category}
+            onChange={handleSearch}
+          >
             <option value="">All Category</option>
             <option value="Programming">Programming</option>
             <option value="Design">Design</option>
@@ -152,7 +160,11 @@ const Courses = () => {
           <FaChevronDown className="filter-icon-small" />
         </div>
         <div className="filter-dropdown">
-          <select name="level" value={searchParams.level} onChange={handleSearch}>
+          <select
+            name="level"
+            value={searchParams.level}
+            onChange={handleSearch}
+          >
             <option value="">All Levels</option>
             <option value="Beginner">Beginner</option>
             <option value="Intermediate">Intermediate</option>
@@ -165,10 +177,10 @@ const Courses = () => {
       <div className="courses-grid">
         {loading ? (
           <p className="no-courses">Searching...</p>
-        ) : courses.length === 0 ? (
+        ) : coursesList.length === 0 ? (
           <p className="no-courses">No courses available.</p>
         ) : (
-          courses.map((course) => (
+          coursesList.map((course) => (
             <CourseCard
               key={course._id}
               course={course}

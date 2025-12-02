@@ -26,27 +26,21 @@ function Home() {
         <div className="courses-grid">
           <div className="course-card">
             <img
-              src="https://via.placeholder.com/250.png?text=Course+1"
               alt="Course 1"
-              onError={(e) => (e.target.src = "https://via.placeholder.com/250.png?text=No+Image")}
             />
             <h3>Web Development</h3>
             <p>Learn HTML, CSS, JavaScript and React.</p>
           </div>
           <div className="course-card">
             <img
-              src="https://via.placeholder.com/250.png?text=Course+2"
               alt="Course 2"
-              onError={(e) => (e.target.src = "https://via.placeholder.com/250.png?text=No+Image")}
             />
             <h3>Data Science</h3>
             <p>Learn Python, Pandas, ML and AI basics.</p>
           </div>
           <div className="course-card">
             <img
-              src="https://via.placeholder.com/250.png?text=Course+3"
               alt="Course 3"
-              onError={(e) => (e.target.src = "https://via.placeholder.com/250.png?text=No+Image")}
             />
             <h3>Mobile Development</h3>
             <p>Learn Flutter & React Native for apps.</p>
