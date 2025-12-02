@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../common/layout.css";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -11,12 +12,7 @@ const Navbar = () => {
   const role =
     typeof window !== "undefined" ? localStorage.getItem("role") : null;
 
-  const handleSignOut = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    navigate("/login");
-    setIsMenuOpen(false); // Close menu on logout
-  };
+  const {logout} = useAuth()
 
   // Helper to close menu when a link is clicked
   const closeMenu = () => setIsMenuOpen(false);
@@ -105,7 +101,7 @@ const Navbar = () => {
                   {role}
                 </span>
               )}
-              <button className="nav-item action" onClick={handleSignOut}>
+              <button className="nav-item action" onClick={() => logout(setIsMenuOpen)}>
                 Sign Out
               </button>
             </>

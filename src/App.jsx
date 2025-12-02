@@ -49,11 +49,7 @@ import TeacherDashboard from "./components/teacher/TeacherDashboard";
 import StudentsEnrolled from "./components/teacher/StudentsEnrolled";
 
 function App() {
-  return (
-    <BrowserRouter basename="/">
-      <Main />
-    </BrowserRouter>
-  );
+  return <Main />;
 }
 
 function Main() {

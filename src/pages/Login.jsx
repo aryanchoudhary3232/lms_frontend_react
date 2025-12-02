@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../css/Login.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -11,6 +12,8 @@ const Login = () => {
     password: "",
     role: "",
   });
+
+  const { login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -58,48 +61,7 @@ const Login = () => {
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
-
-    try {
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-      const response = await fetch(`${backendUrl}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      console.log("Login response:", data);
-
-      if (response.ok && data.success) {
-        // Store token and role
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.data.role);
-
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          role: "",
-        });
-
-        // Navigate based on role
-        if (data.data.role === "Teacher") {
-          navigate("/teacher/home");
-        } else if (data.data.role === "Admin") {
-          navigate("/admin/dashboard");
-        } else if (data.data.role === "Student") {
-          navigate("/student/home");
-        } else {
-          navigate("/");
-        }
-      } else {
-        alert("Login Error: " + (data.message || "Invalid credentials"));
-      }
-    } catch (error) {
-      console.log("Login error:", error);
-      alert("Network error during login. Please try again.");
-    }
+    await login(formData, setFormData);
   };
 
   return (
