@@ -43,6 +43,9 @@ import AdminCourses from "./components/admin/AdminCourses";
 import AdminCourseDetail from "./components/admin/AdminCourseDetail";
 import AdminTeacherDetail from "./components/admin/AdminTeacherDetail";
 import AdminSidebar from "./components/admin/AdminSidebar";
+//common components (shared across all roles)
+import Profile from "./components/common/Profile";
+import Settings from "./components/common/Settings";
 import useLearningTimer from "./helper/customHooks/useLearningTimer";
 import TeacherCourses from "./components/teacher/TeacherCourses";
 import TeacherDashboard from "./components/teacher/TeacherDashboard";
@@ -108,6 +111,8 @@ function Main() {
           <Route path="dashboard" element={<TeacherDashboard />} />
           <Route path="users" element={<StudentsEnrolled />} />
           <Route path="courses" element={<TeacherCourses />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* Student routes  */}
@@ -120,6 +125,7 @@ function Main() {
           }
         >
           <Route path="home" element={<StudentHome />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<StudentCourseDetail />} />
           <Route
@@ -142,6 +148,8 @@ function Main() {
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="courses" element={<StudentCourses />} />
           <Route path="streak" element={<Streak />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* Admin routes  - protect admin pages */}
@@ -158,6 +166,8 @@ function Main() {
           <Route path="teachers/:teacherId" element={<AdminTeacherDetail />} />
           <Route path="courses" element={<AdminCourses />} />
           <Route path="courses/:courseId" element={<AdminCourseDetail />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* Catch-all 404 */}

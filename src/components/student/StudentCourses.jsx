@@ -7,6 +7,10 @@ const StudentCourses = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const viewCourseDetails = (courseId) => {
+    navigate(`/student/courses/${courseId}`);
+  };
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -45,20 +49,13 @@ const StudentCourses = () => {
   }
 
   return (
-    <div
-      style={{ width: "100%", padding: "39px", boxSizing: "border-box" }}
-      className="admin-courses"
-    >
+    <div className="admin-courses">
       <h2>All Courses ({courses.length})</h2>
 
       {courses.length > 0 ? (
         <div className="admin-courses-grid">
           {courses.map((course) => (
-            <div
-              key={course._id}
-              className="admin-course-card"
-              style={{ position: "relative", height: "27rem" }}
-            >
+            <div key={course._id} className="admin-course-card">
               {/* Course Image */}
               <div className="admin-course-image-container">
                 {course.image ? (
@@ -92,20 +89,11 @@ const StudentCourses = () => {
               {/* Course Info */}
               <div className="admin-course-info">
                 <h3 className="admin-course-title">{course.title}</h3>
-                <p
-                  className="admin-course-description"
-                  style={{
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                  }}
-                >
+                <p className="admin-course-description">
                   {course.description || "No description available"}
                 </p>
 
-                <div
-                  className="admin-course-details"
-                  // style={{ position: "absolute", left: "0px", bottom: "0px" }}
-                >
+                <div className="admin-course-details">
                   <div className="admin-course-detail-item">
                     <span className="detail-label">Teacher:</span>
                     <span className="detail-value">
@@ -137,22 +125,12 @@ const StudentCourses = () => {
                   </div>
                 </div>
 
-                <div
-                  className="admin-course-actions"
-                  style={{
-                    position: "absolute",
-                    bottom: "0px",
-                    left: "0px",
-                    width: "100%",
-                    margin: "0 0 0 0",
-                  }}
-                >
+                <div className="admin-course-actions">
                   <Link
                     to={`/student/courses/${course._id}`}
-                    style={{ textAlign: "center", textDecoration: "none" }}
                     className="admin-view-details-btn"
                   >
-                    View
+                    View Details
                   </Link>
                 </div>
               </div>
@@ -163,7 +141,7 @@ const StudentCourses = () => {
         <div className="admin-empty">
           <span className="empty-icon">📚</span>
           <h3>No courses found</h3>
-          <p>There are currently no courses in the system.</p>
+          <p>You haven't enrolled in any courses yet.</p>
         </div>
       )}
     </div>
