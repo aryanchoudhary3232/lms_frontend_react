@@ -121,7 +121,7 @@ const CourseDetail = () => {
     <div className="course-detail-container">
       <div className="main-content">
         <div className="breadcrumbs">
-          <Link to="/dashboard">Dashboard</Link> &gt;{" "}
+          <Link to="/">Dashboard</Link> &gt;{" "}
           <Link to="/courses">Courses</Link> &gt;{" "}
           <span>{course.title}</span>
         </div>
