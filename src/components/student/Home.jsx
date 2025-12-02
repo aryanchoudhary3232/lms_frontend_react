@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Use Link for internal navigation
-import "../../css/Home.css"; // Ensure this path matches your folder structure
+import "../css/Home.css"; // Ensure this path matches your folder structure
 // If your file is in 'student/home.jsx', use "../../css/Home.css"
 
 import {
@@ -21,12 +21,27 @@ function Home() {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/student/courses`);
-      const data = await response.json();
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      
+      // Try to fetch from /courses endpoint first, fallback to /student/courses
+      let response = await fetch(`${backendUrl}/courses`);
+      let data;
+      
+      // If /courses endpoint fails, try /student/courses
+      if (!response.ok) {
+        response = await fetch(`${backendUrl}/student/courses`);
+      }
+      
+      data = await response.json();
 
       if (data.success) {
-        // Get first 3 courses for home page preview
-        setCourses(data.data.slice(0, 3));
+        // Sort courses by rating (highest first) and get top 3
+        const sortedCourses = data.data.sort((a, b) => {
+          const aRating = a.rating?.average || 0;
+          const bRating = b.rating?.average || 0;
+          return bRating - aRating;
+        });
+        setCourses(sortedCourses.slice(0, 3));
       } else {
         console.error("Failed to fetch courses:", data.message);
       }
@@ -135,7 +150,7 @@ function Home() {
                       {/* Rating (Static Fallback if API doesn't have it yet) */}
                       <div className="course-rating">
                         <FaStar style={{ color: "#f39c12" }} /> 
-                        {course.rating || "4.8"} ({course.reviews || "50"})
+                        {course.rating?.average || "0"} ({course.rating?.count || "0"} reviews)
                       </div>
 
                       <h3 className="course-title">{course.title}</h3>
