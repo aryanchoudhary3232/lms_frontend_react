@@ -24,6 +24,8 @@ import SubmitAssignment from "./components/student/assignments/SubmitAssignment"
 import ViewSubmission from "./components/student/assignments/ViewSubmission";
 import Streak from "./components/student/Streak";
 import StudentCourses from "./components/student/StudentCourses";
+import StudentFlashcards from "./components/student/StudentFlashcards";
+import StudentStudyDeck from "./components/student/StudentStudyDeck";
 //teacher routes
 import Teacher from "./components/teacher/Teacher";
 import TeacherHome from "./components/teacher/Home";
@@ -147,6 +149,8 @@ function Main() {
         <Route path="/student/sidebar" element={<AdminSidebar />}>
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="courses" element={<StudentCourses />} />
+          <Route path="courses/:courseId/flashcards" element={<StudentFlashcards />} />
+          <Route path="deck/:deckId" element={<StudentStudyDeck />} />
           <Route path="streak" element={<Streak />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />

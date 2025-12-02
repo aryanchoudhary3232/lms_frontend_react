@@ -469,6 +469,13 @@ const CourseDetail = () => {
 
         {activeTab === "materi" && (
           <div className="chapters-list">
+            {/* Flashcards Link */}
+            <div style={{ padding: "16px", borderBottom: "1px solid #f0f0f0" }}>
+                <Link to={`/student/sidebar/courses/${courseId}/flashcards`} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600' }}>
+                    <span>🗂️</span> Flashcards
+                </Link>
+            </div>
+
             {course.chapters && course.chapters.length > 0 ? (
               course.chapters.map((chapter, chIdx) => (
                 <div key={chIdx} style={styles.chapterAccordion}>
