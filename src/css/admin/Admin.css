@@ -10,8 +10,7 @@
 .admin-layout-container {
   display: flex;
   width: 100%;
-  /* Calculate height: 100vh minus the approx height of Navbar (approx 65px) */
-  min-height: calc(100vh - 65px); 
+  min-height: calc(100vh - 65px);
   position: relative;
   background-color: #f9f9f9;
 }
@@ -40,13 +39,16 @@
   color: white;
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 0; 
-  /* Adjust height to fit within the viewport minus navbar */
-  height: calc(100vh - 65px); 
-  z-index: 900; /* Lower than Navbar (which is usually 1000) */
+  position: fixed;
+  top: var(--site-navbar-height, 65px);
+  left: 0;
+  bottom: 0;
+  height: calc(100vh - var(--site-navbar-height, 65px));
+  z-index: 900;
   transition: transform 0.3s ease-in-out;
   flex-shrink: 0;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
 
@@ -70,10 +72,12 @@
 
 /* Main Content Styles */
 .admin-main-content {
-  flex: 1; /* Takes remaining space */
+  flex: 1;
   padding: 20px;
-  overflow-x: hidden; /* Prevents horizontal scroll */
+  overflow-x: hidden;
   width: 100%;
+  margin-left: 250px;
+  min-height: calc(100vh - 65px);
 }
 
 /* Header inside Sidebar */
@@ -234,6 +238,7 @@
   .admin-main-content {
     width: 100%;
     padding: 60px 20px 20px; /* Top padding for hamburger button space */
+    margin-left: 0;
   }
 
   /* Adjust cards inside outlet for mobile */

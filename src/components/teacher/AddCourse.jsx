@@ -122,9 +122,15 @@ const AddCourse = () => {
     });
   };
 
-  const handleQuizCorrectOption = (e, chapterIdx, topicIdx, quizIdx, val) => {
+  const handleQuizCorrectOption = (
+    chapterIdx,
+    topicIdx,
+    quizIdx,
+    quizOptionIdx
+  ) => {
     const newChapters = [...formData.chapters];
-    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption = val;
+    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption =
+      quizOptionIdx;
 
     setFormData({
       ...formData,
@@ -195,511 +201,289 @@ const AddCourse = () => {
   };
 
   return (
-    <div
-      className="form-container"
-      style={{
-        width: "50vw",
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginTop: "2px",
-        boxShadow: "0 0 12px rgba(0,0,0,0.2)",
-        borderRadius: "12px",
-      }}
-    >
-      <h2
-        style={{
-          textAlign: "center",
-          color: "white",
-          background: "#2337ad",
-          height: "3rem",
-          paddingTop: "16px",
-          marginTop: "0",
-          borderRadius: "12px",
-          marginLeft: "47px",
-          marginRight: "50px",
-        }}
-      >
-        {" "}
-        Add New Course
-      </h2>
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          paddingLeft: "12px",
-          paddingRight: "12px",
-        }}
-      >
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-        >
-          Title
-        </label>
-        <input
-          type="text"
-          name="title"
-          placeholder="Course Title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-          htmlFor=""
-        >
-          Description
-        </label>
-        <textarea
-          name="description"
-          placeholder="Course Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-          htmlFor=""
-        >
-          Category
-        </label>
-        <input
-          type="text"
-          name="category"
-          placeholder="Category"
-          value={formData.category}
-          onChange={handleChange}
-          required
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-          htmlFor=""
-        >
-          Level
-        </label>
-        <select
-          name="level"
-          value={formData.level}
-          onChange={handleChange}
-          style={{
-            height: "41px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        >
-          <option value="Beginner">Beginner</option>
-          <option value="Intermediate">Intermediate</option>
-          <option value="Advance">Advance</option>
-        </select>
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-          htmlFor=""
-        >
-          Duration
-        </label>
-        <input
-          type="number"
-          name="duration"
-          placeholder="Duration (in hours)"
-          value={formData.duration}
-          onChange={handleChange}
-          required
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-          htmlFor=""
-        >
-          Price
-        </label>
-        <input
-          type="number"
-          name="price"
-          placeholder="Price (₹)"
-          value={formData.price}
-          onChange={handleChange}
-          required
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-          htmlFor=""
-        >
-          Notes (PDF)
-        </label>
-        <input
-          type="file"
-          name="notes"
-          accept="application/pdf"
-          onChange={handleChange}
-          style={{
-            margin: "0 42px 12px 42px",
-          }}
-        />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-        >
-          Preview Image
-        </label>
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={handleChange}
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
-        <label
-          style={{
-            marginLeft: "42px",
-            marginBottom: "9px",
-          }}
-        >
-          Preview Video
-        </label>
-        <input
-          type="file"
-          name="video"
-          accept="video/*"
-          onChange={handleChange}
-          style={{
-            height: "26px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        />
+    <div className="form-container">
+      <h2 className="form-heading">Add New Course</h2>
+      <form className="course-form" onSubmit={handleSubmit}>
+        <div className="form-field">
+          <label>Title</label>
+          <input
+            type="text"
+            name="title"
+            placeholder="Course Title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <button
-          type="button"
-          onClick={handleAddChapter}
-          style={{
-            height: "41px",
-            margin: "0 42px 12px 42px",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        >
-          Add Chapter
-        </button>
-        {formData.chapters.map((chapter, chapterIdx) => (
-          <div
-            key={chapterIdx}
-            style={{
-              margin: "0 42px 0px 42px",
-              padding: "5px",
-              borderRadius: "5px",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <label
-              htmlFor=""
-              style={{
-                marginBottom: "10px",
-              }}
+        <div className="form-field">
+          <label>Description</label>
+          <textarea
+            name="description"
+            placeholder="Course Description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-field">
+          <label>Category</label>
+          <input
+            type="text"
+            name="category"
+            placeholder="Category"
+            value={formData.category}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="fields-grid">
+          <div className="form-field">
+            <label>Level</label>
+            <select
+              name="level"
+              value={formData.level}
+              onChange={handleChange}
             >
-              Chapter Title
-            </label>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advance">Advance</option>
+            </select>
+          </div>
+          <div className="form-field">
+            <label>Duration (hours)</label>
             <input
-              onChange={(e) => handleChapterChange(chapterIdx, e.target.value)}
-              value={chapter.title}
-              style={{
-                height: "26px",
-                margin: "0 0 12px 0",
-                padding: "11px 3px",
-                borderRadius: "5px"
-              }}
-              type="text"
-              placeholder="Chapter title"
+              type="number"
+              name="duration"
+              placeholder="Duration"
+              value={formData.duration}
+              onChange={handleChange}
+              required
             />
-            {chapter.topics.map((topic, topicIdx) => (
-              <div
-                key={topicIdx}
-                style={{
-                  marginBottom: "10px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
+          </div>
+        </div>
+
+        <div className="form-field">
+          <label>Price (₹)</label>
+          <input
+            type="number"
+            name="price"
+            placeholder="Price"
+            value={formData.price}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-field">
+          <label>Notes (PDF)</label>
+          <input
+            type="file"
+            name="notes"
+            accept="application/pdf"
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="fields-grid">
+          <div className="form-field">
+            <label>Preview Image</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-field">
+            <label>Preview Video</label>
+            <input
+              type="file"
+              name="video"
+              accept="video/*"
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className="form-actions">
+          <button type="button" className="ghost-btn" onClick={handleAddChapter}>
+            + Add Chapter
+          </button>
+        </div>
+
+        {formData.chapters.map((chapter, chapterIdx) => (
+          <section className="chapter-card" key={chapterIdx}>
+            <div className="chapter-card-header">
+              <div>
+                <h3>Chapter {chapterIdx + 1}</h3>
+                <p className="form-note">Give this chapter a clear, short title.</p>
+              </div>
+              <button
+                type="button"
+                className="ghost-btn ghost-btn--small"
+                onClick={() => handleAddTopic(chapterIdx)}
               >
-                <label
-                  htmlFor=""
-                  style={{
-                    marginBottom: "10px",
-                  }}
-                >
-                  Topic Title
-                </label>
-                <input
-                  onChange={(e) =>
-                    handleTopicChange(chapterIdx, topicIdx, "title", e)
-                  }
-                  value={topic.title}
-                  style={{
-                    height: "26px",
-                    margin: "0 0 12px 0",
-                    padding: "9px 3px",
-                    borderRadius: "5px"
-                  }}
-                  type="text"
-                  placeholder="Enter title"
-                />
-                <label
-                  htmlFor=""
-                  style={{
-                    marginBottom: "3px",
-                  }}
-                >
-                  Topic Video
-                </label>
-                <input
-                  onChange={(e) =>
-                    handleTopicChange(chapterIdx, topicIdx, "video", e)
-                  }
-                  accept="video/*"
-                  style={{
-                    height: "26px",
-                    margin: "0 0 -4px 0",
-                    padding: "11px 3px",
-                    borderRadius: "5px"
-                  }}
-                  type="file"
-                />
-                <label
-                  htmlFor=""
-                  style={{
-                    marginBottom: "12px",
-                  }}
-                >
-                  Quiz
-                </label>
-                {topic.quiz.map((q, quizIdx) => (
-                  <div
-                    key={quizIdx}
-                    style={{ display: "flex", flexDirection: "column" }}
-                  >
-                    <label
-                      style={{
-                        marginBottom: "11px",
-                      }}
-                      htmlFor=""
-                    >
-                      Question Text
-                    </label>
-                    <input
-                      onChange={(e) => {
-                        const newChapters = [...formData.chapters];
-                        newChapters[chapterIdx].topics[topicIdx].quiz[
-                          quizIdx
-                        ].question = e.target.value;
+                + Add Topic
+              </button>
+            </div>
 
-                        setFormData({
-                          ...formData,
-                          chapters: newChapters,
-                        });
-                      }}
-                      value={q.question}
-                      style={{
-                        height: "26px",
-                        margin: "0 0 14px 0",
-                        padding: "9px 3px",
-                        borderRadius: "5px"
-                      }}
-                      type="text"
-                      name=""
-                      id=""
-                      placeholder="Enter question"
-                    />
-                    {q.options.map((option, quizOptionIdx) => (
-                      <label
-                        key={quizOptionIdx}
-                        htmlFor=""
-                        style={{ marginBottom: "5px" }}
-                      >
-                        <input
-                          onChange={(e) =>
-                            handleQuizCorrectOption(
-                              e,
-                              chapterIdx,
-                              topicIdx,
-                              quizIdx,
-                              option
-                            )
-                          }
-                          type="radio"
-                          name=""
-                          id=""
-                        />
-                        <input
-                          onChange={(e) =>
-                            handleQuizOptionChange(
-                              e,
-                              chapterIdx,
-                              topicIdx,
-                              quizIdx,
-                              quizOptionIdx
-                            )
-                          }
-                          value={option}
-                          style={{
-                            height: "26px",
-                            margin: "0 0 14px 5px",
-                            padding: "6px 3px",
-                            borderRadius: "5px"
-                          }}
-                          type="text"
-                          placeholder={`Enter option ${quizOptionIdx + 1}`}
-                        />
-                      </label>
-                    ))}
+            <div className="form-field">
+              <label>Chapter Title</label>
+              <input
+                type="text"
+                placeholder="Chapter title"
+                value={chapter.title}
+                onChange={(e) => handleChapterChange(chapterIdx, e.target.value)}
+              />
+            </div>
 
-                    <label
-                      style={{
-                        marginBottom: "11px",
-                      }}
-                      htmlFor=""
-                    >
-                      Explaination
-                    </label>
-                    <input
-                      onChange={(e) => {
-                        const newChapters = [...formData.chapters];
-                        newChapters[chapterIdx].topics[topicIdx].quiz[
-                          quizIdx
-                        ].explaination = e.target.value;
-
-                        setFormData({
-                          ...formData,
-                          chapters: newChapters,
-                        });
-                      }}
-                      style={{
-                        height: "26px",
-                        margin: "0 0 9px 0",
-                        padding: "9px 3px",
-                        borderRadius: "5px"
-                      }}
-                      type="text"
-                      name=""
-                      id=""
-                      placeholder="Enter Explaination"
-                    />
+            {chapter.topics.map((topic, topicIdx) => (
+              <div className="topic-card" key={topicIdx}>
+                <div className="chapter-card-header">
+                  <div>
+                    <h4>Topic {topicIdx + 1}</h4>
+                    <p className="form-note">Explain what to cover & link resources.</p>
                   </div>
-                ))}
-                <button
-                  onClick={() => handleAddQuestion(chapterIdx, topicIdx)}
-                  type="button"
-                  style={{
-                    padding: "12px 5px",
-                    borderRadius: "5px",
-                    marginBottom: "12px",
-                    width: "122px",
-                  }}
-                >
-                  Add Question
-                </button>
+                  <button
+                    type="button"
+                    className="ghost-btn ghost-btn--small"
+                    onClick={() => handleAddQuestion(chapterIdx, topicIdx)}
+                  >
+                    + Add Question
+                  </button>
+                </div>
+
+                <div className="form-field">
+                  <label>Topic Title</label>
+                  <input
+                    type="text"
+                    placeholder="Enter topic title"
+                    value={topic.title}
+                    onChange={(e) =>
+                      handleTopicChange(chapterIdx, topicIdx, "title", e)
+                    }
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Topic Video</label>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) =>
+                      handleTopicChange(chapterIdx, topicIdx, "video", e)
+                    }
+                  />
+                </div>
+
+                <div className="topic-quiz">
+                  <p className="form-note">Add quiz questions for this topic.</p>
+                  {topic.quiz.map((q, quizIdx) => (
+                    <div className="quiz-card" key={quizIdx}>
+                      <div className="form-field">
+                        <label>Question Text</label>
+                        <input
+                          type="text"
+                          placeholder="Enter question"
+                          value={q.question}
+                          onChange={(e) => {
+                            const newChapters = [...formData.chapters];
+                            newChapters[chapterIdx].topics[topicIdx].quiz[
+                              quizIdx
+                            ].question = e.target.value;
+
+                            setFormData({
+                              ...formData,
+                              chapters: newChapters,
+                            });
+                          }}
+                        />
+                      </div>
+
+                      <div className="quiz-options">
+                        {q.options.map((option, quizOptionIdx) => (
+                          <div className="quiz-option" key={quizOptionIdx}>
+                            <label className="radio-label">
+                              <input
+                                type="radio"
+                                name={`correct-${chapterIdx}-${topicIdx}-${quizIdx}`}
+                                checked={
+                                  q.correctOption === quizOptionIdx
+                                }
+                                onChange={() =>
+                                  handleQuizCorrectOption(
+                                    chapterIdx,
+                                    topicIdx,
+                                    quizIdx,
+                                    quizOptionIdx
+                                  )
+                                }
+                              />
+                              Correct
+                            </label>
+                            <input
+                              type="text"
+                              placeholder={`Enter option ${quizOptionIdx + 1}`}
+                              value={option}
+                              onChange={(e) =>
+                                handleQuizOptionChange(
+                                  e,
+                                  chapterIdx,
+                                  topicIdx,
+                                  quizIdx,
+                                  quizOptionIdx
+                                )
+                              }
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="form-field">
+                        <label>Explanation</label>
+                        <input
+                          type="text"
+                          placeholder="Enter explanation"
+                          value={q.explaination}
+                          onChange={(e) => {
+                            const newChapters = [...formData.chapters];
+                            newChapters[chapterIdx].topics[topicIdx].quiz[
+                              quizIdx
+                            ].explaination = e.target.value;
+
+                            setFormData({
+                              ...formData,
+                              chapters: newChapters,
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
-            <button
-              onClick={() => handleAddTopic(chapterIdx)}
-              type="button"
-              style={{
-                padding: "12px 5px",
-                borderRadius: "5px",
-                marginBottom: "12px",
-              }}
-            >
-              Add Topic
-            </button>
-          </div>
+          </section>
         ))}
-        <div style={{
-            display: "flex",
-            alignItems: "center",
-            margin: "0 42px 12px 42px",
-            gap: "8px"
-        }}>
+
+        <label className="form-checkbox">
           <input
             type="checkbox"
             id="createFlashcards"
             checked={createFlashcards}
             onChange={(e) => setCreateFlashcards(e.target.checked)}
           />
-          <label htmlFor="createFlashcards" style={{ fontSize: "0.9rem" }}>
-            After creating the course, go to Flashcards to create a deck
-          </label>
-        </div>
-        <button
-          type="submit"
-          style={{
-            height: "41px",
+          After creating the course, go to Flashcards to create a deck
+        </label>
 
-            padding: "5px 6px",
-            background: "#2337ad",
-            color: "white",
-            borderRadius: "5px",
-            margin: "10px 43px",
-          }}
-        >
-          Add Course
-        </button>
+        <div className="form-actions">
+          <button type="submit" className="btn-primary">
+            Add Course
+          </button>
+        </div>
       </form>
     </div>
   );
