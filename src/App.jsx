@@ -31,6 +31,7 @@ import Teacher from "./components/teacher/Teacher";
 import TeacherHome from "./components/teacher/Home";
 import TeacherCourseDetail from "./components/teacher/CourseDetail";
 import TeacherAddCourse from "./components/teacher/AddCourse";
+import TeacherEditCourse from "./components/teacher/EditCourse";
 import TeacherChapters from "./components/teacher/Chapters";
 import TeacherQualificationUpload from "./components/teacher/TeacherQualificationUpload";
 import TeacherAssignments from "./components/teacher/assignments/TeacherAssignments";
@@ -90,6 +91,7 @@ function Main() {
           <Route path="home" element={<TeacherHome />} />
           <Route path="courses" element={<TeacherAllCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
+          <Route path="courses/:courseId/edit" element={<TeacherEditCourse />} />
           <Route
             path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<StudentQuiz />}
