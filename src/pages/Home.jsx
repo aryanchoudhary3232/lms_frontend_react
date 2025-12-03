@@ -160,7 +160,7 @@ function Home() {
         <section className="courses-section">
           <div className="courses-header">
             <h2>Popular Courses</h2>
-            <Link to="/student/courses" className="view-all-link">
+            <Link to="/courses" className="view-all-link">
               View All &rarr;
             </Link>
           </div>
