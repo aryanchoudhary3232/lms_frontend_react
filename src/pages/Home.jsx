@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Use Link for internal navigation
 import "../css/Home.css"; // Ensure this path matches your folder structure
 // If your file is in 'student/home.jsx', use "../../css/Home.css"
-import heroImage from "../assets/hero-banner.png";
+import heroImage from "../assets/hero-banner.png"
+
 
 import {
   FaStar,
@@ -15,9 +16,17 @@ import {
 function Home() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    students: "--",
+    instructors: "--",
+    videos: "--",
+    materials: "--",
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
     fetchCourses();
+    fetchStats();
   }, []);
 
   const fetchCourses = async () => {
@@ -53,6 +62,40 @@ function Home() {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      setStatsLoading(true);
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+      // try a few likely endpoints for stats
+      let response = await fetch(`${backendUrl}/stats`);
+      if (!response.ok) {
+        response = await fetch(`${backendUrl}/dashboard/stats`);
+      }
+
+      const data = await response.json();
+
+      // Accept a few possible shapes for returned data
+      if (data && (data.success || data.students || data.totalStudents)) {
+        const payload = data.data || data;
+        setStats({
+          students: payload.students || payload.studentCount || payload.totalStudents || "0",
+          instructors:
+            payload.instructors || payload.teacherCount || payload.totalInstructors || "0",
+          videos: payload.videos || payload.videoCount || payload.totalVideos || "0",
+          materials:
+            payload.materials || payload.materialCount || payload.totalMaterials || "0",
+        });
+      } else {
+        console.error("Failed to fetch stats:", data?.message || data);
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
   return (
     <div className="home-container">
       
@@ -76,14 +119,7 @@ function Home() {
             <img
               src={heroImage}
               alt="Students Learning"
-              style={{ display: "block", height: "auto" }}
-              onError={(e) => {
-                // Fallback to an inline SVG data URL if the external image fails to load
-                // clear the onError to avoid infinite loop
-                e.target.onerror = null;
-                e.target.src =
-                  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="550" height="450"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-family="Arial, Helvetica, sans-serif" font-size="20">Image+unavailable</text></svg>';
-              }}
+              // Optional: Add onError fallback if you have a real image later
             />
           </div>
         </section>
@@ -93,28 +129,28 @@ function Home() {
           <div className="stat-item">
             <FaUserFriends className="stat-icon" />
             <div className="stat-text">
-              <strong>5,000+</strong>
+              <strong>{statsLoading ? "Loading..." : stats.students}</strong>
               <span>Students</span>
             </div>
           </div>
           <div className="stat-item">
             <FaUserFriends className="stat-icon" />
             <div className="stat-text">
-              <strong>30+</strong>
+              <strong>{statsLoading ? "--" : stats.instructors}</strong>
               <span>Instructors</span>
             </div>
           </div>
           <div className="stat-item">
             <FaRegPlayCircle className="stat-icon" />
             <div className="stat-text">
-              <strong>200+</strong>
+              <strong>{statsLoading ? "--" : stats.videos}</strong>
               <span>Videos</span>
             </div>
           </div>
           <div className="stat-item">
             <FaRegListAlt className="stat-icon" />
             <div className="stat-text">
-              <strong>100+</strong>
+              <strong>{statsLoading ? "--" : stats.materials}</strong>
               <span>Materials</span>
             </div>
           </div>
