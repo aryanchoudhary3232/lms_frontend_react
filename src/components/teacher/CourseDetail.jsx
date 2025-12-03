@@ -57,7 +57,7 @@ const CourseDetail = () => {
     async function getCourseById() {
       try {
         const response = await fetch(
-          `${backendUrl}/student/courses/${courseId}`
+          `${import.meta.env.VITE_BACKEND_URL}/student/courses/${courseId}`
         );
         const courseResponse = await response.json();
 
@@ -439,6 +439,19 @@ const CourseDetail = () => {
           </div>
 
           <div style={{ margin: "8px 0", display: "flex", gap: "8px" }}>
+            <Link
+              to={`/teacher/courses/${course._id}/edit`}
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                background: "#28a745",
+                color: "white",
+                borderRadius: "6px",
+                textDecoration: "none",
+              }}
+            >
+              ✏️ Edit Course
+            </Link>
             <Link
               to={`/teacher/flashcards?courseId=${course._id}`}
               style={{

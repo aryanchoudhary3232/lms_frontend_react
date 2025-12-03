@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../css/teacher/AddCourse.css";
 
 const AddCourse = () => {
   const token = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -24,13 +24,27 @@ const AddCourse = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
-    setFormData(() => {
-      return {
-        ...formData,
-        [name]: files ? files[0] : value,
-      };
+    setFormData({
+      ...formData,
+      [name]: files ? files[0] : value,
     });
+  };
+
+  const handleDeleteChapter = (chapterIdx) => {
+    const newChapters = formData.chapters.filter((_, idx) => idx !== chapterIdx);
+    setFormData({ ...formData, chapters: newChapters });
+  };
+
+  const handleDeleteTopic = (chapterIdx, topicIdx) => {
+    const newChapters = [...formData.chapters];
+    newChapters[chapterIdx].topics = newChapters[chapterIdx].topics.filter((_, idx) => idx !== topicIdx);
+    setFormData({ ...formData, chapters: newChapters });
+  };
+
+  const handleDeleteQuestion = (chapterIdx, topicIdx, quizIdx) => {
+    const newChapters = [...formData.chapters];
+    newChapters[chapterIdx].topics[topicIdx].quiz = newChapters[chapterIdx].topics[topicIdx].quiz.filter((_, idx) => idx !== quizIdx);
+    setFormData({ ...formData, chapters: newChapters });
   };
 
   // (Potential future enhancement: allow selecting teacher/students here)
@@ -140,6 +154,7 @@ const AddCourse = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const data = new FormData();
     data.append("title", formData.title);
@@ -197,293 +212,462 @@ const AddCourse = () => {
       }
     } catch (err) {
       console.log("error occured", err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Styles with original #2337ad color
+  const styles = {
+    container: {
+      width: "55vw",
+      margin: "20px auto",
+      background: "white",
+      borderRadius: "12px",
+      boxShadow: "0 0 15px rgba(0,0,0,0.15)",
+      paddingBottom: "30px",
+    },
+    header: {
+      textAlign: "center",
+      color: "white",
+      background: "#2337ad",
+      padding: "18px 0",
+      margin: "0 40px",
+      borderRadius: "12px",
+      fontSize: "22px",
+      fontWeight: "600",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      padding: "20px 40px",
+    },
+    label: {
+      marginBottom: "8px",
+      fontWeight: "500",
+      color: "#333",
+      fontSize: "14px",
+    },
+    input: {
+      height: "38px",
+      marginBottom: "16px",
+      padding: "8px 12px",
+      borderRadius: "8px",
+      border: "1px solid #ddd",
+      fontSize: "14px",
+      outline: "none",
+      transition: "border-color 0.2s",
+    },
+    textarea: {
+      minHeight: "80px",
+      marginBottom: "16px",
+      padding: "10px 12px",
+      borderRadius: "8px",
+      border: "1px solid #ddd",
+      fontSize: "14px",
+      resize: "vertical",
+      outline: "none",
+    },
+    select: {
+      height: "42px",
+      marginBottom: "16px",
+      padding: "8px 12px",
+      borderRadius: "8px",
+      border: "1px solid #ddd",
+      fontSize: "14px",
+      background: "white",
+      cursor: "pointer",
+    },
+    fileInput: {
+      marginBottom: "16px",
+      padding: "10px 0",
+    },
+    addChapterBtn: {
+      height: "42px",
+      marginBottom: "16px",
+      padding: "10px 20px",
+      borderRadius: "8px",
+      background: "#2337ad",
+      color: "white",
+      border: "none",
+      fontSize: "14px",
+      fontWeight: "600",
+      cursor: "pointer",
+    },
+    chapterBox: {
+      background: "#f8f9fa",
+      padding: "20px",
+      borderRadius: "10px",
+      marginBottom: "20px",
+      border: "1px solid #e0e0e0",
+    },
+    chapterHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: "15px",
+    },
+    chapterTitle: {
+      fontWeight: "600",
+      color: "#2337ad",
+      fontSize: "16px",
+    },
+    deleteBtn: {
+      padding: "6px 12px",
+      background: "#ffebee",
+      color: "#d32f2f",
+      border: "none",
+      borderRadius: "6px",
+      fontSize: "12px",
+      fontWeight: "500",
+      cursor: "pointer",
+    },
+    topicBox: {
+      background: "white",
+      padding: "15px",
+      borderRadius: "8px",
+      marginBottom: "15px",
+      marginLeft: "15px",
+      border: "1px solid #e8e8e8",
+    },
+    topicHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: "12px",
+    },
+    topicTitle: {
+      fontWeight: "500",
+      color: "#1976d2",
+      fontSize: "14px",
+    },
+    quizBox: {
+      background: "#fff8e1",
+      padding: "15px",
+      borderRadius: "8px",
+      marginTop: "12px",
+      border: "1px solid #ffe082",
+    },
+    quizHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: "10px",
+    },
+    addBtn: {
+      padding: "8px 14px",
+      background: "#e3f2fd",
+      color: "#2337ad",
+      border: "none",
+      borderRadius: "6px",
+      fontSize: "13px",
+      fontWeight: "500",
+      cursor: "pointer",
+    },
+    optionRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      marginBottom: "8px",
+    },
+    optionInput: {
+      flex: 1,
+      padding: "8px 10px",
+      borderRadius: "6px",
+      border: "1px solid #ddd",
+      fontSize: "13px",
+    },
+    checkboxContainer: {
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      marginTop: "15px",
+      marginBottom: "10px",
+    },
+    submitBtn: {
+      height: "45px",
+      marginTop: "15px",
+      padding: "12px 20px",
+      background: "#2337ad",
+      color: "white",
+      border: "none",
+      borderRadius: "8px",
+      fontSize: "16px",
+      fontWeight: "600",
+      cursor: "pointer",
+    },
+  };
+
   return (
-    <div className="form-container">
-      <h2 className="form-heading">Add New Course</h2>
-      <form className="course-form" onSubmit={handleSubmit}>
-        <div className="form-field">
-          <label>Title</label>
-          <input
-            type="text"
-            name="title"
-            placeholder="Course Title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
+    <div style={styles.container}>
+      <h2 style={styles.header}>Add New Course</h2>
+      
+      <form onSubmit={handleSubmit} style={styles.form}>
+        {/* Basic Info */}
+        <label style={styles.label}>Title</label>
+        <input
+          type="text"
+          name="title"
+          placeholder="Course Title"
+          value={formData.title}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
-        <div className="form-field">
-          <label>Description</label>
-          <textarea
-            name="description"
-            placeholder="Course Description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <label style={styles.label}>Description</label>
+        <textarea
+          name="description"
+          placeholder="Course Description"
+          value={formData.description}
+          onChange={handleChange}
+          required
+          style={styles.textarea}
+        />
 
-        <div className="form-field">
-          <label>Category</label>
-          <input
-            type="text"
-            name="category"
-            placeholder="Category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <label style={styles.label}>Category</label>
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
-        <div className="fields-grid">
-          <div className="form-field">
-            <label>Level</label>
-            <select
-              name="level"
-              value={formData.level}
-              onChange={handleChange}
-            >
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advance">Advance</option>
-            </select>
-          </div>
-          <div className="form-field">
-            <label>Duration (hours)</label>
-            <input
-              type="number"
-              name="duration"
-              placeholder="Duration"
-              value={formData.duration}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
+        <label style={styles.label}>Level</label>
+        <select
+          name="level"
+          value={formData.level}
+          onChange={handleChange}
+          style={styles.select}
+        >
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advance">Advance</option>
+        </select>
 
-        <div className="form-field">
-          <label>Price (₹)</label>
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <label style={styles.label}>Duration (in hours)</label>
+        <input
+          type="number"
+          name="duration"
+          placeholder="Duration (in hours)"
+          value={formData.duration}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
-        <div className="form-field">
-          <label>Notes (PDF)</label>
-          <input
-            type="file"
-            name="notes"
-            accept="application/pdf"
-            onChange={handleChange}
-          />
-        </div>
+        <label style={styles.label}>Price (₹)</label>
+        <input
+          type="number"
+          name="price"
+          placeholder="Price (₹)"
+          value={formData.price}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
-        <div className="fields-grid">
-          <div className="form-field">
-            <label>Preview Image</label>
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-field">
-            <label>Preview Video</label>
-            <input
-              type="file"
-              name="video"
-              accept="video/*"
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+        <label style={styles.label}>Notes (PDF)</label>
+        <input
+          type="file"
+          name="notes"
+          accept="application/pdf"
+          onChange={handleChange}
+          style={styles.fileInput}
+        />
 
-        <div className="form-actions">
-          <button type="button" className="ghost-btn" onClick={handleAddChapter}>
-            + Add Chapter
-          </button>
-        </div>
+        <label style={styles.label}>Preview Image</label>
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={handleChange}
+          style={styles.fileInput}
+        />
+
+        <label style={styles.label}>Preview Video</label>
+        <input
+          type="file"
+          name="video"
+          accept="video/*"
+          onChange={handleChange}
+          style={styles.fileInput}
+        />
+
+        {/* Chapters Section */}
+        <button
+          type="button"
+          onClick={handleAddChapter}
+          style={styles.addChapterBtn}
+        >
+          + Add Chapter
+        </button>
 
         {formData.chapters.map((chapter, chapterIdx) => (
-          <section className="chapter-card" key={chapterIdx}>
-            <div className="chapter-card-header">
-              <div>
-                <h3>Chapter {chapterIdx + 1}</h3>
-                <p className="form-note">Give this chapter a clear, short title.</p>
-              </div>
+          <div key={chapterIdx} style={styles.chapterBox}>
+            <div style={styles.chapterHeader}>
+              <span style={styles.chapterTitle}>Chapter {chapterIdx + 1}</span>
               <button
                 type="button"
-                className="ghost-btn ghost-btn--small"
-                onClick={() => handleAddTopic(chapterIdx)}
+                onClick={() => handleDeleteChapter(chapterIdx)}
+                style={styles.deleteBtn}
               >
-                + Add Topic
+                Delete
               </button>
             </div>
 
-            <div className="form-field">
-              <label>Chapter Title</label>
-              <input
-                type="text"
-                placeholder="Chapter title"
-                value={chapter.title}
-                onChange={(e) => handleChapterChange(chapterIdx, e.target.value)}
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Chapter title"
+              value={chapter.title}
+              onChange={(e) => handleChapterChange(chapterIdx, e.target.value)}
+              style={{ ...styles.input, marginBottom: "12px" }}
+            />
 
             {chapter.topics.map((topic, topicIdx) => (
-              <div className="topic-card" key={topicIdx}>
-                <div className="chapter-card-header">
-                  <div>
-                    <h4>Topic {topicIdx + 1}</h4>
-                    <p className="form-note">Explain what to cover & link resources.</p>
-                  </div>
+              <div key={topicIdx} style={styles.topicBox}>
+                <div style={styles.topicHeader}>
+                  <span style={styles.topicTitle}>Topic {topicIdx + 1}</span>
                   <button
                     type="button"
-                    className="ghost-btn ghost-btn--small"
-                    onClick={() => handleAddQuestion(chapterIdx, topicIdx)}
+                    onClick={() => handleDeleteTopic(chapterIdx, topicIdx)}
+                    style={{ ...styles.deleteBtn, fontSize: "11px", padding: "4px 8px" }}
                   >
-                    + Add Question
+                    Delete
                   </button>
                 </div>
 
-                <div className="form-field">
-                  <label>Topic Title</label>
-                  <input
-                    type="text"
-                    placeholder="Enter topic title"
-                    value={topic.title}
-                    onChange={(e) =>
-                      handleTopicChange(chapterIdx, topicIdx, "title", e)
-                    }
-                  />
-                </div>
+                <label style={{ ...styles.label, fontSize: "13px" }}>Topic Title</label>
+                <input
+                  type="text"
+                  placeholder="Enter topic title"
+                  value={topic.title}
+                  onChange={(e) => handleTopicChange(chapterIdx, topicIdx, "title", e)}
+                  style={{ ...styles.input, marginBottom: "10px" }}
+                />
 
-                <div className="form-field">
-                  <label>Topic Video</label>
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={(e) =>
-                      handleTopicChange(chapterIdx, topicIdx, "video", e)
-                    }
-                  />
-                </div>
+                <label style={{ ...styles.label, fontSize: "13px" }}>Topic Video</label>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => handleTopicChange(chapterIdx, topicIdx, "video", e)}
+                  style={styles.fileInput}
+                />
 
-                <div className="topic-quiz">
-                  <p className="form-note">Add quiz questions for this topic.</p>
+                {/* Quiz Section */}
+                <div style={styles.quizBox}>
+                  <div style={styles.quizHeader}>
+                    <span style={{ fontWeight: "500", color: "#f57c00", fontSize: "14px" }}>Quiz</span>
+                    <button
+                      type="button"
+                      onClick={() => handleAddQuestion(chapterIdx, topicIdx)}
+                      style={styles.addBtn}
+                    >
+                      + Add Question
+                    </button>
+                  </div>
+
                   {topic.quiz.map((q, quizIdx) => (
-                    <div className="quiz-card" key={quizIdx}>
-                      <div className="form-field">
-                        <label>Question Text</label>
-                        <input
-                          type="text"
-                          placeholder="Enter question"
-                          value={q.question}
-                          onChange={(e) => {
-                            const newChapters = [...formData.chapters];
-                            newChapters[chapterIdx].topics[topicIdx].quiz[
-                              quizIdx
-                            ].question = e.target.value;
-
-                            setFormData({
-                              ...formData,
-                              chapters: newChapters,
-                            });
-                          }}
-                        />
+                    <div key={quizIdx} style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px dashed #ffe082" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                        <span style={{ fontWeight: "500", fontSize: "13px" }}>Question {quizIdx + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteQuestion(chapterIdx, topicIdx, quizIdx)}
+                          style={{ ...styles.deleteBtn, fontSize: "10px", padding: "3px 6px" }}
+                        >
+                          Delete
+                        </button>
                       </div>
 
-                      <div className="quiz-options">
-                        {q.options.map((option, quizOptionIdx) => (
-                          <div className="quiz-option" key={quizOptionIdx}>
-                            <label className="radio-label">
-                              <input
-                                type="radio"
-                                name={`correct-${chapterIdx}-${topicIdx}-${quizIdx}`}
-                                checked={
-                                  q.correctOption === quizOptionIdx
-                                }
-                                onChange={() =>
-                                  handleQuizCorrectOption(
-                                    chapterIdx,
-                                    topicIdx,
-                                    quizIdx,
-                                    quizOptionIdx
-                                  )
-                                }
-                              />
-                              Correct
-                            </label>
-                            <input
-                              type="text"
-                              placeholder={`Enter option ${quizOptionIdx + 1}`}
-                              value={option}
-                              onChange={(e) =>
-                                handleQuizOptionChange(
-                                  e,
-                                  chapterIdx,
-                                  topicIdx,
-                                  quizIdx,
-                                  quizOptionIdx
-                                )
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      <input
+                        type="text"
+                        placeholder="Enter question"
+                        value={q.question}
+                        onChange={(e) => {
+                          const newChapters = [...formData.chapters];
+                          newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].question = e.target.value;
+                          setFormData({ ...formData, chapters: newChapters });
+                        }}
+                        style={{ ...styles.input, marginBottom: "10px" }}
+                      />
 
-                      <div className="form-field">
-                        <label>Explanation</label>
-                        <input
-                          type="text"
-                          placeholder="Enter explanation"
-                          value={q.explaination}
-                          onChange={(e) => {
-                            const newChapters = [...formData.chapters];
-                            newChapters[chapterIdx].topics[topicIdx].quiz[
-                              quizIdx
-                            ].explaination = e.target.value;
+                      {q.options.map((option, optIdx) => (
+                        <div key={optIdx} style={styles.optionRow}>
+                          <input
+                            type="radio"
+                            name={`correct-${chapterIdx}-${topicIdx}-${quizIdx}`}
+                            checked={q.correctOption === option && option !== ""}
+                            onChange={() => handleQuizCorrectOption(null, chapterIdx, topicIdx, quizIdx, option)}
+                            style={{ cursor: "pointer" }}
+                          />
+                          <input
+                            type="text"
+                            placeholder={`Enter option ${optIdx + 1}`}
+                            value={option}
+                            onChange={(e) => handleQuizOptionChange(e, chapterIdx, topicIdx, quizIdx, optIdx)}
+                            style={styles.optionInput}
+                          />
+                        </div>
+                      ))}
 
-                            setFormData({
-                              ...formData,
-                              chapters: newChapters,
-                            });
-                          }}
-                        />
-                      </div>
+                      <label style={{ ...styles.label, fontSize: "12px", marginTop: "8px" }}>Explanation</label>
+                      <input
+                        type="text"
+                        placeholder="Enter explanation"
+                        value={q.explaination}
+                        onChange={(e) => {
+                          const newChapters = [...formData.chapters];
+                          newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].explaination = e.target.value;
+                          setFormData({ ...formData, chapters: newChapters });
+                        }}
+                        style={styles.input}
+                      />
                     </div>
                   ))}
                 </div>
               </div>
             ))}
-          </section>
+
+            <button
+              type="button"
+              onClick={() => handleAddTopic(chapterIdx)}
+              style={{ ...styles.addBtn, marginTop: "10px" }}
+            >
+              + Add Topic
+            </button>
+          </div>
         ))}
 
-        <label className="form-checkbox">
+        {/* Flashcard Checkbox */}
+        <div style={styles.checkboxContainer}>
           <input
             type="checkbox"
             id="createFlashcards"
             checked={createFlashcards}
             onChange={(e) => setCreateFlashcards(e.target.checked)}
+            style={{ cursor: "pointer" }}
           />
-          After creating the course, go to Flashcards to create a deck
-        </label>
-
-        <div className="form-actions">
-          <button type="submit" className="btn-primary">
-            Add Course
-          </button>
+          <label htmlFor="createFlashcards" style={{ fontSize: "14px" }}>
+            After creating the course, go to Flashcards to create a deck
+          </label>
         </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            ...styles.submitBtn,
+            opacity: loading ? 0.7 : 1,
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading ? "Creating..." : "Add Course"}
+        </button>
       </form>
     </div>
   );

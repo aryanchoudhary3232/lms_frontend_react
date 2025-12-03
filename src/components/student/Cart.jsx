@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../../css/student/Cart.css";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../../features/cart/cartSlice";
 import { setAuthToken } from "../../api/axios";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([]);
+  // const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const backendUrl =
@@ -21,38 +21,11 @@ const Cart = () => {
     setAuthToken(token);
     if (token) dispatch(fetchCart(calculateTotal));
   }, [dispatch, token]);
-  // Fetch cart from backend
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const token = localStorage.getItem("token"); // JWT from login
-        const res = await fetch(`${backendUrl}/cart`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
 
-        if (data.success && data.data.items) {
-          const items = data.data.items.map((i) => ({
-            id: i.course._id,
-            title: i.course.title,
-            instructor: i.course.description, // adjust if needed
-            price: i.course.price,
-            thumbnail: i.course.image,
-          }));
-          setCartItems(items);
-          calculateTotal(items);
-        } else {
-          setCartItems([]);
-        }
-      } catch (err) {
-        console.error("Error fetching cart:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const cartItems = useSelector((state) => state.cart.items)
+  const loading = useSelector((state) => state.cart.loading)
 
-    fetchCart();
-  }, []);
+  
 
   const calculateTotal = (items) => {
     const sum = items.reduce((acc, item) => acc + (item.price || 0), 0);
