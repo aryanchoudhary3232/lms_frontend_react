@@ -161,7 +161,7 @@ const Login = () => {
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    
+
     // No validation for login - just submit directly
     await login(formData, setFormData);
   };

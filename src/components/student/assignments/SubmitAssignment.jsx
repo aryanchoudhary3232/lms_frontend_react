@@ -11,7 +11,7 @@ const SubmitAssignment = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  
+
   // Track learning time automatically
   const { isActive, formattedTime } = useLearningTimer();
 
@@ -43,10 +43,17 @@ const SubmitAssignment = () => {
             alert("You have already submitted this assignment!");
             navigate("/student/assignments");
           }
+        } else {
+          alert("Assignment not found");
+          navigate("/student/assignments");
         }
+      } else {
+        console.error("Failed to fetch assignments:", data.message);
+        alert("Failed to load assignment. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching assignment:", error);
+      alert("Error loading assignment. Please check your connection.");
     } finally {
       setLoading(false);
     }
@@ -166,13 +173,67 @@ const SubmitAssignment = () => {
         )}
 
         {assignment.attachments && assignment.attachments.length > 0 && (
-          <div className="reference-files">
-            <h4>Reference Files:</h4>
-            <ul>
+          <div
+            className="reference-files"
+            style={{
+              backgroundColor: "#f8f9fa",
+              padding: "20px",
+              borderRadius: "8px",
+              marginTop: "20px",
+              border: "2px solid #e9ecef",
+            }}
+          >
+            <h4 style={{ color: "#2337AD", marginBottom: "15px" }}>
+              📎 Assignment Files from Teacher
+            </h4>
+            <p
+              style={{
+                color: "#6c757d",
+                marginBottom: "12px",
+                fontSize: "0.9rem",
+              }}
+            >
+              Download and review these files before submitting your work:
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {assignment.attachments.map((file, index) => (
-                <li key={index}>
-                  <a href={file.url} target="_blank" rel="noopener noreferrer">
-                    📎 {file.filename}
+                <li key={index} style={{ marginBottom: "10px" }}>
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "12px 16px",
+                      backgroundColor: "#fff",
+                      border: "1px solid #dee2e6",
+                      borderRadius: "6px",
+                      textDecoration: "none",
+                      color: "#212529",
+                      transition: "all 0.2s ease",
+                      fontWeight: "500",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#e7f3ff";
+                      e.currentTarget.style.borderColor = "#2337AD";
+                      e.currentTarget.style.transform = "translateX(5px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "#fff";
+                      e.currentTarget.style.borderColor = "#dee2e6";
+                      e.currentTarget.style.transform = "translateX(0)";
+                    }}
+                  >
+                    <span style={{ fontSize: "1.3rem" }}>📄</span>
+                    <span style={{ flex: 1 }}>
+                      {file.filename || `File ${index + 1}`}
+                    </span>
+                    <span style={{ color: "#2337AD", fontSize: "0.85rem" }}>
+                      ⬇️ Download
+                    </span>
                   </a>
                 </li>
               ))}
