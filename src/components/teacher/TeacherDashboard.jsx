@@ -116,22 +116,28 @@ export default function TeacherDashboard({ teacherId }) {
             <tr>
               <th style={styles.th}>Student</th>
               <th style={styles.th}>Course</th>
-              <th style={styles.th}>Minutes</th>
               <th style={styles.th}>Date</th>
             </tr>
           </thead>
 
           <tbody>
-            {stats.recentActivity.map((a, i) => (
-              <tr key={i}>
-                <td style={styles.td}>{a.name}</td>
-                <td style={styles.td}>{a.course}</td>
-                <td style={styles.td}>{a.minutes}</td>
-                <td style={styles.td}>
-                  {new Date(a.date).toLocaleDateString()}
+            {stats.recentActivity && stats.recentActivity.length > 0 ? (
+              stats.recentActivity.map((a, i) => (
+                <tr key={i}>
+                  <td style={styles.td}>{a.name}</td>
+                  <td style={styles.td}>{a.course}</td>
+                  <td style={styles.td}>
+                    {new Date(a.date).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" style={{ ...styles.td, textAlign: "center" }}>
+                  No recent activity found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

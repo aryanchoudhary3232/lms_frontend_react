@@ -89,6 +89,16 @@ const handleSearch = async (e) => {
     }
   };
 
+  const handleFlashcardClick = (courseId) => {
+    const token = getToken();
+    if (!token) {
+      alert("Please sign in to view flashcards");
+      return;
+    }
+    // Navigate to flashcards page for this course
+    window.location.href = `/courses/${courseId}/flashcards`;
+  };
+
   useEffect(() => {
     getAllCourses();
   }, []);
@@ -155,7 +165,8 @@ const handleSearch = async (e) => {
             <CourseCard
               key={course._id}
               course={course}
-              onAddToCart={() => handleAddToCart(course._id)} // Pass handler
+              onAddToCart={() => handleAddToCart(course._id)}
+              onFlashcardClick={handleFlashcardClick}
             />
           ))
         )}

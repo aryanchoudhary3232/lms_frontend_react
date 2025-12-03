@@ -157,6 +157,16 @@ const Courses = () => {
     }
   };
 
+  const handleFlashcardClick = (courseId) => {
+    const token = getToken();
+    if (!token) {
+      alert("Please sign in to view flashcards");
+      return;
+    }
+    // Navigate to flashcards page for this course
+    window.location.href = `/courses/${courseId}/flashcards`;
+  };
+
   // --- Render Logic Helper ---
   const renderContent = () => {
     if (loading) {
@@ -187,6 +197,7 @@ const Courses = () => {
           isOwned={isAuthenticated && ownedCourseIds.has(course._id)}
           isAuthenticated={isAuthenticated}
           onAddToCart={() => handleAddToCart(course._id)}
+          onFlashcardClick={handleFlashcardClick}
         />
       </div>
     ));
