@@ -20,15 +20,7 @@ const CourseDetail = () => {
   const [activeTab, setActiveTab] = useState("materi");
   // Keep track of which chapters are open, start with first open
 
-  const { startTimer, stopTimer, seconds } = useLearningTimer();
-  useEffect(() => {
-    startTimer();
-
-    return () => {
-      stopTimer();
-    };
-    
-  }, []);
+  const { isActive, formattedTime, currentSessionMinutes } = useLearningTimer();
   const [openChapters, setOpenChapters] = useState([0]); 
   const [ratingValue, setRatingValue] = useState(0);
   const [reviewText, setReviewText] = useState("");

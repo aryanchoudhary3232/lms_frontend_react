@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../css/student/Assignments.css";
+import useLearningTimer from "../../../helper/customHooks/useLearningTimer";
 
 const StudentAssignments = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
+  
+  // Track learning time automatically
+  const { isActive, formattedTime } = useLearningTimer();
 
   const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
