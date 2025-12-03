@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Use Link for internal navigation
 import "../css/Home.css"; // Ensure this path matches your folder structure
 // If your file is in 'student/home.jsx', use "../../css/Home.css"
+import heroImage from "../assets/hero-banner.png";
 
 import {
   FaStar,
@@ -73,9 +74,16 @@ function Home() {
           </div>
           <div className="hero-image">
             <img
-              src="https://via.placeholder.com/550x450.png?text=Learn+Today"
+              src={heroImage}
               alt="Students Learning"
-              // Optional: Add onError fallback if you have a real image later
+              style={{ display: "block", height: "auto" }}
+              onError={(e) => {
+                // Fallback to an inline SVG data URL if the external image fails to load
+                // clear the onError to avoid infinite loop
+                e.target.onerror = null;
+                e.target.src =
+                  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="550" height="450"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-family="Arial, Helvetica, sans-serif" font-size="20">Image+unavailable</text></svg>';
+              }}
             />
           </div>
         </section>
