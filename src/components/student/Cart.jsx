@@ -68,6 +68,8 @@ const Cart = () => {
       const updated = cartItems.filter((item) => item.id !== courseId);
       setCartItems(updated);
       calculateTotal(updated);
+      // Dispatch event to update navbar
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error removing course:", err);
     }

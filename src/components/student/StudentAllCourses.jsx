@@ -79,6 +79,8 @@ const handleSearch = async (e) => {
       const data = await res.json();
       if (res.ok) {
         alert("Added to cart!");
+        // Dispatch event to update navbar
+        window.dispatchEvent(new Event("cartUpdated"));
       } else {
         alert(data.message || "Failed to add to cart");
       }

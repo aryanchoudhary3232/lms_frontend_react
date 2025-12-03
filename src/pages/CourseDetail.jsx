@@ -109,6 +109,8 @@ const CourseDetail = () => {
     const added = addToCart(cartItem);
     if (added) {
       alert("Course added to cart");
+      // Dispatch event to update navbar
+      window.dispatchEvent(new Event("cartUpdated"));
     } else {
       alert("Course is already in cart");
     }
