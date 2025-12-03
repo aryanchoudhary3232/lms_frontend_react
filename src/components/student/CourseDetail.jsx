@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../css/teacher/CourseDetail.css";
 import { Link, useParams } from "react-router-dom";
+import useLearningTimer from "../../helper/customHooks/useLearningTimer";
 
 const CourseDetail = () => {
   const [course, setCourse] = useState([]);
