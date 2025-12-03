@@ -355,12 +355,12 @@ const Settings = () => {
         {/* Password Change Form */}
         <form className="settings-form" onSubmit={handleSubmit}>
           {/* Current Password Field */}
-          {/* <div className="form-group"> */}
-            {/* <label htmlFor="currentPassword">
+          <div className="form-group">
+            <label htmlFor="currentPassword">
               Current Password<span className="required-star">*</span>
-            </label> */}
-            {/* <div className="input-wrapper"> */}
-              {/* <input
+            </label>
+            <div className="input-wrapper">
+              <input
                 type={showPasswords.current ? "text" : "password"}
                 id="currentPassword"
                 name="currentPassword"
@@ -368,22 +368,22 @@ const Settings = () => {
                 onChange={handleInputChange}
                 placeholder="Enter your current password"
                 className={fieldErrors.currentPassword ? "input-error" : ""}
-              /> */}
-              {/* <button
+              />
+              <button
                 type="button"
                 className="password-toggle"
                 onClick={() => togglePasswordVisibility("current")}
                 aria-label={showPasswords.current ? "Hide password" : "Show password"}
               >
                 {showPasswords.current ? EyeOpenIcon : EyeClosedIcon}
-              </button> */}
-            {/* </div> */}
-            {/* {fieldErrors.currentPassword && (
+              </button>
+            </div>
+            {fieldErrors.currentPassword && (
               <span className="field-error">{fieldErrors.currentPassword}</span>
             )}
-          </div> */}
+          </div>
 
-          {/* <div className="settings-divider"></div> */}
+          <div className="settings-divider"></div>
 
           {/* New Password Field */}
           <div className="form-group">
@@ -412,9 +412,11 @@ const Settings = () => {
             {fieldErrors.newPassword && (
               <span className="field-error">{fieldErrors.newPassword}</span>
             )}
-            <span className="input-hint">
-              Password must be at least 6 characters long
-            </span>
+            {(!formData.newPassword || formData.newPassword.length < 6) && (
+              <span className="input-hint">
+                Password must be at least 6 characters long
+              </span>
+            )}
             
             {/* Password Strength Indicator */}
             {formData.newPassword && (
