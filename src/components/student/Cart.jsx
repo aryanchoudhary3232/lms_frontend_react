@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../../css/student/Cart.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCart } from "../../features/cart/cartSlice";
+import { fetchCart, removeFromCart } from "../../features/cart/cartSlice";
 import { setAuthToken } from "../../api/axios";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -25,22 +25,19 @@ const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items)
   const loading = useSelector((state) => state.cart.loading)
 
-  
+  // Recalculate total whenever cart items change
+  useEffect(() => {
+    calculateTotal(cartItems);
+  }, [cartItems]);
 
   const calculateTotal = (items) => {
     const sum = items.reduce((acc, item) => acc + (item.price || 0), 0);
     setTotal(sum);
   };
 
-  const removeFromCart = async (courseId) => {
+  const handleRemoveFromCart = async (courseId) => {
     try {
-      await fetch(`${backendUrl}/cart/remove/${courseId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const updated = cartItems.filter((item) => item.id !== courseId);
-      setCartItems(updated);
-      calculateTotal(updated);
+      await dispatch(removeFromCart(courseId)).unwrap();
       // Dispatch event to update navbar
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
@@ -84,7 +81,7 @@ const Cart = () => {
                   <p className="price">₹{item.price}</p>
                 </div>
                 <button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => handleRemoveFromCart(item.id)}
                   className="remove-btn"
                 >
                   Remove

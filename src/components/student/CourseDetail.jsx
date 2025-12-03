@@ -183,6 +183,7 @@ const CourseDetail = () => {
 
         if (response.ok && courseResponse.success) {
           setCourse(courseResponse.data);
+          console.log("Course data with ratings:", courseResponse.data.ratings);
         } else {
           console.error("Error fetching course:", courseResponse.message);
         }
@@ -683,16 +684,218 @@ const CourseDetail = () => {
           >
             {course.title}
           </h2>
-          <p
-            style={{
-              fontSize: "0.95rem",
-              color: "#6b7280",
-              lineHeight: "1.6",
-              margin: 0,
-            }}
-          >
+          <p style={{
+            fontSize: "0.95rem",
+            color: "#6b7280",
+            lineHeight: "1.6",
+            margin: "0 0 16px 0",
+          }}>
             {course.description}
           </p>
+
+          {/* Course Rating Display */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            marginBottom: "20px",
+            padding: "12px",
+            backgroundColor: "#f8fafc",
+            borderRadius: "8px",
+            border: "1px solid #e2e8f0",
+          }}>
+            <div style={{ fontWeight: "700", fontSize: "1.1rem", color: "#1f2937" }}>
+              {course.rating?.average || "0.0"}
+            </div>
+            <div style={{ display: "flex", gap: "2px" }}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span
+                  key={i}
+                  style={{
+                    color: i < Math.round(course.rating?.average || 0) ? "#fbbf24" : "#d1d5db",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <div style={{ color: "#6b7280", fontSize: "0.9rem" }}>
+              ({course.rating?.count || 0} {course.rating?.count === 1 ? 'rating' : 'ratings'})
+            </div>
+          </div>
+
+          {/* Rating Input Section - Only for enrolled students */}
+          {course.students && course.students.includes(studentId) && (
+            <div style={{
+              padding: "16px",
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              border: "1px solid #e2e8f0",
+              marginTop: "16px",
+            }}>
+              <h4 style={{
+                fontSize: "1rem",
+                fontWeight: "600",
+                color: "#1f2937",
+                margin: "0 0 12px 0",
+              }}>
+                Rate this course
+              </h4>
+              
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const val = i + 1;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setRatingValue(val)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "1.5rem",
+                        color: val <= ratingValue ? "#fbbf24" : "#d1d5db",
+                        padding: "4px",
+                        transition: "color 0.2s ease",
+                      }}
+                      aria-label={`Rate ${val} stars`}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.1)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    >
+                      ★
+                    </button>
+                  );
+                })}
+                
+                <button
+                  onClick={async () => {
+                    if (!ratingValue) {
+                      setRatingMsg("Please select a rating");
+                      return;
+                    }
+                    setRatingSubmitting(true);
+                    setRatingMsg(null);
+                    try {
+                      const backendUrl =
+                        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+                      const token = localStorage.getItem("token");
+                      const res = await fetch(
+                        `${backendUrl}/courses/${courseId}/rate`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                          },
+                          body: JSON.stringify({
+                            rating: ratingValue,
+                            review: reviewText,
+                          }),
+                        }
+                      );
+                      const j = await res.json();
+                      if (j.success) {
+                        setRatingMsg("Thank you for your rating!");
+                        // Update local course data with new rating
+                        setCourse((prevCourse) => ({
+                          ...prevCourse,
+                          rating: {
+                            average: j.data.average,
+                            count: j.data.count,
+                          },
+                        }));
+                        // Reset form
+                        setRatingValue(0);
+                        setReviewText("");
+                        
+                        // Refresh course data to get updated reviews
+                        setTimeout(async () => {
+                          try {
+                            const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+                            const token = localStorage.getItem("token");
+                            const refreshResponse = await fetch(
+                              `${backendUrl}/student/courses/${courseId}`,
+                              token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+                            );
+                            const refreshData = await refreshResponse.json();
+                            if (refreshData.success) {
+                              setCourse(refreshData.data);
+                            }
+                          } catch (error) {
+                            console.log("Error refreshing course data:", error);
+                          }
+                        }, 1000);
+                      } else {
+                        setRatingMsg(j.message || "Could not save rating");
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      setRatingMsg("Network error occurred");
+                    } finally {
+                      setRatingSubmitting(false);
+                    }
+                  }}
+                  style={{
+                    backgroundColor: ratingValue ? "#2337AD" : "#9ca3af",
+                    color: "white",
+                    border: "none",
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    cursor: ratingValue ? "pointer" : "not-allowed",
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                    marginLeft: "8px",
+                    transition: "all 0.2s ease",
+                  }}
+                  disabled={!ratingValue || ratingSubmitting}
+                >
+                  {ratingSubmitting ? "Saving..." : "Submit"}
+                </button>
+              </div>
+
+              <div style={{ marginBottom: "8px" }}>
+                <textarea
+                  placeholder="Leave an optional review..."
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  style={{
+                    width: "100%",
+                    minHeight: "80px",
+                    padding: "8px 12px",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "6px",
+                    fontSize: "0.9rem",
+                    resize: "vertical",
+                    fontFamily: "inherit",
+                  }}
+                  rows={3}
+                />
+              </div>
+
+              {ratingMsg && (
+                <div
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    fontSize: "0.9rem",
+                    backgroundColor: ratingMsg.includes("Thank you") || ratingMsg.includes("success") 
+                      ? "#d1fae5" : "#fee2e2",
+                    color: ratingMsg.includes("Thank you") || ratingMsg.includes("success") 
+                      ? "#065f46" : "#dc2626",
+                    border: `1px solid ${ratingMsg.includes("Thank you") || ratingMsg.includes("success") 
+                      ? "#10b981" : "#ef4444"}`,
+                  }}
+                >
+                  {ratingMsg}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -764,27 +967,22 @@ const CourseDetail = () => {
         )}
 
         {/* Course Content Card */}
-        <div
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: "12px",
-            boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-            padding: "20px",
-            border: "1px solid #e8edf2",
-            maxHeight: "600px",
-            overflowY: "auto",
-          }}
-        >
-          <h3
-            style={{
-              fontSize: "1.1rem",
-              fontWeight: "700",
-              color: "#1f2937",
-              margin: "0 0 16px 0",
-            }}
-          >
-            Course Content
-          </h3>
+        <div style={{
+          backgroundColor: "#fff",
+          borderRadius: "12px",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
+          padding: "20px",
+          border: "1px solid #e8edf2",
+          maxHeight: "600px",
+          overflowY: "auto",
+          marginBottom: "20px",
+        }}>
+          <h3 style={{
+            fontSize: "1.1rem",
+            fontWeight: "700",
+            color: "#1f2937",
+            margin: "0 0 16px 0",
+          }}>Course Content</h3>
           {course.chapters && course.chapters.length > 0 ? (
             course.chapters.map((chapter, chIdx) => (
               <div
@@ -895,6 +1093,137 @@ const CourseDetail = () => {
             >
               No chapters added yet.
             </p>
+          )}
+        </div>
+
+        {/* Student Reviews Card */}
+        <div style={{
+          backgroundColor: "#fff",
+          borderRadius: "12px",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
+          padding: "20px",
+          border: "1px solid #e8edf2",
+          maxHeight: "500px",
+          overflowY: "auto",
+        }}>
+          <h3 style={{
+            fontSize: "1.1rem",
+            fontWeight: "700",
+            color: "#1f2937",
+            margin: "0 0 16px 0",
+          }}>Student Reviews</h3>
+          
+          {console.log("Rendering reviews section, course.ratings:", course.ratings)}
+          
+          {course.ratings && Array.isArray(course.ratings) && course.ratings.length > 0 ? (
+            course.ratings.map((review, index) => (
+              <div key={review._id || index} style={{
+                marginBottom: "16px",
+                paddingBottom: "16px",
+                borderBottom: index !== course.ratings.length - 1 ? "1px solid #f0f2f5" : "none",
+              }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                }}>
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}>
+                    <div style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                      backgroundColor: "#2337AD",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "white",
+                      fontSize: "0.8rem",
+                      fontWeight: "600",
+                    }}>
+                      S
+                    </div>
+                    <span style={{
+                      fontSize: "0.9rem",
+                      fontWeight: "600",
+                      color: "#374151",
+                    }}>Student</span>
+                  </div>
+                  <div style={{ display: "flex", gap: "2px" }}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span
+                        key={i}
+                        style={{
+                          color: i < (review.rating || 0) ? "#fbbf24" : "#d1d5db",
+                          fontSize: "0.9rem",
+                        }}
+                      >
+                        ★
+                      </span>
+                    ))}
+                    <span style={{
+                      marginLeft: "8px",
+                      fontSize: "0.8rem",
+                      color: "#6b7280",
+                      fontWeight: "500",
+                    }}>
+                      {review.rating}/5
+                    </span>
+                  </div>
+                </div>
+                
+                {review.review && review.review.trim() && (
+                  <p style={{
+                    fontSize: "0.9rem",
+                    color: "#4b5563",
+                    lineHeight: "1.5",
+                    margin: "0 0 8px 0",
+                    fontStyle: "italic",
+                    backgroundColor: "#f8fafc",
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid #e2e8f0",
+                  }}>
+                    "{review.review}"
+                  </p>
+                )}
+                
+                <small style={{
+                  color: "#9ca3af",
+                  fontSize: "0.8rem",
+                }}>
+                  {review.createdAt ? new Date(review.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }) : 'Recently'}
+                </small>
+              </div>
+            ))
+          ) : (
+            <div style={{
+              textAlign: "center",
+              padding: "40px 20px",
+              color: "#9ca3af",
+            }}>
+              <span style={{ fontSize: "2rem", marginBottom: "8px", display: "block" }}>💬</span>
+              <p style={{ 
+                fontSize: "0.9rem",
+                margin: "0",
+                color: "#6b7280",
+              }}>No reviews yet.</p>
+              <p style={{ 
+                fontSize: "0.8rem",
+                margin: "4px 0 0 0",
+                color: "#9ca3af",
+              }}>Be the first to share your experience!</p>
+            </div>
           )}
         </div>
       </div>
