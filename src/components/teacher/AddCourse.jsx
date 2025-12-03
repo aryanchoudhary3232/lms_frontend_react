@@ -31,19 +31,25 @@ const AddCourse = () => {
   };
 
   const handleDeleteChapter = (chapterIdx) => {
-    const newChapters = formData.chapters.filter((_, idx) => idx !== chapterIdx);
+    const newChapters = formData.chapters.filter(
+      (_, idx) => idx !== chapterIdx
+    );
     setFormData({ ...formData, chapters: newChapters });
   };
 
   const handleDeleteTopic = (chapterIdx, topicIdx) => {
     const newChapters = [...formData.chapters];
-    newChapters[chapterIdx].topics = newChapters[chapterIdx].topics.filter((_, idx) => idx !== topicIdx);
+    newChapters[chapterIdx].topics = newChapters[chapterIdx].topics.filter(
+      (_, idx) => idx !== topicIdx
+    );
     setFormData({ ...formData, chapters: newChapters });
   };
 
   const handleDeleteQuestion = (chapterIdx, topicIdx, quizIdx) => {
     const newChapters = [...formData.chapters];
-    newChapters[chapterIdx].topics[topicIdx].quiz = newChapters[chapterIdx].topics[topicIdx].quiz.filter((_, idx) => idx !== quizIdx);
+    newChapters[chapterIdx].topics[topicIdx].quiz = newChapters[
+      chapterIdx
+    ].topics[topicIdx].quiz.filter((_, idx) => idx !== quizIdx);
     setFormData({ ...formData, chapters: newChapters });
   };
 
@@ -199,9 +205,9 @@ const AddCourse = () => {
         const newCourseId = coursesResponse?.data?._id;
         if (createFlashcards && newCourseId) {
           // Redirect directly to flashcards management with preselected course
-            navigate(`/teacher/flashcards?courseId=${newCourseId}`);
+          navigate(`/teacher/flashcards?courseId=${newCourseId}`);
         } else {
-            navigate("/teacher/courses");
+          navigate("/teacher/courses");
         }
       }
     } catch (err) {
@@ -395,7 +401,7 @@ const AddCourse = () => {
   return (
     <div style={styles.container}>
       <h2 style={styles.header}>Add New Course</h2>
-      
+
       <form onSubmit={handleSubmit} style={styles.form}>
         {/* Basic Info */}
         <label style={styles.label}>Title</label>
@@ -528,33 +534,53 @@ const AddCourse = () => {
                   <button
                     type="button"
                     onClick={() => handleDeleteTopic(chapterIdx, topicIdx)}
-                    style={{ ...styles.deleteBtn, fontSize: "11px", padding: "4px 8px" }}
+                    style={{
+                      ...styles.deleteBtn,
+                      fontSize: "11px",
+                      padding: "4px 8px",
+                    }}
                   >
                     Delete
                   </button>
                 </div>
 
-                <label style={{ ...styles.label, fontSize: "13px" }}>Topic Title</label>
+                <label style={{ ...styles.label, fontSize: "13px" }}>
+                  Topic Title
+                </label>
                 <input
                   type="text"
                   placeholder="Enter topic title"
                   value={topic.title}
-                  onChange={(e) => handleTopicChange(chapterIdx, topicIdx, "title", e)}
+                  onChange={(e) =>
+                    handleTopicChange(chapterIdx, topicIdx, "title", e)
+                  }
                   style={{ ...styles.input, marginBottom: "10px" }}
                 />
 
-                <label style={{ ...styles.label, fontSize: "13px" }}>Topic Video</label>
+                <label style={{ ...styles.label, fontSize: "13px" }}>
+                  Topic Video
+                </label>
                 <input
                   type="file"
                   accept="video/*"
-                  onChange={(e) => handleTopicChange(chapterIdx, topicIdx, "video", e)}
+                  onChange={(e) =>
+                    handleTopicChange(chapterIdx, topicIdx, "video", e)
+                  }
                   style={styles.fileInput}
                 />
 
                 {/* Quiz Section */}
                 <div style={styles.quizBox}>
                   <div style={styles.quizHeader}>
-                    <span style={{ fontWeight: "500", color: "#f57c00", fontSize: "14px" }}>Quiz</span>
+                    <span
+                      style={{
+                        fontWeight: "500",
+                        color: "#f57c00",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Quiz
+                    </span>
                     <button
                       type="button"
                       onClick={() => handleAddQuestion(chapterIdx, topicIdx)}
@@ -565,13 +591,34 @@ const AddCourse = () => {
                   </div>
 
                   {topic.quiz.map((q, quizIdx) => (
-                    <div key={quizIdx} style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px dashed #ffe082" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                        <span style={{ fontWeight: "500", fontSize: "13px" }}>Question {quizIdx + 1}</span>
+                    <div
+                      key={quizIdx}
+                      style={{
+                        marginTop: "12px",
+                        paddingTop: "12px",
+                        borderTop: "1px dashed #ffe082",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        <span style={{ fontWeight: "500", fontSize: "13px" }}>
+                          Question {quizIdx + 1}
+                        </span>
                         <button
                           type="button"
-                          onClick={() => handleDeleteQuestion(chapterIdx, topicIdx, quizIdx)}
-                          style={{ ...styles.deleteBtn, fontSize: "10px", padding: "3px 6px" }}
+                          onClick={() =>
+                            handleDeleteQuestion(chapterIdx, topicIdx, quizIdx)
+                          }
+                          style={{
+                            ...styles.deleteBtn,
+                            fontSize: "10px",
+                            padding: "3px 6px",
+                          }}
                         >
                           Delete
                         </button>
@@ -583,7 +630,9 @@ const AddCourse = () => {
                         value={q.question}
                         onChange={(e) => {
                           const newChapters = [...formData.chapters];
-                          newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].question = e.target.value;
+                          newChapters[chapterIdx].topics[topicIdx].quiz[
+                            quizIdx
+                          ].question = e.target.value;
                           setFormData({ ...formData, chapters: newChapters });
                         }}
                         style={{ ...styles.input, marginBottom: "10px" }}
@@ -594,28 +643,56 @@ const AddCourse = () => {
                           <input
                             type="radio"
                             name={`correct-${chapterIdx}-${topicIdx}-${quizIdx}`}
-                            checked={q.correctOption === option && option !== ""}
-                            onChange={() => handleQuizCorrectOption(null, chapterIdx, topicIdx, quizIdx, option)}
+                            checked={
+                              q.correctOption === option && option !== ""
+                            }
+                            onChange={() =>
+                              handleQuizCorrectOption(
+                                null,
+                                chapterIdx,
+                                topicIdx,
+                                quizIdx,
+                                option
+                              )
+                            }
                             style={{ cursor: "pointer" }}
                           />
                           <input
                             type="text"
                             placeholder={`Enter option ${optIdx + 1}`}
                             value={option}
-                            onChange={(e) => handleQuizOptionChange(e, chapterIdx, topicIdx, quizIdx, optIdx)}
+                            onChange={(e) =>
+                              handleQuizOptionChange(
+                                e,
+                                chapterIdx,
+                                topicIdx,
+                                quizIdx,
+                                optIdx
+                              )
+                            }
                             style={styles.optionInput}
                           />
                         </div>
                       ))}
 
-                      <label style={{ ...styles.label, fontSize: "12px", marginTop: "8px" }}>Explanation</label>
+                      <label
+                        style={{
+                          ...styles.label,
+                          fontSize: "12px",
+                          marginTop: "8px",
+                        }}
+                      >
+                        Explanation
+                      </label>
                       <input
                         type="text"
                         placeholder="Enter explanation"
                         value={q.explaination}
                         onChange={(e) => {
                           const newChapters = [...formData.chapters];
-                          newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].explaination = e.target.value;
+                          newChapters[chapterIdx].topics[topicIdx].quiz[
+                            quizIdx
+                          ].explaination = e.target.value;
                           setFormData({ ...formData, chapters: newChapters });
                         }}
                         style={styles.input}

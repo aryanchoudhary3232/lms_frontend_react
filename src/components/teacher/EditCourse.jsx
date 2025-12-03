@@ -149,9 +149,17 @@ const EditCourse = () => {
     });
   };
 
-  const handleQuizOptionChange = (e, chapterIdx, topicIdx, quizIdx, quizOptionIdx) => {
+  const handleQuizOptionChange = (
+    e,
+    chapterIdx,
+    topicIdx,
+    quizIdx,
+    quizOptionIdx
+  ) => {
     const newChapters = [...formData.chapters];
-    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].options[quizOptionIdx] = e.target.value;
+    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].options[
+      quizOptionIdx
+    ] = e.target.value;
     setFormData({
       ...formData,
       chapters: newChapters,
@@ -168,7 +176,9 @@ const EditCourse = () => {
   };
 
   const handleDeleteChapter = (chapterIdx) => {
-    const newChapters = formData.chapters.filter((_, idx) => idx !== chapterIdx);
+    const newChapters = formData.chapters.filter(
+      (_, idx) => idx !== chapterIdx
+    );
     setFormData({
       ...formData,
       chapters: newChapters,
@@ -420,7 +430,9 @@ const EditCourse = () => {
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>
           Notes (PDF)
           {existingFiles.notes && (
-            <span style={{ fontSize: "12px", color: "#666", marginLeft: "10px" }}>
+            <span
+              style={{ fontSize: "12px", color: "#666", marginLeft: "10px" }}
+            >
               (Current file exists - upload new to replace)
             </span>
           )}
@@ -436,7 +448,9 @@ const EditCourse = () => {
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>
           Preview Image
           {existingFiles.image && (
-            <span style={{ fontSize: "12px", color: "#666", marginLeft: "10px" }}>
+            <span
+              style={{ fontSize: "12px", color: "#666", marginLeft: "10px" }}
+            >
               (Current image exists - upload new to replace)
             </span>
           )}
@@ -465,7 +479,9 @@ const EditCourse = () => {
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>
           Preview Video
           {existingFiles.video && (
-            <span style={{ fontSize: "12px", color: "#666", marginLeft: "10px" }}>
+            <span
+              style={{ fontSize: "12px", color: "#666", marginLeft: "10px" }}
+            >
               (Current video exists - upload new to replace)
             </span>
           )}
@@ -547,7 +563,9 @@ const EditCourse = () => {
                 type="text"
                 placeholder="Chapter Title"
                 value={chapter.title}
-                onChange={(e) => handleChapterChange(chapterIdx, e.target.value)}
+                onChange={(e) =>
+                  handleChapterChange(chapterIdx, e.target.value)
+                }
                 style={{
                   width: "100%",
                   padding: "8px",
@@ -654,7 +672,10 @@ const EditCourse = () => {
                               newChapters[chapterIdx].topics[topicIdx].quiz[
                                 quizIdx
                               ].question = e.target.value;
-                              setFormData({ ...formData, chapters: newChapters });
+                              setFormData({
+                                ...formData,
+                                chapters: newChapters,
+                              });
                             }}
                             style={{
                               width: "100%",
@@ -719,7 +740,10 @@ const EditCourse = () => {
                               newChapters[chapterIdx].topics[topicIdx].quiz[
                                 quizIdx
                               ].explaination = e.target.value;
-                              setFormData({ ...formData, chapters: newChapters });
+                              setFormData({
+                                ...formData,
+                                chapters: newChapters,
+                              });
                             }}
                             style={{
                               width: "100%",

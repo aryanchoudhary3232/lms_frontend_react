@@ -91,7 +91,10 @@ function Main() {
           <Route path="home" element={<TeacherHome />} />
           <Route path="courses" element={<TeacherAllCourses />} />
           <Route path="courses/:courseId" element={<TeacherCourseDetail />} />
-          <Route path="courses/:courseId/edit" element={<TeacherEditCourse />} />
+          <Route
+            path="courses/:courseId/edit"
+            element={<TeacherEditCourse />}
+          />
           <Route
             path="courses/:courseId/:chapterId/:topicId/quiz"
             element={<StudentQuiz />}
@@ -152,7 +155,10 @@ function Main() {
         <Route path="/student/sidebar" element={<AdminSidebar />}>
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="courses" element={<StudentCourses />} />
-          <Route path="courses/:courseId/flashcards" element={<StudentFlashcards />} />
+          <Route
+            path="courses/:courseId/flashcards"
+            element={<StudentFlashcards />}
+          />
           <Route path="deck/:deckId" element={<StudentStudyDeck />} />
           <Route path="streak" element={<Streak />} />
           <Route path="profile" element={<Profile />} />
