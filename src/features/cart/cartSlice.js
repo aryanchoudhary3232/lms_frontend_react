@@ -25,6 +25,18 @@ export const fetchCart = createAsyncThunk(
   }
 );
 
+export const removeFromCart = createAsyncThunk(
+  "cart/remove",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      await api.delete(`/cart/remove/${courseId}`);
+      return courseId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -44,6 +56,18 @@ const cartSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchCart.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(removeFromCart.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeFromCart.fulfilled, (state, action) => {
+        state.items = state.items.filter(item => item.id !== action.payload);
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(removeFromCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
