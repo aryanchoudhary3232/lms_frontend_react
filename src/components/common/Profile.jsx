@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../../css/common/Profile.css";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfile } from "../../features/studentProfile/studentProfileSlice";
+import { setAuthToken } from "../../api/axios";
+import { useAuth } from "../../contexts/AuthContext";
 
 /**
  * Profile Component - Personal Information Management
  * ============================================
  * Allows users to view and update their profile information.
  * Works for all user roles (Student, Teacher, Admin) with smart routing.
- * 
+ *
  * Features:
  * - View current name and email
  * - Update display name
@@ -19,24 +23,27 @@ const Profile = () => {
   // ============================================
   // State Management
   // ============================================
-  
-  // User profile data
-  const [profileData, setProfileData] = useState({
-    name: "",
-    email: "",
-    role: "",
-  });
-  
+
+  const { token } = useAuth();
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    setAuthToken(token);
+    if (token) dispatch(fetchProfile());
+  }, [token, dispatch]);
+  const { name, email, role, loading, error } = useSelector(
+    (state) => state.studentProfile
+  );
   // Form state for editing
-  const [formData, setFormData] = useState({
-    name: "",
-  });
-  
+  const [formName, setFormName] = useState("");
+  useEffect(() => {
+    setFormName(name);
+  }, [name]);
+
   // UI states
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // Feedback messages
   const [alert, setAlert] = useState({
     type: "", // "success" or "error"
@@ -44,75 +51,8 @@ const Profile = () => {
   });
 
   // Backend URL from environment
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-
-  // ============================================
-  // Data Fetching
-  // ============================================
-
-  /**
-   * Fetches the current user's profile data from the server
-   * Called on component mount
-   */
-  const fetchProfile = async () => {
-    try {
-      setIsLoading(true);
-      clearAlert();
-
-      const token = localStorage.getItem("token");
-      
-      if (!token) {
-        setAlert({
-          type: "error",
-          message: "You are not logged in. Please login again.",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await fetch(`${backendUrl}/auth/profile`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Update profile state with fetched data
-        setProfileData({
-          name: data.data.name,
-          email: data.data.email,
-          role: data.data.role,
-        });
-        // Initialize form data with current name
-        setFormData({
-          name: data.data.name,
-        });
-      } else {
-        setAlert({
-          type: "error",
-          message: data.message || "Failed to fetch profile data.",
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      setAlert({
-        type: "error",
-        message: "Network error. Please check your connection.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fetch profile on component mount
-  useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
   // ============================================
   // Event Handlers
@@ -123,27 +63,10 @@ const Profile = () => {
    * Updates the formData state
    */
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormName(e.target.value);
   };
 
-  /**
-   * Toggles edit mode on/off
-   * Resets form data when canceling edit
-   */
-  const handleToggleEdit = () => {
-    if (isEditing) {
-      // Cancel editing - reset form to original values
-      setFormData({
-        name: profileData.name,
-      });
-    }
-    setIsEditing(!isEditing);
-    clearAlert();
-  };
+  console.log(".............", isEditing);
 
   /**
    * Clears the current alert message
@@ -158,21 +81,12 @@ const Profile = () => {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate name is not empty
-    if (!formData.name.trim()) {
+    if (!formName.trim()) {
       setAlert({
         type: "error",
         message: "Name cannot be empty.",
-      });
-      return;
-    }
-
-    // Check if name actually changed
-    if (formData.name.trim() === profileData.name) {
-      setAlert({
-        type: "error",
-        message: "No changes detected.",
       });
       return;
     }
@@ -190,7 +104,7 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name: formData.name.trim(),
+          name: formName.trim(),
         }),
       });
 
@@ -198,10 +112,7 @@ const Profile = () => {
 
       if (data.success) {
         // Update profile data with new values
-        setProfileData((prev) => ({
-          ...prev,
-          name: data.data.name,
-        }));
+        setFormName(data.data.name);
         setIsEditing(false);
         setAlert({
           type: "success",
@@ -244,8 +155,8 @@ const Profile = () => {
   // ============================================
   // Render: Loading State
   // ============================================
-  
-  if (isLoading) {
+
+  if (loading) {
     return (
       <div className="profile-container">
         <div className="profile-loading">
@@ -259,7 +170,7 @@ const Profile = () => {
   // ============================================
   // Render: Main Component
   // ============================================
-  
+
   return (
     <div className="profile-container">
       {/* Page Header */}
@@ -272,12 +183,10 @@ const Profile = () => {
       <div className="profile-card">
         {/* Avatar Section */}
         <div className="profile-avatar-section">
-          <div className="profile-avatar">
-            {getInitials(profileData.name)}
-          </div>
+          <div className="profile-avatar">{getInitials(name)}</div>
           <div className="profile-avatar-info">
-            <h2>{profileData.name || "User"}</h2>
-            <span className="role-badge">{profileData.role}</span>
+            <h2>{name || "User"}</h2>
+            <span className="role-badge">{role}</span>
           </div>
         </div>
 
@@ -300,7 +209,7 @@ const Profile = () => {
               type="text"
               id="name"
               name="name"
-              value={isEditing ? formData.name : profileData.name}
+              value={isEditing ? formName : name}
               onChange={handleInputChange}
               disabled={!isEditing}
               placeholder="Enter your full name"
@@ -314,7 +223,7 @@ const Profile = () => {
               type="email"
               id="email"
               name="email"
-              value={profileData.email}
+              value={email}
               disabled
               readOnly
             />
@@ -337,7 +246,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="profile-btn profile-btn-secondary"
-                  onClick={handleToggleEdit}
+                  onClick={() => setIsEditing(false)}
                   disabled={isSaving}
                 >
                   Cancel
@@ -347,7 +256,10 @@ const Profile = () => {
               <button
                 type="button"
                 className="profile-btn profile-btn-primary"
-                onClick={handleToggleEdit}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsEditing(true);
+                }}
               >
                 Edit Profile
               </button>

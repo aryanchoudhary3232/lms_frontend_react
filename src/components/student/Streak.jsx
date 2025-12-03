@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../../css/student/Streak.css";
 
 const Streak = () => {
   const [stats, setStats] = useState(null);
@@ -25,47 +26,68 @@ const Streak = () => {
     load();
   }, []);
 
-  if (loading) return <div style={{ padding: 28 }}>Loading streak...</div>;
+  if (loading) {
+    return (
+      <div className="streak-container">
+        <div className="streak-loading">Loading streak data...</div>
+      </div>
+    );
+  }
 
-  if (!stats) return <div style={{ padding: 28 }}>No data available.</div>;
+  if (!stats) {
+    return (
+      <div className="streak-container">
+        <div className="streak-error">No data available.</div>
+      </div>
+    );
+  }
 
   const formatDate = (iso) => {
-    if (!iso) return "-";
+    if (!iso) return "No recent activity";
     const d = new Date(iso);
-    return d.toLocaleDateString();
+    return d.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
 
   return (
-    <div style={{ width: "100%", padding: "28px", boxSizing: "border-box" }}>
-      <h2>Streak & Activity</h2>
-      <p className="muted">Overview of your recent activity</p>
+    <div className="streak-container">
+      <div className="streak-header">
+        <h2 className="streak-title">Streak & Activity</h2>
+        <p className="streak-subtitle">Overview of your recent activity</p>
+      </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 16, marginTop: 16 }}>
-        <div className="analytics-card">
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#2337AD" }}>{stats.activeDays}</div>
-          <div style={{ color: "#666", marginTop: 6 }}>Days Active</div>
+      <div className="streak-stats-grid">
+        <div className="streak-stat-card active-days">
+          <span className="streak-stat-number">{stats.activeDays}</span>
+          <div className="streak-stat-label">Days Active</div>
         </div>
 
-        <div className="analytics-card">
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#2337AD" }}>{stats.quizDays}</div>
-          <div style={{ color: "#666", marginTop: 6 }}>Days with Quiz Attempts</div>
+        <div className="streak-stat-card quiz-days">
+          <span className="streak-stat-number">{stats.quizDays}</span>
+          <div className="streak-stat-label">Days with Quiz Attempts</div>
         </div>
 
-        <div className="analytics-card">
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#2337AD" }}>{stats.currentStreak}</div>
-          <div style={{ color: "#666", marginTop: 6 }}>Current Streak (days)</div>
+        <div className="streak-stat-card current-streak">
+          <span className="streak-stat-number">{stats.currentStreak}</span>
+          <div className="streak-stat-label">Current Streak (days)</div>
         </div>
 
-        <div className="analytics-card">
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#2337AD" }}>{stats.bestStreak}</div>
-          <div style={{ color: "#666", marginTop: 6 }}>Best Streak</div>
+        <div className="streak-stat-card best-streak">
+          <span className="streak-stat-number">{stats.bestStreak}</span>
+          <div className="streak-stat-label">Best Streak</div>
         </div>
       </div>
 
-      <div style={{ marginTop: 18 }} className="quiz-panel">
-        <h3>Last Active</h3>
-        <p>{formatDate(stats.lastActiveDate)}</p>
-        <small className="muted">Last recorded active date for streak tracking.</small>
+      <div className="last-active-panel">
+        <h3 className="last-active-title">Last Active</h3>
+        <div className="last-active-date">{formatDate(stats.lastActiveDate)}</div>
+        <p className="last-active-description">
+          Last recorded active date for streak tracking. Keep learning daily to maintain your streak!
+        </p>
       </div>
     </div>
   );

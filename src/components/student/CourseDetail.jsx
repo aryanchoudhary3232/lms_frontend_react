@@ -8,13 +8,51 @@ const CourseDetail = () => {
 
   const { courseId } = useParams();
 
+  // State for the new UI elements
+  // 'materi' or 'komentar'
+  const [activeTab, setActiveTab] = useState("materi");
+  // Keep track of which chapters are open, start with first open
+
+  const { isActive, formattedTime, currentSessionMinutes } = useLearningTimer();
+  const [openChapters, setOpenChapters] = useState([0]); 
+  const [ratingValue, setRatingValue] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [ratingSubmitting, setRatingSubmitting] = useState(false);
+  const [ratingMsg, setRatingMsg] = useState(null);
+
+  useEffect(() => {
+    async function getStudentProfile() {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/student/profile`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setStudentId(data.data._id);
+      } catch (error) {
+        console.log("err occurred...", error);
+      }
+    }
+    getStudentProfile();
+  }, []);
+
   useEffect(() => {
     async function getCourseById() {
       try {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+        const token = localStorage.getItem("token");
+        
         const response = await fetch(
-          `${backendUrl}/student/courses/${courseId}`
+          `${backendUrl}/student/courses/${courseId}`,
+          token ? { headers: { Authorization: `Bearer ${token}` } } : {}
         );
         const courseResponse = await response.json();
 
@@ -50,23 +88,105 @@ const CourseDetail = () => {
   };
 
   return (
-    <div
-      className="course-player-wrapper"
-      style={{
-        display: "flex",
-        // gap: "12rem",
-        margin: "5px 5px 5px 5px",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      {/* Left - Video Player */}
-      <div
-        className="player-left"
-        style={{
-          width: "75%",
-        }}
-      >
+    <div style={styles.container}>
+      {/* ===== LEFT SIDEBAR ===== */}
+      <div style={styles.sidebar}>
+        <div style={styles.sidebarTabs}>
+          <div
+            style={{
+              ...styles.tab,
+              ...(activeTab === "materi" ? styles.activeTab : {}),
+            }}
+            onClick={() => setActiveTab("materi")}
+          >
+            Material
+          </div>
+          <div
+            style={{
+              ...styles.tab,
+              ...(activeTab === "komentar" ? styles.activeTab : {}),
+            }}
+            onClick={() => setActiveTab("komentar")}
+          >
+            Comments
+          </div>
+        </div>
+
+        {activeTab === "materi" && (
+          <div className="chapters-list">
+            {/* Flashcards Link */}
+            <div style={{ padding: "16px", borderBottom: "1px solid #f0f0f0" }}>
+                <Link to={`/student/sidebar/courses/${courseId}/flashcards`} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600' }}>
+                    <span>🗂️</span> Flashcards
+                </Link>
+            </div>
+
+            {course.chapters && course.chapters.length > 0 ? (
+              course.chapters.map((chapter, chIdx) => (
+                <div key={chIdx} style={styles.chapterAccordion}>
+                  <h3
+                    style={styles.chapterHeader}
+                    onClick={() => toggleChapter(chIdx)}
+                  >
+                    {chapter.title}
+                    <span>{openChapters.includes(chIdx) ? "▲" : "▼"}</span>
+                  </h3>
+                  {openChapters.includes(chIdx) && (
+                    <ul style={styles.topicList}>
+                      {chapter.topics.map((topic, tpIdx) => (
+                        <React.Fragment key={tpIdx}>
+                          {/* Video Item */}
+                          <li
+                            style={{
+                              ...styles.topicItem,
+                              ...(selectedVideo === topic.video
+                                ? styles.activeTopicItem
+                                : {}),
+                            }}
+                            onClick={() =>
+                              handleTopicClick(topic.video, chIdx, tpIdx, chapter._id, topic._id)
+                            }
+                          >
+                            <span>🎥</span>
+                            {topic.title}
+                            {isTopicCompleted(chapter._id, topic._id) && (
+                              <span style={{ color: 'green', marginLeft: '8px' }}>✓</span>
+                            )}
+                          </li>
+                          {/* Quiz Item */}
+                          <li
+                            style={{ ...styles.topicItem, cursor: "default" }}
+                          >
+                            <Link
+                              to={`/student/courses/${course._id}/${chapter._id}/${topic._id}/quiz`}
+                              style={styles.quizLink}
+                            >
+                              <span>📝</span>
+                              Quiz: {topic.title}
+                            </Link>
+                          </li>
+                        </React.Fragment>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p style={{ padding: "16px" }}>No chapters added yet.</p>
+            )}
+          </div>
+        )}
+
+        {activeTab === "komentar" && (
+          <div style={{ padding: "16px" }}>
+            <p>Comments feature coming soon.</p>
+          </div>
+        )}
+      </div>
+
+      {/* ===== RIGHT MAIN CONTENT ===== */}
+      <div style={styles.mainContent}>
+        {/* Video Player */}
         <video
           src={selectedVideo}
           controls

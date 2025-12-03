@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import "../css/teacher/CourseDetail.css"; // We will create this new CSS file
-import { Link, useParams } from "react-router-dom";
+import "../css/teacher/CourseDetail.css"; 
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { addToCart } from "../helper/cartHelper";
 
 // Simple star rating component
 const StarRating = ({ rating }) => {
-  // rating may be a number or an object { average, count }
   const avg = rating && typeof rating === 'object' ? rating.average : rating;
   const count = rating && typeof rating === 'object' ? rating.count : 0;
   const num = Number(avg) || 0;
   return (
     <div className="star-rating">
       {[...Array(5)].map((_, index) => (
-        <span key={index}>{index < Math.round(num) ? "⭐" : "☆"}</span>
+        <span key={index} style={{ color: index < Math.round(num) ? "#ffc107" : "#e4e5e9" }}>
+          {index < Math.round(num) ? "★" : "☆"}
+        </span>
       ))}
       <span className="rating-text" style={{ marginLeft: 8 }}>{num}</span>
       {count ? <small style={{ marginLeft: 6, color: '#eee' }}>({count})</small> : null}
@@ -23,13 +25,15 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [studentId, setStudentId] = useState("");
   const [isEnroll, setIsEnroll] = useState(false);
+  const [activeTab, setActiveTab] = useState("description"); // New State for Tabs
   const { courseId } = useParams();
+  const navigate = useNavigate();
 
-  // --- Your existing data fetching (works perfectly here) ---
+  // --- Data Fetching ---
   useEffect(() => {
     async function getStudentProfile() {
       const token = localStorage.getItem("token");
-      if (!token) return; // Added a check
+      if (!token) return;
       try {
         const response = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/student/profile`,
@@ -53,9 +57,7 @@ const CourseDetail = () => {
   useEffect(() => {
     async function getCourseById() {
       try {
-        const backendUrl =
-          import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-        console.log("Fetching course from:", `${backendUrl}/student/courses/${courseId}`);
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const response = await fetch(
           `${backendUrl}/student/courses/${courseId}`, {
             headers: {
@@ -64,17 +66,11 @@ const CourseDetail = () => {
             },
           }
         );
-        if (!response.ok) {
-          const text = await response.text();
-          console.error("Server response:", text);
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const courseResponse = await response.json();
         
         if (courseResponse.success) {
           setCourse(courseResponse.data);
-        } else {
-          console.error("Error fetching course:", courseResponse.message);
         }
       } catch (error) {
         console.error("Error details:", error);
@@ -92,36 +88,54 @@ const CourseDetail = () => {
     }
   }, [course, studentId]);
 
-  // --- End of data fetching ---
+  const handleEnroll = () => {
+    // If user is not authenticated, redirect to login
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // Include return URL so user can be redirected back after login
+      navigate(`/login?next=${encodeURIComponent(`/courses/${courseId}`)}`);
+      return;
+    }
+
+    // Build a cart-friendly item shape expected by cartHelper
+    const cartItem = {
+      id: course._id || course.id,
+      title: course.title,
+      price: course.price || 0,
+      instructor: course.teacher?.name || course.instructor || "",
+      thumbnail: course.image || course.thumbnail || ""
+    };
+
+    const added = addToCart(cartItem);
+    if (added) {
+      alert("Course added to cart");
+      // Dispatch event to update navbar
+      window.dispatchEvent(new Event("cartUpdated"));
+    } else {
+      alert("Course is already in cart");
+    }
+  };
 
   if (!course) {
     return (
-      <div className="loading-container" style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <p>Loading course details...</p>
-          <p style={{ fontSize: '0.8em', color: '#666' }}>Course ID: {courseId}</p>
-        </div>
+      <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Loading...</p>
       </div>
     );
   }
 
-  // A function to handle enrollment - you'll need to build this
-  const handleEnroll = () => {
-    // This would typically redirect to a payment page or API call
-    alert("Redirecting to enrollment/payment...");
-    // Example: window.location.href = `/checkout/${courseId}`;
+  // Helper to format duration if needed
+  const formatDuration = (min) => {
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
   };
 
   return (
     <div className="course-detail-container">
       <div className="main-content">
         <div className="breadcrumbs">
-          <Link to="/dashboard">Dashboard</Link> &gt;{" "}
+          <Link to="/">Dashboard</Link> &gt;{" "}
           <Link to="/courses">Courses</Link> &gt;{" "}
           <span>{course.title}</span>
         </div>
@@ -129,47 +143,155 @@ const CourseDetail = () => {
         <div
           className="course-header"
           style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${
               course.image || "/default-banner.jpg"
             })`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
           }}
         >
           <h1>{course.title}</h1>
-          <p>{course.shortDescription || "Learn how to master this subject."}</p>
-          <StarRating rating={course.rating || 4.5} />{" "}
-          {/* Assuming you have a rating */}
+          <p>{course.description.substring(0, 100)}...</p>
+          <div className="header-meta">
+             <span className="badge">{course.category}</span>
+             <span className="badge">{course.level}</span>
+          </div>
+          <StarRating rating={course.rating} />
         </div>
 
         <div className="course-body">
+          {/* Interactive Tabs */}
           <div className="course-tabs">
-            <span className="tab active">Description</span>
-            <span className="tab">Course content</span>
-            <span className="tab">Teacher</span>
-            <span className="tab">Reviews</span>
+            <span 
+              className={`tab ${activeTab === "description" ? "active" : ""}`}
+              onClick={() => setActiveTab("description")}
+            >
+              Description
+            </span>
+            <span 
+              className={`tab ${activeTab === "content" ? "active" : ""}`}
+              onClick={() => setActiveTab("content")}
+            >
+              Course content
+            </span>
+            <span 
+              className={`tab ${activeTab === "teacher" ? "active" : ""}`}
+              onClick={() => setActiveTab("teacher")}
+            >
+              Teacher
+            </span>
+            <span 
+              className={`tab ${activeTab === "reviews" ? "active" : ""}`}
+              onClick={() => setActiveTab("reviews")}
+            >
+              Reviews
+            </span>
           </div>
 
           <div className="tab-content">
-            <h3>Course Description</h3>
-            <p>{course.description}</p>
-
-            <h3>Teacher Information</h3>
-            {course.teacher && (
-              <div className="teacher-info">
-                <p><strong>Name:</strong> {course.teacher.name}</p>
-                <p><strong>Contact:</strong> {course.teacher.email}</p>
+            
+            {/* 1. Description Tab */}
+            {activeTab === "description" && (
+              <div className="fade-in">
+                <h3>Course Description</h3>
+                <p>{course.description}</p>
+                
+                <h3>What you will learn</h3>
+                <ul className="learning-list">
+                  {/* Ideally fetch this from backend, hardcoded for now as per prev code */}
+                  <li>Understand key concepts of {course.category}.</li>
+                  <li>Master the basics of {course.title}.</li>
+                  <li>Build real-world projects.</li>
+                </ul>
               </div>
             )}
 
-            <h3>What you will learn</h3>
-            <ul className="learning-list">
-              {/* You should add this 'whatYouWillLearn' array to your course data in the backend */}
-              <li>Be able to use the budgeting process to increase teamwork.</li>
-              <li>Be able to speak confidently on the key concepts.</li>
-              <li>
-                Understand the "who, what, when, where, and why" of a budget.
-              </li>
-              <li>Plan, and control where you work or in your own business.</li>
-            </ul>
+            {/* 2. Course Content Tab (Updated based on JSON) */}
+            {activeTab === "content" && (
+              <div className="course-curriculum fade-in">
+                <h3>Course Curriculum</h3>
+                <div className="total-lectures">
+                  {course.chapters?.length || 0} Chapters • {course.duration || 0} Hours Total
+                </div>
+
+                {course.chapters && course.chapters.length > 0 ? (
+                  course.chapters.map((chapter, index) => (
+                    <div key={chapter._id || index} className="chapter-item">
+                      <div className="chapter-header">
+                        <h4>Chapter {index + 1}: {chapter.title}</h4>
+                        <span className="chapter-meta">{chapter.topics?.length || 0} lessons</span>
+                      </div>
+                      
+                      <ul className="chapter-topics">
+                        {chapter.topics && chapter.topics.map((topic, tIndex) => (
+                          <li key={topic._id || tIndex} className="topic-item">
+                            <div className="topic-left">
+                              {/* Icon based on content */}
+                              <span className="icon">{topic.video ? "▶" : "📄"}</span>
+                              <span className="topic-title">{topic.title}</span>
+                            </div>
+                            
+                            <div className="topic-right">
+                              {topic.quiz && topic.quiz.length > 0 && (
+                                <span className="quiz-badge">Quiz inside</span>
+                              )}
+                              {!isEnroll && <span className="locked-icon">🔒</span>}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+                ) : (
+                  <p>No curriculum content available.</p>
+                )}
+              </div>
+            )}
+
+            {/* 3. Teacher Tab */}
+            {activeTab === "teacher" && (
+              <div className="teacher-info fade-in">
+                <h3>Instructor</h3>
+                {course.teacher ? (
+                  <div className="teacher-card">
+                    <div className="teacher-avatar">
+                      {/* Placeholder avatar logic */}
+                      {course.teacher.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4>{course.teacher.name}</h4>
+                      <p>{course.teacher.email}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p>No teacher information.</p>
+                )}
+              </div>
+            )}
+
+            {/* 4. Reviews Tab (Based on JSON ratings) */}
+            {activeTab === "reviews" && (
+              <div className="reviews-section fade-in">
+                <h3>Student Reviews</h3>
+                {course.ratings && course.ratings.length > 0 ? (
+                  course.ratings.map((review) => (
+                    <div key={review._id} className="review-item">
+                      <div className="review-header">
+                        <span className="reviewer-name">Student</span>
+                        <StarRating rating={review.rating} />
+                      </div>
+                      <p className="review-text">{review.review}</p>
+                      <small className="review-date">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </small>
+                    </div>
+                  ))
+                ) : (
+                  <p>No reviews yet.</p>
+                )}
+              </div>
+            )}
+
           </div>
         </div>
       </div>
@@ -177,12 +299,12 @@ const CourseDetail = () => {
       <div className="sidebar">
         <div className="video-preview">
           <img
-            src={course.thumbnail || "/default-thumbnail.jpg"}
+            src={course.image || "/default-thumbnail.jpg"}
             alt={course.title}
           />
           <div className="overlay">
             <span>▶</span>
-            <p>Overview</p>
+            <p>Preview Course</p>
           </div>
         </div>
 
@@ -191,28 +313,25 @@ const CourseDetail = () => {
             {course.price ? `$${course.price}` : "Free"}
           </h2>
           <div className="course-format">
-            <h4>Course Format</h4>
+            <h4>This course includes:</h4>
             <ul>
-              <li>
-                ✓ {course.chapters?.length || "5"}{" "}
-                Video lessons
-              </li>
-              <li>✓ {course.quizzes?.length || "3"} Quizzes</li>
-              <li>✓ 4 Downloadable resources</li>
-              <li>✓ Course Duration: 02:36:14</li>
+              <li>✓ {course.chapters?.length || "0"} Chapters</li>
+              <li>✓ {course.duration || "0"} Hours video</li>
+              <li>✓ Full lifetime access</li>
+              <li>✓ Access on mobile and TV</li>
             </ul>
           </div>
 
           {isEnroll ? (
             <Link
-              to={`/student/course-player/${courseId}`} // Link to the NEW player page
+              to={`/student/courses/${courseId}`}
               className="start-course-btn"
             >
-              Start Course →
+              Go to course →
             </Link>
           ) : (
             <button onClick={handleEnroll} className="enroll-now-btn">
-              Enroll Now
+              Enroll Course
             </button>
           )}
         </div>

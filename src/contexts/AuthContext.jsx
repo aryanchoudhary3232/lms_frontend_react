@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { setAuthToken } from "../api/axios";
 
 const AuthContext = createContext();
 
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("role", data.data.role);
         setToken(data.token);
         setRole(data.data.role);
+        setAuthToken(data.token);
 
         setFormData({
           name: "",

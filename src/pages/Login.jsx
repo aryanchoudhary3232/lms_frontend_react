@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../css/Login.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import Navbar from "../components/common/Navbar";
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -66,6 +67,7 @@ const Login = () => {
 
   return (
     <div className="login-page">
+      <Navbar />
       <div className="login-container">
         <div className="login-content">
           
@@ -185,7 +187,6 @@ const Login = () => {
                       <option value="">...Choose role...</option>
                       <option value="Student">Student</option>
                       <option value="Teacher">Teacher</option>
-                      <option value="Admin">Admin</option>
                     </select>
                   </div>
 

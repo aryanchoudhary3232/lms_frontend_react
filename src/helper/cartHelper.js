@@ -12,6 +12,8 @@ export const addToCart = (course) => {
       thumbnail: course.thumbnail
     });
     localStorage.setItem('cart', JSON.stringify(cart));
+    // Dispatch custom event for same-tab updates
+    window.dispatchEvent(new Event('cartUpdated'));
     return true;
   }
   return false;
@@ -21,6 +23,8 @@ export const removeFromCart = (courseId) => {
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
   const updatedCart = cart.filter(item => item.id !== courseId);
   localStorage.setItem('cart', JSON.stringify(updatedCart));
+  // Dispatch custom event for same-tab updates
+  window.dispatchEvent(new Event('cartUpdated'));
 };
 
 export const getCartItems = () => {

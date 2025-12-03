@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import useLearningTimer from "../../../helper/customHooks/useLearningTimer";
 import "../../../css/student/Assignments.css";
 
 const SubmitAssignment = () => {
@@ -10,6 +11,9 @@ const SubmitAssignment = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+  
+  // Track learning time automatically
+  const { isActive, formattedTime } = useLearningTimer();
 
   const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
