@@ -161,25 +161,8 @@ const Login = () => {
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
-
-    // Mark fields as touched
-    setTouched({
-      email: true,
-      password: true,
-    });
-
-    // Validate login fields
-    const newErrors = {};
-    newErrors.email = validateField("email", formData.email);
-    newErrors.password = validateField("password", formData.password);
-
-    setErrors(newErrors);
-
-    // Check if there are any errors
-    if (Object.values(newErrors).some((error) => error !== "")) {
-      return;
-    }
-
+    
+    // No validation for login - just submit directly
     await login(formData, setFormData);
   };
 
@@ -232,16 +215,10 @@ const Login = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleOnChange}
-                      onBlur={handleBlur}
                       placeholder="Enter E-mail"
                       required
-                      className={`form-input ${
-                        errors.email && touched.email ? "error" : ""
-                      }`}
+                      className="form-input"
                     />
-                    {errors.email && touched.email && (
-                      <span className="error-message">{errors.email}</span>
-                    )}
                   </div>
 
                   <div className="form-group">
@@ -250,16 +227,10 @@ const Login = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleOnChange}
-                      onBlur={handleBlur}
                       placeholder="Enter Password"
                       required
-                      className={`form-input ${
-                        errors.password && touched.password ? "error" : ""
-                      }`}
+                      className="form-input"
                     />
-                    {errors.password && touched.password && (
-                      <span className="error-message">{errors.password}</span>
-                    )}
                   </div>
 
                   <div className="forgot-password">
