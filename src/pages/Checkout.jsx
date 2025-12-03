@@ -46,20 +46,30 @@ const Checkout = () => {
 
       const json = await response.json();
       if (response.ok && json.success) {
-        if (json.data?.enrolledCourses) {
-          const enrolledIds = json.data.enrolledCourses
-            .map((course) => course?._id)
-            .filter(id => typeof id === 'string' && id.trim().length > 0);
-          localStorage.setItem(
-            "enrolledCourseIds",
-            JSON.stringify(enrolledIds)
-          );
-          // Notify other components that enrolledCourseIds has changed
-          window.dispatchEvent(new Event("enrolledCourseIdsUpdated"));
-        }
+          let redirectCourseId = null;
+          if (json.data?.enrolledCourses) {
+            const enrolledIds = json.data.enrolledCourses
+              .map((course) => course?._id || course?.id || course)
+              .filter(id => typeof id === 'string' && id.trim().length > 0);
+            localStorage.setItem(
+              "enrolledCourseIds",
+              JSON.stringify(enrolledIds)
+            );
+            window.dispatchEvent(new Event("enrolledCourseIdsUpdated"));
 
-        // Pass a query parameter to indicate successful enrollment
-        navigate("/student/enrolled-courses?enrolled=success");
+            // Find the first courseId from the cart that is present in enrolledIds
+            const cartCourseIds = courseIds.map(String);
+            redirectCourseId = cartCourseIds.find(id => enrolledIds.includes(id));
+          }
+
+          if (redirectCourseId) {
+            navigate(`/student/courses/${redirectCourseId}`);
+          } else if (courseIds.length > 0) {
+            // Optimistically redirect to the first course in the cart
+            navigate(`/student/courses/${courseIds[0]}`);
+          } else {
+            navigate("/student");
+          }
       } else {
         setErrors({ form: json.message || "Checkout failed" });
       }

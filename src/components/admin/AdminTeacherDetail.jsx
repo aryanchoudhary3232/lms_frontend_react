@@ -258,22 +258,23 @@ const AdminTeacherDetail = () => {
             </div>
 
             {/* Approve/Reject Buttons */}
-            {teacher.verificationStatus === "Pending" && teacher.qualificationDoc?.url && (
-              <div className="verification-actions">
-                <button
-                  onClick={() => setShowApproveModal(true)}
-                  className="btn-approve"
-                >
-                  ✅ Approve Verification
-                </button>
-                <button
-                  onClick={() => setShowRejectModal(true)}
-                  className="btn-reject"
-                >
-                  ❌ Reject Verification
-                </button>
-              </div>
-            )}
+            {teacher.verificationStatus === "Pending" &&
+              teacher.qualificationDoc?.url && (
+                <div className="verification-actions">
+                  <button
+                    onClick={() => setShowApproveModal(true)}
+                    className="btn-approve"
+                  >
+                    ✅ Approve Verification
+                  </button>
+                  <button
+                    onClick={() => setShowRejectModal(true)}
+                    className="btn-reject"
+                  >
+                    ❌ Reject Verification
+                  </button>
+                </div>
+              )}
 
             {teacher.verificationNotes && (
               <div className="notes-section">
@@ -444,7 +445,8 @@ const AdminTeacherDetail = () => {
           <div className="modal-content">
             <h3>✅ Approve Teacher Verification</h3>
             <p>
-              Are you sure you want to approve <strong>{teacher.name}</strong>'s qualification?
+              Are you sure you want to approve <strong>{teacher.name}</strong>'s
+              qualification?
             </p>
             <div className="modal-input">
               <label>Approval Notes (Optional):</label>
@@ -484,7 +486,8 @@ const AdminTeacherDetail = () => {
           <div className="modal-content">
             <h3>❌ Reject Teacher Verification</h3>
             <p>
-              Are you sure you want to reject <strong>{teacher.name}</strong>'s qualification?
+              Are you sure you want to reject <strong>{teacher.name}</strong>'s
+              qualification?
             </p>
             <div className="modal-input">
               <label>Rejection Reason (Required):</label>

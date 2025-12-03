@@ -1,6 +1,32 @@
 import React, { useState } from "react";
 import "../../css/common/Settings.css";
 
+const EyeOpenIcon = (
+  <svg
+    className="password-eye-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>
+);
+
+
+
+const EyeClosedIcon = (
+<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="m634-422-48.67-48.67q20.34-63-27-108-47.33-45-107.66-26.66L402-654q17-10 36.83-14.67 19.84-4.66 41.17-4.66 72.33 0 122.83 50.5T653.33-500q0 21.33-5 41.5T634-422Zm128.67 128-46-45.33Q762-373 796.17-414.17q34.16-41.16 52.5-85.83-50-107.67-147.84-170.5-97.83-62.83-214.16-62.83-37.67 0-76.34 6.66Q371.67-720 346-710l-51.33-52q37-16.33 87.66-27.17Q433-800 483.33-800q145.67 0 264 82.17Q865.67-635.67 920-500q-25 62.33-64.83 114.5-39.84 52.17-92.5 91.5ZM808-61.33 640-226.67q-35 13-76.17 19.84Q522.67-200 480-200q-147.67 0-266.33-82.17Q95-364.33 40-500q20.33-52.33 54.67-100.5 34.33-48.17 82-90.17L56-812l46.67-47.33 750 750-44.67 48ZM222.67-644q-34.34 26.67-65.34 66.33-31 39.67-46.66 77.67 50.66 107.67 150.16 170.5t224.5 62.83q28.67 0 56.34-3.5 27.66-3.5 45-9.83L532-335.33q-11 4.33-25 6.5-14 2.16-27 2.16-71.67 0-122.5-50.16Q306.67-427 306.67-500q0-13.67 2.16-27 2.17-13.33 6.5-25l-92.66-92Zm309.66 125.67Zm-127.66 63.66Z"/></svg>
+);
+
 /**
  * Settings Component - Security & Password Management
  * ============================================
@@ -329,12 +355,12 @@ const Settings = () => {
         {/* Password Change Form */}
         <form className="settings-form" onSubmit={handleSubmit}>
           {/* Current Password Field */}
-          <div className="form-group">
-            <label htmlFor="currentPassword">
+          {/* <div className="form-group"> */}
+            {/* <label htmlFor="currentPassword">
               Current Password<span className="required-star">*</span>
-            </label>
-            <div className="input-wrapper">
-              <input
+            </label> */}
+            {/* <div className="input-wrapper"> */}
+              {/* <input
                 type={showPasswords.current ? "text" : "password"}
                 id="currentPassword"
                 name="currentPassword"
@@ -342,22 +368,22 @@ const Settings = () => {
                 onChange={handleInputChange}
                 placeholder="Enter your current password"
                 className={fieldErrors.currentPassword ? "input-error" : ""}
-              />
-              <button
+              /> */}
+              {/* <button
                 type="button"
                 className="password-toggle"
                 onClick={() => togglePasswordVisibility("current")}
                 aria-label={showPasswords.current ? "Hide password" : "Show password"}
               >
-                {showPasswords.current ? "👁️" : "👁️‍🗨️"}
-              </button>
-            </div>
-            {fieldErrors.currentPassword && (
+                {showPasswords.current ? EyeOpenIcon : EyeClosedIcon}
+              </button> */}
+            {/* </div> */}
+            {/* {fieldErrors.currentPassword && (
               <span className="field-error">{fieldErrors.currentPassword}</span>
             )}
-          </div>
+          </div> */}
 
-          <div className="settings-divider"></div>
+          {/* <div className="settings-divider"></div> */}
 
           {/* New Password Field */}
           <div className="form-group">
@@ -380,7 +406,7 @@ const Settings = () => {
                 onClick={() => togglePasswordVisibility("new")}
                 aria-label={showPasswords.new ? "Hide password" : "Show password"}
               >
-                {showPasswords.new ? "👁️" : "👁️‍🗨️"}
+                {showPasswords.new ? EyeOpenIcon : EyeClosedIcon}
               </button>
             </div>
             {fieldErrors.newPassword && (
@@ -424,7 +450,7 @@ const Settings = () => {
                 onClick={() => togglePasswordVisibility("confirm")}
                 aria-label={showPasswords.confirm ? "Hide password" : "Show password"}
               >
-                {showPasswords.confirm ? "👁️" : "👁️‍🗨️"}
+                {showPasswords.confirm ? EyeOpenIcon : EyeClosedIcon}
               </button>
             </div>
             {fieldErrors.confirmPassword && (

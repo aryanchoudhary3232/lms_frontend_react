@@ -66,7 +66,7 @@ const Navbar = () => {
                 : role === "Admin"
                 ? "/admin/courses"
                 : role === "Student"
-                ? "student/courses"
+                ? "/student/courses"
                 : "/teacher/courses"
             }
             className="nav-item"
