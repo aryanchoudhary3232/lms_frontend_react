@@ -656,6 +656,50 @@ const CourseDetail = () => {
 
       {/* ===== RIGHT MAIN CONTENT ===== */}
       <div style={styles.mainContent}>
+        {/* Learning Timer Indicator */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "12px 16px",
+          backgroundColor: isActive ? "#d1fae5" : "#f3f4f6",
+          borderBottom: "1px solid #e5e7eb",
+          fontSize: "0.9rem",
+        }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            color: isActive ? "#065f46" : "#6b7280",
+          }}>
+            <span style={{ fontSize: "1.2rem" }}>
+              {isActive ? "⏱️" : "⏸️"}
+            </span>
+            <span style={{ fontWeight: "600" }}>
+              Learning Timer: {formattedTime}
+            </span>
+            {currentSessionMinutes > 0 && (
+              <span style={{
+                fontSize: "0.8rem",
+                color: isActive ? "#047857" : "#6b7280",
+                marginLeft: "8px",
+                padding: "2px 6px",
+                backgroundColor: isActive ? "#a7f3d0" : "#e5e7eb",
+                borderRadius: "4px",
+              }}>
+                {currentSessionMinutes} min{currentSessionMinutes > 1 ? 's' : ''} this session
+              </span>
+            )}
+          </div>
+          <div style={{
+            fontSize: "0.8rem",
+            color: isActive ? "#047857" : "#6b7280",
+            fontStyle: "italic",
+          }}>
+            {isActive ? "📈 Tracking your progress..." : "⏸️ Paused"}
+          </div>
+        </div>
+
         {/* Video Player */}
         <video
           src={selectedVideo}
