@@ -15,7 +15,7 @@ const Quiz = () => {
   const [result, setResult] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const { startTimer, stopTimer, seconds } = useLearningTimer();
+  const { startTimer, stopTimer, seconds, isActive, formattedTime } = useLearningTimer();
 
   useEffect(() => {
     startTimer();
@@ -107,6 +107,46 @@ const Quiz = () => {
     <div
       style={{ display: "flex", flexDirection: "column", marginTop: "22px" }}
     >
+      {/* Learning Timer Indicator */}
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "12px",
+        padding: "12px 16px",
+        backgroundColor: isActive ? "#dbeafe" : "#f3f4f6",
+        borderRadius: "8px",
+        marginBottom: "20px",
+        maxWidth: "400px",
+        margin: "0 auto 20px auto",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+      }}>
+        <span style={{ fontSize: "1.2rem" }}>
+          {isActive ? "🧠" : "⏸️"}
+        </span>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "2px",
+        }}>
+          <span style={{ 
+            fontWeight: "600", 
+            fontSize: "1rem",
+            color: isActive ? "#1e40af" : "#6b7280",
+          }}>
+            Study Time: {formattedTime}
+          </span>
+          <span style={{
+            fontSize: "0.8rem",
+            color: isActive ? "#3730a3" : "#9ca3af",
+            fontStyle: "italic",
+          }}>
+            {isActive ? "Focus mode active" : "Timer paused"}
+          </span>
+        </div>
+      </div>
+
       <h2 style={{ textAlign: "center" }}>Topic: {quizTitle}</h2>
       <form
         onSubmit={handleOnSubmit}

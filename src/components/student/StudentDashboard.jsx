@@ -205,14 +205,25 @@ const StudentDashboard = () => {
             <div className="chart-header">
               <div className="card-title" style={{marginBottom: 0}}>Progress</div>
               
-              {/* Test Buttons - Optional */}
-              <div className="test-btn-group">
+              {/* Test Buttons and Refresh */}
+              <div className="test-btn-group" style={{ display: "flex", gap: "8px" }}>
+                <button 
+                  onClick={fetchDashboardData}
+                  style={{
+                    background: "#f3f4f6", color: "#374151", border: "1px solid #d1d5db",
+                    padding: "4px 8px", borderRadius: "4px", cursor: "pointer", fontSize: "11px"
+                  }}
+                  title="Refresh dashboard data"
+                >
+                  🔄 Refresh
+                </button>
                 <button 
                   onClick={() => addLearningMinutes(15)}
                   style={{
                     background: "#e0e7ff", color: "#4338ca", border: "none",
                     padding: "4px 8px", borderRadius: "4px", cursor: "pointer", fontSize: "11px"
                   }}
+                  title="Add 15 minutes for testing"
                 >
                   +15m
                 </button>
