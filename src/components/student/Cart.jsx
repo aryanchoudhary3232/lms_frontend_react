@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from "react";
 import "../../css/student/Cart.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchCart } from "../../features/cart/cartSlice";
+import { setAuthToken } from "../../api/axios";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
+  const dispatch = useDispatch();
+  const { token } = useAuth();
+  useEffect(() => {
+    setAuthToken(token);
+    if (token) dispatch(fetchCart(calculateTotal));
+  }, [dispatch, token]);
   // Fetch cart from backend
   useEffect(() => {
     const fetchCart = async () => {
@@ -43,7 +53,7 @@ const Cart = () => {
 
     fetchCart();
   }, []);
-  console.log("....", cartItems);
+
   const calculateTotal = (items) => {
     const sum = items.reduce((acc, item) => acc + (item.price || 0), 0);
     setTotal(sum);
