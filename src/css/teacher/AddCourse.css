@@ -67,6 +67,10 @@ body {
   gap: 12px; /* Kept your original gap model */
 }
 
+.course-form {
+  width: 100%;
+}
+
 /* Reset margins */
 .form-container form > label,
 .form-container form > input,
@@ -201,6 +205,161 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.form-heading {
+  margin: 0;
+  background: linear-gradient(180deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  text-align: center;
+  padding: 20px 16px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.chapter-card,
+.topic-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: #ffffff;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.chapter-card + .chapter-card {
+  margin-top: 10px;
+}
+
+.chapter-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.chapter-card h3,
+.topic-card h4 {
+  color: var(--brand-dark);
+  margin: 0;
+}
+
+.topic-card {
+  margin-top: 12px;
+  border: 1px dashed #c7d2fe;
+  background: #f8fafc;
+}
+
+.topic-quiz {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.quiz-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.quiz-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quiz-option input[type="text"] {
+  flex: 1;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-dark);
+}
+
+.ghost-btn {
+  border: 1px dashed rgba(35, 55, 173, 0.4);
+  background: transparent;
+  color: var(--brand-dark);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.ghost-btn:hover {
+  background: rgba(35, 55, 173, 0.08);
+}
+
+.ghost-btn--small {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  border-style: solid;
+}
+
+.form-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(180deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-btn);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(35, 55, 173, 0.35);
+}
+
+.btn-primary:focus-visible,
+.ghost-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(35, 55, 173, 0.3);
 }
 
 /* Your media queries are solid, just minor tweaks */

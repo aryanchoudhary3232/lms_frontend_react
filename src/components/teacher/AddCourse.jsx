@@ -142,9 +142,15 @@ const AddCourse = () => {
     });
   };
 
-  const handleQuizCorrectOption = (e, chapterIdx, topicIdx, quizIdx, val) => {
+  const handleQuizCorrectOption = (
+    chapterIdx,
+    topicIdx,
+    quizIdx,
+    quizOptionIdx
+  ) => {
     const newChapters = [...formData.chapters];
-    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption = val;
+    newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption =
+      quizOptionIdx;
 
     setFormData({
       ...formData,
