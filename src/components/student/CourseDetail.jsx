@@ -63,8 +63,11 @@ const CourseDetail = () => {
       try {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+        const token = localStorage.getItem("token");
+        
         const response = await fetch(
-          `${backendUrl}/student/courses/${courseId}`
+          `${backendUrl}/student/courses/${courseId}`,
+          token ? { headers: { Authorization: `Bearer ${token}` } } : {}
         );
         const courseResponse = await response.json();
 

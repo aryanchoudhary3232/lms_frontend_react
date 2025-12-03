@@ -63,10 +63,10 @@ function Home() {
             <p>Learn anytime, anywhere — courses for every learner.</p>
             <div className="hero-buttons">
                {/* Updated buttons to Links for better navigation */}
-              <Link to="/student/courses" className="btn btn-primary">
+              <Link to="/courses" className="btn btn-primary">
                 Get Started
               </Link>
-              <Link to="/student/courses" className="btn btn-secondary">
+              <Link to="/courses" className="btn btn-secondary">
                 Browse all Courses
               </Link>
             </div>

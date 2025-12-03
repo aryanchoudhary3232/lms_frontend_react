@@ -25,6 +25,9 @@ const Courses = () => {
   // Redux state for default list
   const coursesList = useSelector((state) => state.courses.list);
 
+  // Whether the user is logged in
+  const isAuthenticated = !!getToken();
+
   // Initialize owned courses
   const [ownedCourseIds, setOwnedCourseIds] = useState(() => {
     try {
@@ -178,7 +181,8 @@ const Courses = () => {
       >
         <CourseCard
           course={course}
-          isOwned={ownedCourseIds.has(course._id)}
+          isOwned={isAuthenticated && ownedCourseIds.has(course._id)}
+          isAuthenticated={isAuthenticated}
           onAddToCart={() => handleAddToCart(course._id)}
         />
       </div>
