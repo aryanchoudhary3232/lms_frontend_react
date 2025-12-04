@@ -155,7 +155,7 @@ const TeacherQualificationUpload = () => {
             </div>
           </div>
 
-          <div style={{ maxWidth: 420 }}>
+          <div className="status-details">
             {verificationStatus.verificationNotes && (
               <div className="status-notes">
                 <h4>Admin Notes:</h4>
@@ -166,8 +166,8 @@ const TeacherQualificationUpload = () => {
             {verificationStatus.qualificationDoc && (
               <div className="uploaded-doc-info">
                 <h4>Uploaded Document</h4>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div className="doc-details" style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div className="doc-card">
+                  <div className="doc-details">
                     <span className="doc-icon">📄</span>
                     <div className="doc-info">
                       <p className="doc-name">{verificationStatus.qualificationDoc.publicId || "Qualification Document"}</p>
@@ -175,7 +175,7 @@ const TeacherQualificationUpload = () => {
                     </div>
                   </div>
                   {verificationStatus.qualificationDoc.url && (
-                    <a href={verificationStatus.qualificationDoc.url} target="_blank" rel="noopener noreferrer" className="doc-link">View Document</a>
+                    <a href={verificationStatus.qualificationDoc.url} target="_blank" rel="noopener noreferrer" className="doc-link">View</a>
                   )}
                 </div>
               </div>

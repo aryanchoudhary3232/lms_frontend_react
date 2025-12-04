@@ -907,6 +907,7 @@ const CourseDetail = () => {
                   placeholder="Leave an optional review..."
                   value={reviewText}
                   onChange={(e) => setReviewText(e.target.value)}
+                  maxLength={1000}
                   style={{
                     width: "100%",
                     minHeight: "80px",
@@ -919,6 +920,7 @@ const CourseDetail = () => {
                   }}
                   rows={3}
                 />
+                <small style={{ color: '#666', fontSize: '0.8rem' }}>{reviewText.length}/1000 characters</small>
               </div>
 
               {ratingMsg && (

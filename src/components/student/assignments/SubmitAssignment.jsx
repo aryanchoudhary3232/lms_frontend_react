@@ -8,6 +8,7 @@ const SubmitAssignment = () => {
   const [assignment, setAssignment] = useState(null);
   const [textContent, setTextContent] = useState("");
   const [files, setFiles] = useState([]);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -60,14 +61,48 @@ const SubmitAssignment = () => {
   };
 
   const handleFileChange = (e) => {
-    setFiles(Array.from(e.target.files));
+    const selectedFiles = Array.from(e.target.files);
+    const maxFileSize = 10 * 1024 * 1024; // 10MB per file
+    const maxFiles = 10;
+    
+    const oversizedFiles = selectedFiles.filter(f => f.size > maxFileSize);
+    if (oversizedFiles.length > 0) {
+      setErrors(prev => ({ ...prev, files: 'Each file must be less than 10MB' }));
+      e.target.value = '';
+      return;
+    }
+    
+    if (selectedFiles.length > maxFiles) {
+      setErrors(prev => ({ ...prev, files: `Maximum ${maxFiles} files allowed` }));
+      e.target.value = '';
+      return;
+    }
+    
+    setErrors(prev => ({ ...prev, files: '' }));
+    setFiles(selectedFiles);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Check if at least one submission method is provided
+    if (!textContent.trim() && files.length === 0) {
+      newErrors.submission = 'Please provide either text content or upload files';
+    }
+    
+    // Text content validation
+    if (textContent && textContent.length > 10000) {
+      newErrors.textContent = 'Text content must be less than 10000 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!textContent && files.length === 0) {
-      alert("Please provide either text content or upload files");
+    if (!validateForm()) {
       return;
     }
 
@@ -245,24 +280,34 @@ const SubmitAssignment = () => {
       <form onSubmit={handleSubmit} className="submission-form">
         <h3>Your Submission</h3>
 
+        {errors.submission && (
+          <div className="error-text" style={{ color: '#dc3545', marginBottom: '16px', padding: '10px', backgroundColor: '#fee2e2', borderRadius: '4px' }}>
+            {errors.submission}
+          </div>
+        )}
+
         {(assignment.submissionType === "text" ||
           assignment.submissionType === "both") && (
           <div className="form-group">
-            <label>Text Content</label>
+            <label>Text Content (max 10000 characters)</label>
             <textarea
               value={textContent}
               onChange={(e) => setTextContent(e.target.value)}
               rows="8"
               placeholder="Type your answer here..."
               required={assignment.submissionType === "text"}
+              maxLength={10000}
+              style={{ borderColor: errors.textContent ? '#dc3545' : undefined }}
             />
+            <small style={{ color: '#666' }}>{textContent.length}/10000 characters</small>
+            {errors.textContent && <span style={{ color: '#dc3545', fontSize: '12px', display: 'block' }}>{errors.textContent}</span>}
           </div>
         )}
 
         {(assignment.submissionType === "file" ||
           assignment.submissionType === "both") && (
           <div className="form-group">
-            <label>Upload Files</label>
+            <label>Upload Files (max 10 files, 10MB each)</label>
             <input
               type="file"
               multiple
@@ -270,6 +315,7 @@ const SubmitAssignment = () => {
               accept=".pdf,.doc,.docx,.txt,.jpg,.png,.zip"
               required={assignment.submissionType === "file"}
             />
+            {errors.files && <span style={{ color: '#dc3545', fontSize: '12px', display: 'block' }}>{errors.files}</span>}
             {files.length > 0 && (
               <div className="selected-files">
                 <p>Selected files:</p>

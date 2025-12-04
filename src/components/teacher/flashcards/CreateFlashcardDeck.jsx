@@ -11,6 +11,7 @@ const CreateFlashcardDeck = ({ onClose, onCreate, initialCourseId }) => {
     visibility: 'private'
   });
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   const token = localStorage.getItem('token');
 
@@ -49,12 +50,36 @@ const CreateFlashcardDeck = ({ onClose, onCreate, initialCourseId }) => {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.courseId) {
+      newErrors.courseId = 'Please select a course';
+    }
+    
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    } else if (formData.title.trim().length < 3) {
+      newErrors.title = 'Title must be at least 3 characters';
+    } else if (formData.title.trim().length > 100) {
+      newErrors.title = 'Title must be less than 100 characters';
+    }
+    
+    if (formData.description && formData.description.length > 500) {
+      newErrors.description = 'Description must be less than 500 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.courseId || !formData.title) {
-      alert('Please fill in all required fields');
+    
+    if (!validateForm()) {
       return;
     }
+    
     onCreate(formData);
   };
 
@@ -72,19 +97,23 @@ const CreateFlashcardDeck = ({ onClose, onCreate, initialCourseId }) => {
             {loading ? (
               <p>Loading courses...</p>
             ) : (
-              <select
-                name="courseId"
-                value={formData.courseId}
-                onChange={handleChange}
-                required
-              >
-                <option value="">-- Choose a course --</option>
-                {courses.map(course => (
-                  <option key={course._id} value={course._id}>
-                    {course.title || course.name}
-                  </option>
-                ))}
-              </select>
+              <>
+                <select
+                  name="courseId"
+                  value={formData.courseId}
+                  onChange={handleChange}
+                  required
+                  style={{ borderColor: errors.courseId ? '#dc3545' : undefined }}
+                >
+                  <option value="">-- Choose a course --</option>
+                  {courses.map(course => (
+                    <option key={course._id} value={course._id}>
+                      {course.title || course.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.courseId && <span style={{ color: '#dc3545', fontSize: '12px' }}>{errors.courseId}</span>}
+              </>
             )}
           </div>
 
@@ -98,7 +127,9 @@ const CreateFlashcardDeck = ({ onClose, onCreate, initialCourseId }) => {
               placeholder="e.g., Chapter 3 - Key Concepts"
               maxLength="100"
               required
+              style={{ borderColor: errors.title ? '#dc3545' : undefined }}
             />
+            {errors.title && <span style={{ color: '#dc3545', fontSize: '12px' }}>{errors.title}</span>}
           </div>
 
           <div className="form-group">
@@ -110,7 +141,10 @@ const CreateFlashcardDeck = ({ onClose, onCreate, initialCourseId }) => {
               placeholder="What topics does this deck cover?"
               rows="4"
               maxLength="500"
+              style={{ borderColor: errors.description ? '#dc3545' : undefined }}
             />
+            <small style={{ color: '#666' }}>{formData.description.length}/500</small>
+            {errors.description && <span style={{ color: '#dc3545', fontSize: '12px' }}>{errors.description}</span>}
           </div>
 
           <div className="form-group">

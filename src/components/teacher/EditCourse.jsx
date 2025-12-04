@@ -10,6 +10,7 @@ const EditCourse = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   const [formData, setFormData] = useState({
     title: "",
@@ -79,6 +80,24 @@ const EditCourse = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    
+    // File size validation
+    if (files && files[0]) {
+      const file = files[0];
+      const maxSize = name === 'video' ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setFormErrors(prev => ({
+          ...prev,
+          [name]: name === 'video' 
+            ? 'Video file must be less than 100MB' 
+            : 'File must be less than 10MB'
+        }));
+        e.target.value = '';
+        return;
+      }
+      setFormErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    
     setFormData({
       ...formData,
       [name]: files ? files[0] : value,
@@ -196,8 +215,75 @@ const EditCourse = () => {
     });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    } else if (formData.title.trim().length < 3) {
+      newErrors.title = 'Title must be at least 3 characters';
+    } else if (formData.title.trim().length > 150) {
+      newErrors.title = 'Title must be less than 150 characters';
+    }
+    
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+    } else if (formData.description.trim().length < 20) {
+      newErrors.description = 'Description must be at least 20 characters';
+    } else if (formData.description.trim().length > 2000) {
+      newErrors.description = 'Description must be less than 2000 characters';
+    }
+    
+    if (!formData.category.trim()) {
+      newErrors.category = 'Category is required';
+    } else if (formData.category.trim().length > 50) {
+      newErrors.category = 'Category must be less than 50 characters';
+    }
+    
+    if (!formData.duration) {
+      newErrors.duration = 'Duration is required';
+    } else if (Number(formData.duration) <= 0) {
+      newErrors.duration = 'Duration must be greater than 0';
+    } else if (Number(formData.duration) > 1000) {
+      newErrors.duration = 'Duration must be less than 1000 hours';
+    }
+    
+    if (formData.price === '' || formData.price === null) {
+      newErrors.price = 'Price is required';
+    } else if (Number(formData.price) < 0) {
+      newErrors.price = 'Price cannot be negative';
+    } else if (Number(formData.price) > 999999) {
+      newErrors.price = 'Price must be less than ₹999999';
+    }
+    
+    formData.chapters.forEach((chapter, chIdx) => {
+      if (!chapter.title.trim()) {
+        newErrors[`chapter_${chIdx}`] = `Chapter ${chIdx + 1} title is required`;
+      }
+      chapter.topics.forEach((topic, tpIdx) => {
+        if (!topic.title.trim()) {
+          newErrors[`topic_${chIdx}_${tpIdx}`] = `Topic ${tpIdx + 1} title is required`;
+        }
+        topic.quiz?.forEach((q, qIdx) => {
+          if (q.question.trim() && q.options.filter(o => o.trim()).length < 2) {
+            newErrors[`quiz_${chIdx}_${tpIdx}_${qIdx}`] = `Question needs at least 2 options`;
+          }
+        });
+      });
+    });
+    
+    setFormErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      setError('Please fix the validation errors before submitting');
+      return;
+    }
+    
     setSaving(true);
     setError(null);
 
@@ -330,13 +416,16 @@ const EditCourse = () => {
           value={formData.title}
           onChange={handleChange}
           required
+          maxLength={150}
           style={{
             height: "26px",
-            margin: "0 42px 12px 42px",
+            margin: "0 42px 6px 42px",
             padding: "5px",
             borderRadius: "5px",
+            borderColor: formErrors.title ? '#dc3545' : '#ccc'
           }}
         />
+        {formErrors.title && <span style={{ color: '#dc3545', fontSize: '12px', marginLeft: '42px', marginBottom: '12px', display: 'block' }}>{formErrors.title}</span>}
 
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>
           Description
@@ -347,13 +436,16 @@ const EditCourse = () => {
           value={formData.description}
           onChange={handleChange}
           required
+          maxLength={2000}
           style={{
             height: "80px",
-            margin: "0 42px 12px 42px",
+            margin: "0 42px 6px 42px",
             padding: "5px",
             borderRadius: "5px",
+            borderColor: formErrors.description ? '#dc3545' : '#ccc'
           }}
         />
+        {formErrors.description && <span style={{ color: '#dc3545', fontSize: '12px', marginLeft: '42px', marginBottom: '12px', display: 'block' }}>{formErrors.description}</span>}
 
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>
           Category
@@ -365,13 +457,16 @@ const EditCourse = () => {
           value={formData.category}
           onChange={handleChange}
           required
+          maxLength={50}
           style={{
             height: "26px",
-            margin: "0 42px 12px 42px",
+            margin: "0 42px 6px 42px",
             padding: "5px",
             borderRadius: "5px",
+            borderColor: formErrors.category ? '#dc3545' : '#ccc'
           }}
         />
+        {formErrors.category && <span style={{ color: '#dc3545', fontSize: '12px', marginLeft: '42px', marginBottom: '12px', display: 'block' }}>{formErrors.category}</span>}
 
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>Level</label>
         <select
@@ -400,13 +495,17 @@ const EditCourse = () => {
           value={formData.duration}
           onChange={handleChange}
           required
+          min="1"
+          max="1000"
           style={{
             height: "26px",
-            margin: "0 42px 12px 42px",
+            margin: "0 42px 6px 42px",
             padding: "5px",
             borderRadius: "5px",
+            borderColor: formErrors.duration ? '#dc3545' : '#ccc'
           }}
         />
+        {formErrors.duration && <span style={{ color: '#dc3545', fontSize: '12px', marginLeft: '42px', marginBottom: '12px', display: 'block' }}>{formErrors.duration}</span>}
 
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>
           Price (₹)
@@ -418,13 +517,17 @@ const EditCourse = () => {
           value={formData.price}
           onChange={handleChange}
           required
+          min="0"
+          max="999999"
           style={{
             height: "26px",
-            margin: "0 42px 12px 42px",
+            margin: "0 42px 6px 42px",
             padding: "5px",
             borderRadius: "5px",
+            borderColor: formErrors.price ? '#dc3545' : '#ccc'
           }}
         />
+        {formErrors.price && <span style={{ color: '#dc3545', fontSize: '12px', marginLeft: '42px', marginBottom: '12px', display: 'block' }}>{formErrors.price}</span>}
 
         {/* File uploads with existing file indicators */}
         <label style={{ marginLeft: "42px", marginBottom: "9px" }}>

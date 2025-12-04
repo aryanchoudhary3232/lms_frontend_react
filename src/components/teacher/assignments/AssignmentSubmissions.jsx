@@ -242,15 +242,17 @@ const AssignmentSubmissions = () => {
               </div>
 
               <div className="form-group">
-                <label>Feedback</label>
+                <label>Feedback (max 2000 characters)</label>
                 <textarea
                   value={gradeForm.feedback}
                   onChange={(e) =>
                     setGradeForm({ ...gradeForm, feedback: e.target.value })
                   }
                   rows="4"
+                  maxLength={2000}
                   placeholder="Provide feedback to the student..."
                 />
+                <small style={{ color: '#666' }}>{gradeForm.feedback?.length || 0}/2000</small>
               </div>
 
               <div className="modal-actions">

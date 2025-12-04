@@ -3,6 +3,7 @@ import './AddCard.css';
 
 const AddCard = ({ onAdd, onCancel }) => {
   const [cardType, setCardType] = useState('qa');
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     type: 'qa',
     question: '',
@@ -22,11 +23,41 @@ const AddCard = ({ onAdd, onCancel }) => {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.question.trim()) {
+      newErrors.question = 'Question is required';
+    } else if (formData.question.trim().length < 3) {
+      newErrors.question = 'Question must be at least 3 characters';
+    } else if (formData.question.length > 1000) {
+      newErrors.question = 'Question must be less than 1000 characters';
+    }
+    
+    if (!formData.answer.trim()) {
+      newErrors.answer = 'Answer is required';
+    } else if (formData.answer.trim().length < 1) {
+      newErrors.answer = 'Answer is required';
+    } else if (formData.answer.length > 2000) {
+      newErrors.answer = 'Answer must be less than 2000 characters';
+    }
+    
+    // Timestamp format validation (MM:SS or HH:MM:SS)
+    if (formData.lectureTimestamp && formData.lectureTimestamp.trim()) {
+      const timestampRegex = /^(?:[0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]$/;
+      if (!timestampRegex.test(formData.lectureTimestamp.trim())) {
+        newErrors.lectureTimestamp = 'Invalid format. Use MM:SS or HH:MM:SS (e.g., 12:34 or 1:23:45)';
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!formData.question.trim() || !formData.answer.trim()) {
-      alert('Question and answer are required');
+    if (!validateForm()) {
       return;
     }
 
@@ -87,7 +118,10 @@ const AddCard = ({ onAdd, onCancel }) => {
             placeholder="Enter the question or prompt"
             rows="3"
             required
+            maxLength={1000}
+            style={{ borderColor: errors.question ? '#dc3545' : undefined }}
           />
+          {errors.question && <span style={{ color: '#dc3545', fontSize: '12px' }}>{errors.question}</span>}
         </div>
 
         <div className="form-group">
@@ -99,7 +133,10 @@ const AddCard = ({ onAdd, onCancel }) => {
             placeholder="Enter the answer"
             rows="3"
             required
+            maxLength={2000}
+            style={{ borderColor: errors.answer ? '#dc3545' : undefined }}
           />
+          {errors.answer && <span style={{ color: '#dc3545', fontSize: '12px' }}>{errors.answer}</span>}
         </div>
 
         {cardType === 'cloze' && (
@@ -134,8 +171,10 @@ const AddCard = ({ onAdd, onCancel }) => {
               name="lectureTimestamp"
               value={formData.lectureTimestamp}
               onChange={handleChange}
-              placeholder="e.g., 12:34"
+              placeholder="e.g., 12:34 or 1:23:45"
+              style={{ borderColor: errors.lectureTimestamp ? '#dc3545' : undefined }}
             />
+            {errors.lectureTimestamp && <span style={{ color: '#dc3545', fontSize: '12px' }}>{errors.lectureTimestamp}</span>}
           </div>
         </div>
 

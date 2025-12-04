@@ -162,7 +162,6 @@ const Login = () => {
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
 
-    // No validation for login - just submit directly
     await login(formData, setFormData);
   };
 
@@ -216,7 +215,6 @@ const Login = () => {
                       value={formData.email}
                       onChange={handleOnChange}
                       placeholder="Enter E-mail"
-                      required
                       className="form-input"
                     />
                   </div>
@@ -228,7 +226,6 @@ const Login = () => {
                       value={formData.password}
                       onChange={handleOnChange}
                       placeholder="Enter Password"
-                      required
                       className="form-input"
                     />
                   </div>

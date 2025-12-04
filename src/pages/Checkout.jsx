@@ -4,7 +4,13 @@ import "./checkout.css";
 
 const validateCardNumber = (num) => /^\d{12}$/.test(num);
 const validateCvv = (cvv) => /^\d{3}$/.test(cvv);
-const validateName = (name) => /^[A-Za-z ]{2,}$/.test(name.trim());
+const validateName = (name) => {
+  const trimmed = name.trim();
+  if (trimmed.length < 2) return false;
+  if (trimmed.length > 100) return false;
+  if (!/^[A-Za-z ]+$/.test(trimmed)) return false;
+  return true;
+};
 
 const Checkout = () => {
   const location = useLocation();
@@ -24,7 +30,15 @@ const Checkout = () => {
     const newErrors = {};
     if (!validateCardNumber(cardNumber)) newErrors.cardNumber = "Card number must be exactly 12 digits";
     if (!validateCvv(cvv)) newErrors.cvv = "CVV must be exactly 3 digits";
-    if (!validateName(name)) newErrors.name = "Name must be at least 2 letters and only contain letters and spaces";
+    if (!validateName(name)) {
+      if (name.trim().length < 2) {
+        newErrors.name = "Name must be at least 2 characters";
+      } else if (name.trim().length > 100) {
+        newErrors.name = "Name must be less than 100 characters";
+      } else {
+        newErrors.name = "Name can only contain letters and spaces";
+      }
+    }
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
@@ -119,8 +133,9 @@ const Checkout = () => {
                 <input
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setName(e.target.value.replace(/[^A-Za-z ]/g, ""))}
                   placeholder="John Doe"
+                  maxLength={100}
                 />
                 {errors.name && <div className="error">{errors.name}</div>}
               </div>
