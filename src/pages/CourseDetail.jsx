@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../css/teacher/CourseDetail.css"; 
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { addToCart } from "../helper/cartHelper";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../features/cart/cartSlice";
 
 // Simple star rating component
 const StarRating = ({ rating }) => {
@@ -28,6 +29,7 @@ const CourseDetail = () => {
   const [activeTab, setActiveTab] = useState("description"); // New State for Tabs
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // --- Data Fetching ---
   useEffect(() => {
@@ -58,8 +60,9 @@ const CourseDetail = () => {
     async function getCourseById() {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+        // Use the general courses endpoint for public course details
         const response = await fetch(
-          `${backendUrl}/student/courses/${courseId}`, {
+          `${backendUrl}/courses`, {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
@@ -67,10 +70,16 @@ const CourseDetail = () => {
           }
         );
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const courseResponse = await response.json();
+        const coursesResponse = await response.json();
         
-        if (courseResponse.success) {
-          setCourse(courseResponse.data);
+        if (coursesResponse.success) {
+          // Find the specific course from the list
+          const foundCourse = coursesResponse.data.find(course => course._id === courseId);
+          if (foundCourse) {
+            setCourse(foundCourse);
+          } else {
+            console.error("Course not found");
+          }
         }
       } catch (error) {
         console.error("Error details:", error);
@@ -84,11 +93,15 @@ const CourseDetail = () => {
 
   useEffect(() => {
     if (course?.students && studentId) {
-      setIsEnroll(course.students.includes(studentId));
+      // Check if the current student is enrolled in this course
+      const isStudentEnrolled = course.students.some(student => 
+        (typeof student === 'string' ? student : student._id) === studentId
+      );
+      setIsEnroll(isStudentEnrolled);
     }
   }, [course, studentId]);
 
-  const handleEnroll = () => {
+  const handleEnroll = async () => {
     // If user is not authenticated, redirect to login
     const token = localStorage.getItem("token");
     if (!token) {
@@ -97,22 +110,23 @@ const CourseDetail = () => {
       return;
     }
 
-    // Build a cart-friendly item shape expected by cartHelper
-    const cartItem = {
-      id: course._id || course.id,
-      title: course.title,
-      price: course.price || 0,
-      instructor: course.teacher?.name || course.instructor || "",
-      thumbnail: course.image || course.thumbnail || ""
-    };
+    if (!course) {
+      alert("Course data not loaded. Please try again.");
+      return;
+    }
 
-    const added = addToCart(cartItem);
-    if (added) {
-      alert("Course added to cart");
+    try {
+      // Use Redux action to add to cart
+      const result = await dispatch(addToCart(course._id)).unwrap();
+      
+      alert("Course added to cart successfully!");
       // Dispatch event to update navbar
       window.dispatchEvent(new Event("cartUpdated"));
-    } else {
-      alert("Course is already in cart");
+      
+    } catch (error) {
+      // Handle the error message from the backend
+      const errorMessage = error || "Course is already in cart or failed to add";
+      alert(errorMessage);
     }
   };
 

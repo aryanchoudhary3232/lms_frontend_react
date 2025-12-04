@@ -37,6 +37,18 @@ export const removeFromCart = createAsyncThunk(
   }
 );
 
+export const addToCart = createAsyncThunk(
+  "cart/add",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/cart/add/${courseId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -68,6 +80,18 @@ const cartSlice = createSlice({
         state.error = null;
       })
       .addCase(removeFromCart.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addToCart.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addToCart.fulfilled, (state, action) => {
+        // Refresh cart data after successful addition
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
