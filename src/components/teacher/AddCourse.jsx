@@ -25,24 +25,57 @@ const AddCourse = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    
+
     // File size validation
     if (files && files[0]) {
       const file = files[0];
-      const maxSize = name === 'video' ? 100 * 1024 * 1024 : 10 * 1024 * 1024; // 100MB for video, 10MB for others
+      const maxSize = name === "video" ? 100 * 1024 * 1024 : 10 * 1024 * 1024; // 100MB for video, 10MB for others
       if (file.size > maxSize) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          [name]: name === 'video' 
-            ? 'Video file must be less than 100MB' 
-            : 'File must be less than 10MB'
+          [name]:
+            name === "video"
+              ? "Video file must be less than 100MB"
+              : "File must be less than 10MB",
         }));
-        e.target.value = '';
+        e.target.value = "";
         return;
       }
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-    
+
+    // Text-only validation for Title, Description, Category (no numbers allowed)
+    if (["title", "description", "category"].includes(name)) {
+      const hasNumbers = /[0-9]/.test(value);
+      if (hasNumbers) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: `${
+            name.charAt(0).toUpperCase() + name.slice(1)
+          } me sirf text allowed hai, numbers nahi`,
+        }));
+        return; // Don't update the value if it contains numbers
+      } else {
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+      }
+    }
+
+    // Number-only validation for Duration and Price
+    if (["duration", "price"].includes(name)) {
+      // Allow empty value for clearing the field
+      if (value !== "" && !/^\d*\.?\d*$/.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: `${
+            name.charAt(0).toUpperCase() + name.slice(1)
+          } me sirf numbers allowed hai`,
+        }));
+        return; // Don't update the value if it contains non-numbers
+      } else {
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+      }
+    }
+
     setFormData({
       ...formData,
       [name]: files ? files[0] : value,
@@ -179,97 +212,114 @@ const AddCourse = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     // Title validation
     if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
+      newErrors.title = "Title is required";
     } else if (formData.title.trim().length < 3) {
-      newErrors.title = 'Title must be at least 3 characters';
+      newErrors.title = "Title must be at least 3 characters";
     } else if (formData.title.trim().length > 150) {
-      newErrors.title = 'Title must be less than 150 characters';
+      newErrors.title = "Title must be less than 150 characters";
     }
-    
+
     // Description validation
     if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = "Description is required";
     } else if (formData.description.trim().length < 20) {
-      newErrors.description = 'Description must be at least 20 characters';
+      newErrors.description = "Description must be at least 20 characters";
     } else if (formData.description.trim().length > 2000) {
-      newErrors.description = 'Description must be less than 2000 characters';
+      newErrors.description = "Description must be less than 2000 characters";
     }
-    
+
     // Category validation
     if (!formData.category.trim()) {
-      newErrors.category = 'Category is required';
+      newErrors.category = "Category is required";
     } else if (formData.category.trim().length < 2) {
-      newErrors.category = 'Category must be at least 2 characters';
+      newErrors.category = "Category must be at least 2 characters";
     } else if (formData.category.trim().length > 50) {
-      newErrors.category = 'Category must be less than 50 characters';
+      newErrors.category = "Category must be less than 50 characters";
     }
-    
+
     // Duration validation
     if (!formData.duration) {
-      newErrors.duration = 'Duration is required';
+      newErrors.duration = "Duration is required";
     } else if (Number(formData.duration) <= 0) {
-      newErrors.duration = 'Duration must be greater than 0';
+      newErrors.duration = "Duration must be greater than 0";
     } else if (Number(formData.duration) > 1000) {
-      newErrors.duration = 'Duration must be less than 1000 hours';
+      newErrors.duration = "Duration must be less than 1000 hours";
     }
-    
+
     // Price validation
-    if (formData.price === '' || formData.price === null || formData.price === undefined) {
-      newErrors.price = 'Price is required';
+    if (
+      formData.price === "" ||
+      formData.price === null ||
+      formData.price === undefined
+    ) {
+      newErrors.price = "Price is required";
     } else if (Number(formData.price) < 0) {
-      newErrors.price = 'Price cannot be negative';
+      newErrors.price = "Price cannot be negative";
     } else if (Number(formData.price) > 999999) {
-      newErrors.price = 'Price must be less than ₹999999';
+      newErrors.price = "Price must be less than ₹999999";
     }
-    
+
     // Chapter validations
     formData.chapters.forEach((chapter, chIdx) => {
       if (!chapter.title.trim()) {
-        newErrors[`chapter_${chIdx}_title`] = `Chapter ${chIdx + 1} title is required`;
+        newErrors[`chapter_${chIdx}_title`] = `Chapter ${
+          chIdx + 1
+        } title is required`;
       } else if (chapter.title.trim().length > 150) {
-        newErrors[`chapter_${chIdx}_title`] = `Chapter ${chIdx + 1} title is too long`;
+        newErrors[`chapter_${chIdx}_title`] = `Chapter ${
+          chIdx + 1
+        } title is too long`;
       }
-      
+
       chapter.topics.forEach((topic, tpIdx) => {
         if (!topic.title.trim()) {
-          newErrors[`topic_${chIdx}_${tpIdx}_title`] = `Topic ${tpIdx + 1} in Chapter ${chIdx + 1} needs a title`;
+          newErrors[`topic_${chIdx}_${tpIdx}_title`] = `Topic ${
+            tpIdx + 1
+          } in Chapter ${chIdx + 1} needs a title`;
         }
-        
+
         // Quiz validation
         topic.quiz.forEach((q, qIdx) => {
           if (!q.question.trim()) {
-            newErrors[`quiz_${chIdx}_${tpIdx}_${qIdx}_question`] = `Question ${qIdx + 1} is empty`;
+            newErrors[`quiz_${chIdx}_${tpIdx}_${qIdx}_question`] = `Question ${
+              qIdx + 1
+            } is empty`;
           }
-          
-          const filledOptions = q.options.filter(opt => opt.trim() !== '');
+
+          const filledOptions = q.options.filter((opt) => opt.trim() !== "");
           if (filledOptions.length < 2) {
-            newErrors[`quiz_${chIdx}_${tpIdx}_${qIdx}_options`] = `Question ${qIdx + 1} needs at least 2 options`;
+            newErrors[`quiz_${chIdx}_${tpIdx}_${qIdx}_options`] = `Question ${
+              qIdx + 1
+            } needs at least 2 options`;
           }
-          
+
           if (!q.correctOption || !q.options.includes(q.correctOption)) {
-            newErrors[`quiz_${chIdx}_${tpIdx}_${qIdx}_correct`] = `Select correct answer for Question ${qIdx + 1}`;
+            newErrors[
+              `quiz_${chIdx}_${tpIdx}_${qIdx}_correct`
+            ] = `Select correct answer for Question ${qIdx + 1}`;
           }
         });
       });
     });
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       // Scroll to first error
-      const firstError = document.querySelector('.input-error');
-      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const firstError = document.querySelector(".input-error");
+      if (firstError)
+        firstError.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
-    
+
     setLoading(true);
 
     const data = new FormData();
@@ -531,11 +581,22 @@ const AddCourse = () => {
           maxLength={150}
           style={{
             ...styles.input,
-            borderColor: errors.title ? '#dc3545' : '#ddd'
+            borderColor: errors.title ? "#dc3545" : "#ddd",
           }}
-          className={errors.title ? 'input-error' : ''}
+          className={errors.title ? "input-error" : ""}
         />
-        {errors.title && <span style={{ color: '#dc3545', fontSize: '12px', marginTop: '-12px', marginBottom: '12px' }}>{errors.title}</span>}
+        {errors.title && (
+          <span
+            style={{
+              color: "#dc3545",
+              fontSize: "12px",
+              marginTop: "-12px",
+              marginBottom: "12px",
+            }}
+          >
+            {errors.title}
+          </span>
+        )}
 
         <label style={styles.label}>Description</label>
         <textarea
@@ -547,11 +608,22 @@ const AddCourse = () => {
           maxLength={2000}
           style={{
             ...styles.textarea,
-            borderColor: errors.description ? '#dc3545' : '#ddd'
+            borderColor: errors.description ? "#dc3545" : "#ddd",
           }}
-          className={errors.description ? 'input-error' : ''}
+          className={errors.description ? "input-error" : ""}
         />
-        {errors.description && <span style={{ color: '#dc3545', fontSize: '12px', marginTop: '-12px', marginBottom: '12px' }}>{errors.description}</span>}
+        {errors.description && (
+          <span
+            style={{
+              color: "#dc3545",
+              fontSize: "12px",
+              marginTop: "-12px",
+              marginBottom: "12px",
+            }}
+          >
+            {errors.description}
+          </span>
+        )}
 
         <label style={styles.label}>Category</label>
         <input
@@ -564,11 +636,22 @@ const AddCourse = () => {
           maxLength={50}
           style={{
             ...styles.input,
-            borderColor: errors.category ? '#dc3545' : '#ddd'
+            borderColor: errors.category ? "#dc3545" : "#ddd",
           }}
-          className={errors.category ? 'input-error' : ''}
+          className={errors.category ? "input-error" : ""}
         />
-        {errors.category && <span style={{ color: '#dc3545', fontSize: '12px', marginTop: '-12px', marginBottom: '12px' }}>{errors.category}</span>}
+        {errors.category && (
+          <span
+            style={{
+              color: "#dc3545",
+              fontSize: "12px",
+              marginTop: "-12px",
+              marginBottom: "12px",
+            }}
+          >
+            {errors.category}
+          </span>
+        )}
 
         <label style={styles.label}>Level</label>
         <select
@@ -594,11 +677,22 @@ const AddCourse = () => {
           max="1000"
           style={{
             ...styles.input,
-            borderColor: errors.duration ? '#dc3545' : '#ddd'
+            borderColor: errors.duration ? "#dc3545" : "#ddd",
           }}
-          className={errors.duration ? 'input-error' : ''}
+          className={errors.duration ? "input-error" : ""}
         />
-        {errors.duration && <span style={{ color: '#dc3545', fontSize: '12px', marginTop: '-12px', marginBottom: '12px' }}>{errors.duration}</span>}
+        {errors.duration && (
+          <span
+            style={{
+              color: "#dc3545",
+              fontSize: "12px",
+              marginTop: "-12px",
+              marginBottom: "12px",
+            }}
+          >
+            {errors.duration}
+          </span>
+        )}
 
         <label style={styles.label}>Price (₹)</label>
         <input
@@ -612,11 +706,22 @@ const AddCourse = () => {
           max="999999"
           style={{
             ...styles.input,
-            borderColor: errors.price ? '#dc3545' : '#ddd'
+            borderColor: errors.price ? "#dc3545" : "#ddd",
           }}
-          className={errors.price ? 'input-error' : ''}
+          className={errors.price ? "input-error" : ""}
         />
-        {errors.price && <span style={{ color: '#dc3545', fontSize: '12px', marginTop: '-12px', marginBottom: '12px' }}>{errors.price}</span>}
+        {errors.price && (
+          <span
+            style={{
+              color: "#dc3545",
+              fontSize: "12px",
+              marginTop: "-12px",
+              marginBottom: "12px",
+            }}
+          >
+            {errors.price}
+          </span>
+        )}
 
         <label style={styles.label}>Notes (PDF)</label>
         <input
