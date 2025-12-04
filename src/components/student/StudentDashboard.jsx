@@ -172,7 +172,14 @@ const StudentDashboard = () => {
               )}
             </div>
 
-            <Link to="/student/courses" className="continue-btn">
+            <Link 
+              to={
+                dashboardData?.enrolledCourses?.length > 0 
+                  ? `/student/courses/${dashboardData.enrolledCourses[0].course._id}` 
+                  : "/student/courses"
+              } 
+              className="continue-btn"
+            >
               Continue Learning
             </Link>
           </div>
