@@ -79,7 +79,7 @@ function Main() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
 
-        {/* Teacher routes  */}
+        {/* Teacher routes wjdjbh  */}
         <Route
           path="/teacher"
           element={
