@@ -404,7 +404,7 @@ const CourseDetail = () => {
         {/* Actions Below Video */}
         <div style={styles.videoActions}>
           <span style={styles.transcriptTab}>Transcript</span>
-          <button style={styles.completeButton}>Mark as Complete</button>
+          {/* <button style={styles.completeButton}>Mark as Complete</button> */}
         </div>
 
         {/* Content Details (Title, Desc, Notes) */}
