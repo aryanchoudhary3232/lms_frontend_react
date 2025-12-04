@@ -65,23 +65,13 @@ const CourseCard = ({ course, onAddToCart, isOwned = false, isAuthenticated = fa
               <FaPlay /> Go to Course
             </Link>
           ) : (
-            <div className="course-actions">
-              <button 
-                className="btn-primary" 
-                onClick={onAddToCart}
-                title="Add to Cart"
-              >
-                <FaShoppingCart /> Add to Cart
-              </button>
-
-              <button 
-                className="btn-secondary" 
-                onClick={() => onFlashcardClick && onFlashcardClick(course._id)}
-                title="View Flashcards"
-              >
-                <FaBookmark /> Flashcards
-              </button>
-            </div>
+            <button 
+              className="btn-primary" 
+              onClick={onAddToCart}
+              title="Add to Cart"
+            >
+              <FaShoppingCart /> Add to Cart
+            </button>
           )}
         </div>
       </div>

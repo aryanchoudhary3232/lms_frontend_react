@@ -175,12 +175,12 @@ const Login = () => {
           <div className="info-panel">
             <div className="info-content">
               <h1 className="brand-title">
-                {isSignup ? "Welcome To SeekoBharat" : "Hi Scholars!"}
+                {isSignup ? "Welcome To SeekhoBharat" : "Hi Scholars!"}
               </h1>
               <p className="brand-subtitle">
                 {isSignup
                   ? "Sign in With ID & Password"
-                  : "Join SeekoBharat to Improve Your Knowledge"}
+                  : "Join SeekhoBharat to Improve Your Knowledge"}
               </p>
               <button
                 className="switch-btn"
