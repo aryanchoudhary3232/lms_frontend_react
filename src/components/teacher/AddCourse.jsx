@@ -52,7 +52,7 @@ const AddCourse = () => {
           ...prev,
           [name]: `${
             name.charAt(0).toUpperCase() + name.slice(1)
-          } me sirf text allowed hai, numbers nahi`,
+          } should contain only text, numbers are not allowed`,
         }));
         return; // Don't update the value if it contains numbers
       } else {
@@ -68,7 +68,7 @@ const AddCourse = () => {
           ...prev,
           [name]: `${
             name.charAt(0).toUpperCase() + name.slice(1)
-          } me sirf numbers allowed hai`,
+          } should contain only numbers`,
         }));
         return; // Don't update the value if it contains non-numbers
       } else {
@@ -184,9 +184,25 @@ const AddCourse = () => {
     quizOptionIdx
   ) => {
     const newChapters = [...formData.chapters];
+    const oldValue =
+      newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].options[
+        quizOptionIdx
+      ];
+    const newValue = e.target.value;
+
+    // Update the option value
     newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].options[
       quizOptionIdx
-    ] = e.target.value;
+    ] = newValue;
+
+    // If this option was the correct answer, update correctOption to new value
+    if (
+      newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption ===
+      oldValue
+    ) {
+      newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption =
+        newValue;
+    }
 
     setFormData({
       ...formData,
@@ -198,11 +214,14 @@ const AddCourse = () => {
     chapterIdx,
     topicIdx,
     quizIdx,
-    quizOptionIdx
+    optionIndex
   ) => {
     const newChapters = [...formData.chapters];
+    // Store the option value at the given index as correctOption
     newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].correctOption =
-      quizOptionIdx;
+      newChapters[chapterIdx].topics[topicIdx].quiz[quizIdx].options[
+        optionIndex
+      ];
 
     setFormData({
       ...formData,
@@ -896,16 +915,13 @@ const AddCourse = () => {
                           <input
                             type="radio"
                             name={`correct-${chapterIdx}-${topicIdx}-${quizIdx}`}
-                            checked={
-                              q.correctOption === option && option !== ""
-                            }
+                            checked={q.correctOption === option}
                             onChange={() =>
                               handleQuizCorrectOption(
-                                null,
                                 chapterIdx,
                                 topicIdx,
                                 quizIdx,
-                                option
+                                optIdx
                               )
                             }
                             style={{ cursor: "pointer" }}
