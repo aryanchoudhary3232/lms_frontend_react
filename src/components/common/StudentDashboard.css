@@ -110,20 +110,22 @@
 /* My Courses Section */
 .courses-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 220px)); /* Constrained sizing */
+  gap: 16px;
   margin-bottom: 40px; /* Space for the button */
+  justify-content: start;
 }
 
 .course-item {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-width: 220px;
 }
 
 .course-item img {
   width: 100%;
-  height: 120px;
+  height: 100px;
   object-fit: cover;
   border-radius: 6px;
 }

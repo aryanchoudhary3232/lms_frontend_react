@@ -14,6 +14,7 @@ const Quiz = () => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [result, setResult] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const { startTimer, stopTimer, seconds, isActive, formattedTime } = useLearningTimer();
 
@@ -130,8 +131,8 @@ const Quiz = () => {
           alignItems: "center",
           gap: "2px",
         }}>
-          <span style={{ 
-            fontWeight: "600", 
+          <span style={{
+            fontWeight: "600",
             fontSize: "1rem",
             color: isActive ? "#1e40af" : "#6b7280",
           }}>
@@ -147,68 +148,156 @@ const Quiz = () => {
         </div>
       </div>
 
+
       <h2 style={{ textAlign: "center" }}>Topic: {quizTitle}</h2>
+
+      {/* Progress Indicator */}
+      {quiz.length > 0 && (
+        <div style={{
+          textAlign: "center",
+          marginBottom: "16px",
+          color: "#666",
+          fontSize: "14px"
+        }}>
+          Question {currentQuestionIndex + 1} of {quiz.length}
+          <div style={{
+            width: "200px",
+            height: "6px",
+            background: "#e5e7eb",
+            borderRadius: "3px",
+            margin: "8px auto 0",
+            overflow: "hidden"
+          }}>
+            <div style={{
+              width: `${((currentQuestionIndex + 1) / quiz.length) * 100}%`,
+              height: "100%",
+              background: "#2337ad",
+              borderRadius: "3px",
+              transition: "width 0.3s ease"
+            }} />
+          </div>
+        </div>
+      )}
+
       <form
         onSubmit={handleOnSubmit}
         style={{
           display: "flex",
           flexDirection: "column",
           boxShadow: "0 0 12px rgba(0,0,0,0.2)",
-          borderRadius: "5px",
+          borderRadius: "8px",
           width: "50%",
           marginLeft: "auto",
           marginRight: "auto",
-          padding: "12px 12px 0px 12px",
+          padding: "24px",
+          minHeight: "300px"
         }}
       >
-        {quiz.map((question, questionIdx) => (
-          <div key={questionIdx} style={{ marginBottom: "15px" }}>
-            <div style={{ fontWeight: "600", marginBottom: "10px" }}>
-              Q{questionIdx + 1}:&nbsp;{question.question}
+        {quiz.length > 0 && (
+          <div style={{ marginBottom: "15px", flex: 1 }}>
+            <div style={{ fontWeight: "600", marginBottom: "16px", fontSize: "18px" }}>
+              Q{currentQuestionIndex + 1}:&nbsp;{quiz[currentQuestionIndex].question}
             </div>
             <div
-              className=""
               style={{
                 display: "flex",
                 gap: "12px",
                 flexDirection: "column",
               }}
             >
-              {question.options.map((option, optionIdx) => (
+              {quiz[currentQuestionIndex].options.map((option, optionIdx) => (
                 <div
                   key={optionIdx}
-                  className=""
-                  style={{ display: "flex", gap: "6px" }}
+                  onClick={() => handleTickOption(currentQuestionIndex, option)}
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    alignItems: "center",
+                    padding: "12px 16px",
+                    border: userAnswers[currentQuestionIndex] === option
+                      ? "2px solid #2337ad"
+                      : "1px solid #d1d5db",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    background: userAnswers[currentQuestionIndex] === option
+                      ? "#eef2ff"
+                      : "white",
+                    transition: "all 0.2s ease"
+                  }}
                 >
                   <input
-                    onChange={() => handleTickOption(questionIdx, option)}
-                    checked={userAnswers[questionIdx] === option}
-                    name={`question-${questionIdx}`}
+                    onChange={() => handleTickOption(currentQuestionIndex, option)}
+                    checked={userAnswers[currentQuestionIndex] === option}
+                    name={`question-${currentQuestionIndex}`}
                     type="radio"
+                    style={{ cursor: "pointer" }}
                   />
-                  <div>{option}</div>
+                  <div style={{ fontSize: "15px" }}>{option}</div>
                 </div>
               ))}
             </div>
           </div>
-        ))}
-        <button
-          type="submit"
-          style={{
-            width: "955px",
-            marginLeft: "auto",
-            marginRight: "auto",
-            background: "#2337ad",
-            color: "white",
-            border: "none",
-            marginTop: "18px",
-            padding: "12px 0px",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Finish Quiz
-        </button>
+        )}
+
+        {/* Navigation Buttons */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "20px",
+          paddingTop: "16px",
+          borderTop: "1px solid #e5e7eb"
+        }}>
+          <button
+            type="button"
+            onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
+            disabled={currentQuestionIndex === 0}
+            style={{
+              padding: "10px 24px",
+              background: currentQuestionIndex === 0 ? "#e5e7eb" : "#f3f4f6",
+              color: currentQuestionIndex === 0 ? "#9ca3af" : "#374151",
+              border: "1px solid #d1d5db",
+              borderRadius: "6px",
+              cursor: currentQuestionIndex === 0 ? "not-allowed" : "pointer",
+              fontWeight: "500"
+            }}
+          >
+            ← Previous
+          </button>
+
+          {currentQuestionIndex < quiz.length - 1 ? (
+            <button
+              type="button"
+              onClick={() => setCurrentQuestionIndex(prev => Math.min(quiz.length - 1, prev + 1))}
+              style={{
+                padding: "10px 24px",
+                background: "#2337ad",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontWeight: "500"
+              }}
+            >
+              Next →
+            </button>
+          ) : (
+            <button
+              type="submit"
+              style={{
+                padding: "10px 24px",
+                background: "#16a34a",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontWeight: "500"
+              }}
+            >
+              ✓ Finish Quiz
+            </button>
+          )}
+        </div>
       </form>
     </div>
   ) : (
