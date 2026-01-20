@@ -22,8 +22,8 @@ const Cart = () => {
     if (token) dispatch(fetchCart(calculateTotal));
   }, [dispatch, token]);
 
-  const cartItems = useSelector((state) => state.cart.items)
-  const loading = useSelector((state) => state.cart.loading)
+  const cartItems = useSelector((state) => state.cart.items) || [];  // Fallback to empty array
+  const loading = useSelector((state) => state.cart.loading);
 
   // Recalculate total whenever cart items change
   useEffect(() => {
