@@ -170,17 +170,203 @@ const Login = () => {
       <Navbar />
       <div className="login-container">
         <div className="login-content">
-          {/* Left Panel - Info Panel */}
+          {/* Left Panel - Form Panel */}
+          <div className="form-panel">
+            <div className="form-content">
+              {/* Brand Logo */}
+              <div className="brand-logo">
+                <div className="brand-icon">S</div>
+                <span className="brand-name">SeekhoBharat</span>
+              </div>
+
+              {/* Sign In Form */}
+              {!isSignup && (
+                <form onSubmit={handleSubmitLogin} className="auth-form">
+                  <h2 className="form-title">Holla,<br />Welcome Back</h2>
+                  <p className="form-subtitle">Hey, welcome back to your special place</p>
+
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleOnChange}
+                      placeholder="email@example.com"
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleOnChange}
+                      placeholder="••••••••••"
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-options">
+                    <label className="remember-me">
+                      <input type="checkbox" />
+                      <span>Remember me</span>
+                    </label>
+                    <a href="#" className="forgot-link">
+                      Forgot Password?
+                    </a>
+                  </div>
+
+                  <button type="submit" className="submit-btn">
+                    Sign In
+                  </button>
+
+                  <p className="signup-link">
+                    Don't have an account?
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsSignup(true);
+                        setErrors({});
+                        setTouched({});
+                        setFormData({
+                          name: "",
+                          email: "",
+                          password: "",
+                          role: "",
+                        });
+                      }}
+                    >
+                      Sign Up
+                    </a>
+                  </p>
+                </form>
+              )}
+
+              {/* Sign Up Form */}
+              {isSignup && (
+                <form onSubmit={handleSubmitSignUp} className="auth-form">
+                  <h2 className="form-title">Create<br />Account</h2>
+                  <p className="form-subtitle">Join us and start your learning journey</p>
+
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleOnChange}
+                      onBlur={handleBlur}
+                      placeholder="Full Name"
+                      required
+                      className={`form-input ${errors.name && touched.name ? "error" : ""
+                        }`}
+                    />
+                    {errors.name && touched.name && (
+                      <span className="error-message">{errors.name}</span>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleOnChange}
+                      onBlur={handleBlur}
+                      placeholder="email@example.com"
+                      required
+                      className={`form-input ${errors.email && touched.email ? "error" : ""
+                        }`}
+                    />
+                    {errors.email && touched.email && (
+                      <span className="error-message">{errors.email}</span>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleOnChange}
+                      onBlur={handleBlur}
+                      placeholder="Create Password"
+                      required
+                      className={`form-input ${errors.password && touched.password ? "error" : ""
+                        }`}
+                    />
+                    {errors.password && touched.password && (
+                      <span className="error-message">{errors.password}</span>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleOnChange}
+                      onBlur={handleBlur}
+                      required
+                      className={`form-select ${errors.role && touched.role ? "error" : ""
+                        }`}
+                    >
+                      <option value="">Choose your role...</option>
+                      <option value="Student">Student</option>
+                      <option value="Teacher">Teacher</option>
+                    </select>
+                    {errors.role && touched.role && (
+                      <span className="error-message">{errors.role}</span>
+                    )}
+                  </div>
+
+                  <button type="submit" className="submit-btn">
+                    Sign Up
+                  </button>
+
+                  <p className="signup-link">
+                    Already have an account?
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsSignup(false);
+                        setErrors({});
+                        setTouched({});
+                        setFormData({
+                          name: "",
+                          email: "",
+                          password: "",
+                          role: "",
+                        });
+                      }}
+                    >
+                      Sign In
+                    </a>
+                  </p>
+                </form>
+              )}
+            </div>
+          </div>
+
+          {/* Right Panel - Illustration Panel */}
           <div className="info-panel">
             <div className="info-content">
               <h1 className="brand-title">
-                {isSignup ? "Welcome To SeekhoBharat" : "Hi Scholars!"}
+                {isSignup ? "Start Learning Today" : "Welcome Back!"}
               </h1>
               <p className="brand-subtitle">
                 {isSignup
-                  ? "Sign in With ID & Password"
-                  : "Join SeekhoBharat to Improve Your Knowledge"}
+                  ? "Join thousands of learners on SeekhoBharat"
+                  : "Your learning journey continues here"}
               </p>
+
+              {/* Illustration Placeholder */}
+              <div className="illustration-placeholder">
+                <span className="icon">🎓</span>
+                <span className="text">Learn & Grow</span>
+              </div>
+
               <button
                 className="switch-btn"
                 onClick={() => {
@@ -195,137 +381,8 @@ const Login = () => {
                   });
                 }}
               >
-                {isSignup ? "Sign In" : "Sign Up"}
+                {isSignup ? "Sign In Instead" : "Create Account"}
               </button>
-            </div>
-          </div>
-
-          {/* Right Panel - Form Panel */}
-          <div className="form-panel">
-            <div className="form-content">
-              {/* Sign In Form */}
-              {!isSignup && (
-                <form onSubmit={handleSubmitLogin} className="auth-form">
-                  <h2 className="form-title">Sign In</h2>
-
-                  <div className="form-group">
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleOnChange}
-                      placeholder="Enter E-mail"
-                      className="form-input"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleOnChange}
-                      placeholder="Enter Password"
-                      className="form-input"
-                    />
-                  </div>
-
-                  <div className="forgot-password">
-                    <a href="#" className="forgot-link">
-                      Forgot Password?
-                    </a>
-                  </div>
-
-                  <button type="submit" className="submit-btn">
-                    Sign In
-                  </button>
-                </form>
-              )}
-
-              {/* Sign Up Form */}
-              {isSignup && (
-                <form onSubmit={handleSubmitSignUp} className="auth-form">
-                  <h2 className="form-title">Create Account</h2>
-
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleOnChange}
-                      onBlur={handleBlur}
-                      placeholder="Name"
-                      required
-                      className={`form-input ${
-                        errors.name && touched.name ? "error" : ""
-                      }`}
-                    />
-                    {errors.name && touched.name && (
-                      <span className="error-message">{errors.name}</span>
-                    )}
-                  </div>
-
-                  <div className="form-group">
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleOnChange}
-                      onBlur={handleBlur}
-                      placeholder="Enter E-mail"
-                      required
-                      className={`form-input ${
-                        errors.email && touched.email ? "error" : ""
-                      }`}
-                    />
-                    {errors.email && touched.email && (
-                      <span className="error-message">{errors.email}</span>
-                    )}
-                  </div>
-
-                  <div className="form-group">
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleOnChange}
-                      onBlur={handleBlur}
-                      placeholder="Enter Password"
-                      required
-                      className={`form-input ${
-                        errors.password && touched.password ? "error" : ""
-                      }`}
-                    />
-                    {errors.password && touched.password && (
-                      <span className="error-message">{errors.password}</span>
-                    )}
-                  </div>
-
-                  <div className="form-group">
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleOnChange}
-                      onBlur={handleBlur}
-                      required
-                      className={`form-select ${
-                        errors.role && touched.role ? "error" : ""
-                      }`}
-                    >
-                      <option value="">...Choose role...</option>
-                      <option value="Student">Student</option>
-                      <option value="Teacher">Teacher</option>
-                    </select>
-                    {errors.role && touched.role && (
-                      <span className="error-message">{errors.role}</span>
-                    )}
-                  </div>
-
-                  <button type="submit" className="submit-btn">
-                    Sign Up
-                  </button>
-                </form>
-              )}
             </div>
           </div>
         </div>

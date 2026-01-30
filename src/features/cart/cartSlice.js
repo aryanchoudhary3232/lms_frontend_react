@@ -8,19 +8,29 @@ export const fetchCart = createAsyncThunk(
       console.log("..........");
 
       const response = await api.get("/cart");
-      console.log(response);
-      const items = response.data.data.items.map((i) => ({
-        id: i.course._id,
-        title: i.course.title,
-        instructor: i.course.description, // adjust if needed
-        price: i.course.price,
-        thumbnail: i.course.image,
-      }));
-      calculateTotal(items);
+      console.log("Cart Response:", response.data);
+
+      const cartData = response.data?.data || response.data;
+      const rawItems = cartData?.items || [];
+
+      const items = rawItems
+        .filter((item) => item && item.course) // 🛡️ Skip items with null course references
+        .map((i) => ({
+          id: i.course._id || i._id,
+          title: i.course.title || "Unknown Course",
+          instructor: i.course.description || "",
+          price: i.course.price || 0,
+          thumbnail: i.course.image || "",
+        }));
+
+      if (calculateTotal && typeof calculateTotal === "function") {
+        calculateTotal(items);
+      }
 
       return items;
     } catch (error) {
-      rejectWithValue(error.message);
+      console.error("Fetch Cart Error:", error);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
@@ -63,7 +73,7 @@ const cartSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
-        state.items = action.payload;
+        state.items = action.payload || [];  // ✅ Fallback to empty array
         state.loading = false;
         state.error = null;
       })
@@ -87,9 +97,10 @@ const cartSlice = createSlice({
         state.loading = true;
       })
       .addCase(addToCart.fulfilled, (state, action) => {
-        // Refresh cart data after successful addition
         state.loading = false;
         state.error = null;
+        // Optimization: We could update items here if the payload was mapped,
+        // but typically a fetchCart is triggered or navigation occurs.
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;

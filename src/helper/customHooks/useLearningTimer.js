@@ -79,28 +79,37 @@ export default function useLearningTimer() {
     
     if (minutes > 0) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/student/progress`, {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+        const token = localStorage.getItem("token");
+        
+        console.log(`📤 Saving learning progress: ${minutes} minutes...`);
+        
+        const response = await fetch(`${backendUrl}/student/progress`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ minutes }),
         });
         
+        const data = await response.json();
+        
         if (response.ok) {
-          console.log(`✅ Learning progress tracked: ${minutes} minutes`);
+          console.log(`✅ Learning progress tracked: ${minutes} minutes`, data);
           setTotalMinutesTracked(prev => prev + minutes);
           // Reset timer after successful save
           secondsRef.current = 0;
           setSeconds(0);
           sessionStartRef.current = Date.now();
         } else {
-          console.error('Failed to track learning progress:', response.statusText);
+          console.error('❌ Failed to track learning progress:', response.statusText, data);
         }
       } catch (error) {
-        console.error('Error tracking learning progress:', error);
+        console.error('❌ Error tracking learning progress:', error);
       }
+    } else {
+      console.log('⏭️ Skipping save - less than 1 minute tracked');
     }
   };
 
@@ -129,12 +138,18 @@ export default function useLearningTimer() {
       // Use synchronous approach for page unload
       const minutes = Math.floor(secondsRef.current / 60);
       if (minutes > 0) {
-        // Use navigator.sendBeacon for reliable data transmission
-        const data = new FormData();
-        data.append('minutes', minutes.toString());
-        
+        // Use navigator.sendBeacon for reliable data transmission with JSON
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
-        navigator.sendBeacon(`${backendUrl}/student/progress`, data);
+        const token = localStorage.getItem('token');
+        
+        // Create blob with JSON data and auth header
+        const blob = new Blob(
+          [JSON.stringify({ minutes, token })],
+          { type: 'application/json' }
+        );
+        
+        navigator.sendBeacon(`${backendUrl}/student/progress?token=${token}`, blob);
+        console.log(`🚀 Sent ${minutes} minutes via beacon on page unload`);
       }
     }
   };

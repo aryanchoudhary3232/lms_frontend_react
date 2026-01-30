@@ -18,7 +18,7 @@ const StudentCourses = () => {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-        const response = await fetch(`${backendUrl}/student/courses`, {
+        const response = await fetch(`${backendUrl}/student/my-courses`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
