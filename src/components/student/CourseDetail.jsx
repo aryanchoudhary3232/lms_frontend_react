@@ -9,6 +9,9 @@ const CourseDetail = () => {
   const [studentId, setStudentId] = useState(null);
   const [assignments, setAssignments] = useState([]);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
+  const [completedTopics, setCompletedTopics] = useState([]);
+  const [selectedTopic, setSelectedTopic] = useState({ chapterId: null, topicId: null });
+  const [markingComplete, setMarkingComplete] = useState(false);
 
   const { courseId } = useParams();
 
@@ -34,8 +37,9 @@ const CourseDetail = () => {
   };
 
   const isTopicCompleted = (chapterId, topicId) => {
-    // Add your logic to check if topic is completed
-    return false;
+    return completedTopics.some(
+      (ct) => ct.chapterId === chapterId && ct.topicId === topicId
+    );
   };
 
   // Inline styles object
@@ -168,6 +172,37 @@ const CourseDetail = () => {
     getStudentProfile();
   }, []);
 
+  // Fetch completed topics for this course
+  useEffect(() => {
+    if (!courseId) return;
+    
+    async function fetchCompletedTopics() {
+      try {
+        const token = localStorage.getItem("token");
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+        
+        const response = await fetch(
+          `${backendUrl}/student/topic-completion?courseId=${courseId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        
+        const data = await response.json();
+        if (data.success) {
+          setCompletedTopics(data.data.completedTopics || []);
+        }
+      } catch (error) {
+        console.error("Error fetching completed topics:", error);
+      }
+    }
+    
+    fetchCompletedTopics();
+  }, [courseId]);
+
   useEffect(() => {
     async function getCourseById() {
       try {
@@ -277,11 +312,64 @@ const CourseDetail = () => {
 
   if (!course) return <p>Loading...</p>;
 
-  const handleTopicClick = (tpVideo) => {
+  const handleTopicClick = (tpVideo, chapterId, topicId) => {
     if (tpVideo) {
       setSelectedVideo(tpVideo);
+      setSelectedTopic({ chapterId, topicId });
     } else if (course.video) {
       setSelectedVideo(course.video); // fallback to intro
+      setSelectedTopic({ chapterId: null, topicId: null });
+    }
+  };
+
+  const markTopicAsComplete = async () => {
+    if (!selectedTopic.chapterId || !selectedTopic.topicId) {
+      alert("Please select a video topic first");
+      return;
+    }
+
+    if (isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId)) {
+      alert("This topic is already marked as complete");
+      return;
+    }
+
+    try {
+      setMarkingComplete(true);
+      const token = localStorage.getItem("token");
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+      const response = await fetch(
+        `${backendUrl}/student/mark-topic-complete`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            courseId,
+            chapterId: selectedTopic.chapterId,
+            topicId: selectedTopic.topicId,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        setCompletedTopics([...completedTopics, {
+          chapterId: selectedTopic.chapterId,
+          topicId: selectedTopic.topicId,
+          completedAt: new Date()
+        }]);
+        alert("✅ Topic marked as complete!");
+      } else {
+        alert(data.message || "Failed to mark topic as complete");
+      }
+    } catch (error) {
+      console.error("Error marking topic as complete:", error);
+      alert("Error marking topic as complete");
+    } finally {
+      setMarkingComplete(false);
     }
   };
 
@@ -377,8 +465,6 @@ const CourseDetail = () => {
                             onClick={() =>
                               handleTopicClick(
                                 topic.video,
-                                chIdx,
-                                tpIdx,
                                 chapter._id,
                                 topic._id
                               )
@@ -711,6 +797,63 @@ const CourseDetail = () => {
             display: "block",
           }}
         />
+        
+        {/* Mark as Done Button */}
+        {selectedTopic.chapterId && selectedTopic.topicId && (
+          <div style={{
+            padding: "16px 24px",
+            backgroundColor: "#f9fafb",
+            borderBottom: "1px solid #e8edf2",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <div style={{ fontSize: "0.9rem", color: "#6b7280" }}>
+              {isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) ? (
+                <span style={{ color: "#059669", fontWeight: "600" }}>
+                  ✅ You've completed this topic
+                </span>
+              ) : (
+                <span>
+                  Mark this topic as complete to track your progress
+                </span>
+              )}
+            </div>
+            <button
+              onClick={markTopicAsComplete}
+              disabled={markingComplete || isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId)}
+              style={{
+                padding: "10px 24px",
+                backgroundColor: isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) 
+                  ? "#d1d5db" 
+                  : "#2337AD",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                fontWeight: "600",
+                fontSize: "0.9rem",
+                cursor: isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) || markingComplete
+                  ? "not-allowed" 
+                  : "pointer",
+                transition: "all 0.2s ease",
+                opacity: markingComplete ? 0.7 : 1,
+              }}
+              onMouseEnter={(e) => {
+                if (!isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) && !markingComplete) {
+                  e.currentTarget.style.backgroundColor = "#1a2a88";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) && !markingComplete) {
+                  e.currentTarget.style.backgroundColor = "#2337AD";
+                }
+              }}
+            >
+              {markingComplete ? "Marking..." : isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) ? "✓ Completed" : "Mark as Done"}
+            </button>
+          </div>
+        )}
+        
         {/* Video Info Section */}
         <div
           style={{

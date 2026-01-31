@@ -171,10 +171,12 @@ const StudentDashboard = () => {
           </div>
 
           <div className="stat-card accent">
-            <div className="stat-icon">📈</div>
+            <div className="stat-icon">🎥</div>
             <div className="stat-info">
-              <span className="stat-label">Completion</span>
-              <span className="stat-value">{dashboardData?.dashboardStats?.overallCompletionPercentage || 0}%</span>
+              <span className="stat-label">Videos Watched</span>
+              <span className="stat-value">
+                {dashboardData?.dashboardStats?.totalCompletedTopics || 0}
+              </span>
             </div>
           </div>
         </div>
