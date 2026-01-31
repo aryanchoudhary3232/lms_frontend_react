@@ -13,7 +13,7 @@ const Navbar = () => {
   const role =
     typeof window !== "undefined" ? localStorage.getItem("role") : null;
 
-  const {logout} = useAuth()
+  const { logout } = useAuth()
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
@@ -60,18 +60,19 @@ const Navbar = () => {
 
   return (
     <header className="site-navbar" style={{ width: '100%' }}>
-      <div className="container nav-inner">
+      <div className="nav-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link
           to={
             !role
               ? "/"
               : role === "Admin"
-              ? "/admin/dashboard"
-              : role === "Teacher"
-              ? "/teacher/home"
-              : "/student/home"
+                ? "/admin/dashboard"
+                : role === "Teacher"
+                  ? "/teacher/home"
+                  : "/student/home"
           }
           className="brand"
+          style={{ marginRight: 'auto' }}
           onClick={closeMenu}
         >
           SeekhoBharat
@@ -102,10 +103,10 @@ const Navbar = () => {
               !token
                 ? "/courses"
                 : role === "Admin"
-                ? "/admin/courses"
-                : role === "Student"
-                ? "/student/courses"
-                : "/teacher/courses"
+                  ? "/admin/courses"
+                  : role === "Student"
+                    ? "/student/courses"
+                    : "/teacher/courses"
             }
             className="nav-item"
             onClick={closeMenu}
