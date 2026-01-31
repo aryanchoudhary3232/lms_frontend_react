@@ -81,6 +81,7 @@ const StudentDashboard = () => {
   const globalQuizAverage = dashboardData?.dashboardStats?.globalQuizAverage || 0;
   const highestQuizScore = dashboardData?.dashboardStats?.highestQuizScore || 0;
   const studentName = dashboardData?.studentInfo?.name || "Student";
+  const studentEmail = dashboardData?.studentInfo?.email || "student@example.com";
 
   // Chart Data Logic
   const formattedProgressData = dashboardData?.studentProgress?.length > 0
@@ -259,7 +260,7 @@ const StudentDashboard = () => {
         <div className="dashboard-card profile-card">
           <div className="profile-avatar">👤</div>
           <div className="profile-name">{studentName}</div>
-          <div className="profile-email">student@seekhobharat.com</div>
+          <div className="profile-email">{studentEmail}</div>
 
           <div className="profile-stats">
             <div className="profile-stat">
