@@ -6,13 +6,9 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [token, setToken] = useState(null);
-  const [role, setRole] = useState(null);
-
-  useEffect(() => {
-    setToken(localStorage.getItem("token"));
-    setRole(localStorage.getItem("role"));
-  }, []);
+  // Use lazy initialization to avoid extra render (rerender-lazy-state-init)
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [role, setRole] = useState(() => localStorage.getItem("role"));
 
   const login = async (formData, setFormData) => {
     try {

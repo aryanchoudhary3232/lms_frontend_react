@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   ResponsiveContainer,
@@ -83,27 +83,30 @@ const StudentDashboard = () => {
   const studentName = dashboardData?.studentInfo?.name || "Student";
   const studentEmail = dashboardData?.studentInfo?.email || "student@example.com";
 
-  // Chart Data Logic
-  const formattedProgressData = dashboardData?.studentProgress?.length > 0
-    ? dashboardData.studentProgress.map((data) => ({
-      day: new Date(data.date).toLocaleDateString("en-us", {
-        weekday: "short",
-      }),
-      minutes: data.minutes || 0,
-    }))
-    : (() => {
-      const fallbackData = [];
-      const today = new Date();
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        fallbackData.push({
-          day: date.toLocaleDateString("en-us", { weekday: "short" }),
-          minutes: 0
-        });
-      }
-      return fallbackData;
-    })();
+  // Chart Data Logic - memoized to prevent recalculation each render (rerender-memo)
+  const formattedProgressData = useMemo(() => {
+    if (dashboardData?.studentProgress?.length > 0) {
+      return dashboardData.studentProgress.map((data) => ({
+        day: new Date(data.date).toLocaleDateString("en-us", {
+          weekday: "short",
+        }),
+        minutes: data.minutes || 0,
+      }));
+    }
+
+    // Fallback data for last 7 days
+    const fallbackData = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      fallbackData.push({
+        day: date.toLocaleDateString("en-us", { weekday: "short" }),
+        minutes: 0
+      });
+    }
+    return fallbackData;
+  }, [dashboardData?.studentProgress]);
 
   if (loading) {
     return (

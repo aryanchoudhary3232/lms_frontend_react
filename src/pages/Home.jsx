@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Use Link for internal navigation
-import "../css/Home.css"; // Ensure this path matches your folder structure
-// If your file is in 'student/home.jsx', use "../../css/Home.css"
+import { Link } from "react-router-dom";
+import "../css/Home.css";
 import heroImage from "../assets/hero-banner.png"
 
 
-import {
-  FaStar,
-  FaUserFriends,
-  FaBook,
-  FaRegPlayCircle,
-  FaRegListAlt,
-} from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+import { FaUserFriends } from "react-icons/fa";
+import { FaBook } from "react-icons/fa";
+import { FaRegPlayCircle } from "react-icons/fa";
+import { FaRegListAlt } from "react-icons/fa";
 
 function Home() {
   const [courses, setCourses] = useState([]);
@@ -25,23 +22,23 @@ function Home() {
   const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
-    fetchCourses();
-    fetchStats();
+    // Parallel fetching for better performance (eliminates waterfall)
+    Promise.all([fetchCourses(), fetchStats()]);
   }, []);
 
   const fetchCourses = async () => {
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-      
+
       // Try to fetch from /courses endpoint first, fallback to /student/courses
       let response = await fetch(`${backendUrl}/courses`);
       let data;
-      
+
       // If /courses endpoint fails, try /student/courses
       if (!response.ok) {
         response = await fetch(`${backendUrl}/student/courses`);
       }
-      
+
       data = await response.json();
 
       if (data.success) {
@@ -98,7 +95,7 @@ function Home() {
 
   return (
     <div className="home-container">
-      
+
       <main>
         {/* --- Hero Section --- */}
         <section className="hero-section">
@@ -106,7 +103,7 @@ function Home() {
             <h1>Welcome to SeekhoBharat</h1>
             <p>Learn anytime, anywhere — courses for every learner.</p>
             <div className="hero-buttons">
-               {/* Updated buttons to Links for better navigation */}
+              {/* Updated buttons to Links for better navigation */}
               <Link to="/courses" className="btn btn-primary">
                 Get Started
               </Link>
@@ -119,7 +116,7 @@ function Home() {
             <img
               src={heroImage}
               alt="Students Learning"
-              // Optional: Add onError fallback if you have a real image later
+            // Optional: Add onError fallback if you have a real image later
             />
           </div>
         </section>
@@ -166,8 +163,8 @@ function Home() {
           </div>
 
           {loading ? (
-            <div className="loading-message" style={{textAlign: 'center', padding: '2rem'}}>
-                Loading amazing courses...
+            <div className="loading-message" style={{ textAlign: 'center', padding: '2rem' }}>
+              Loading amazing courses...
             </div>
           ) : (
             <div className="courses-grid">
@@ -185,20 +182,20 @@ function Home() {
                       alt={course.title}
                       className="course-image"
                       onError={(e) =>
-                        (e.target.src =
-                          "https://via.placeholder.com/350x200.png?text=No+Image")
+                      (e.target.src =
+                        "https://via.placeholder.com/350x200.png?text=No+Image")
                       }
                     />
 
                     <div className="course-content">
                       {/* Rating (Static Fallback if API doesn't have it yet) */}
                       <div className="course-rating">
-                        <FaStar style={{ color: "#f39c12" }} /> 
+                        <FaStar style={{ color: "#f39c12" }} />
                         {course.rating?.average || "0"} ({course.rating?.count || "0"} reviews)
                       </div>
 
                       <h3 className="course-title">{course.title}</h3>
-                      
+
                       <p className="course-instructor">
                         Member: {course.teacher ? course.teacher.name : "Top Instructor"}
                       </p>
@@ -215,7 +212,7 @@ function Home() {
                       <div className="course-footer">
                         {/* Display Price */}
                         <span className="course-price">
-                           {course.price ? `₹${course.price}` : "Free"}
+                          {course.price ? `₹${course.price}` : "Free"}
                         </span>
                       </div>
                     </div>

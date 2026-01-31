@@ -70,34 +70,36 @@ const Login = () => {
   const handleOnChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData({
-      ...formData,
+    // Use functional setState to avoid stale state (rerender-functional-setstate)
+    setFormData(prev => ({
+      ...prev,
       [name]: value,
-    });
+    }));
 
     // Validate field if it has been touched
     if (touched[name]) {
       const error = validateField(name, value);
-      setErrors({
-        ...errors,
+      setErrors(prev => ({
+        ...prev,
         [name]: error,
-      });
+      }));
     }
   };
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
 
-    setTouched({
-      ...touched,
+    // Use functional setState for consistency (rerender-functional-setstate)
+    setTouched(prev => ({
+      ...prev,
       [name]: true,
-    });
+    }));
 
     const error = validateField(name, value);
-    setErrors({
-      ...errors,
+    setErrors(prev => ({
+      ...prev,
       [name]: error,
-    });
+    }));
   };
 
   const handleSubmitSignUp = async (e) => {

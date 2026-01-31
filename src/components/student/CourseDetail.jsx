@@ -149,86 +149,63 @@ const CourseDetail = () => {
     },
   };
 
+  // Combined parallel fetch for all initial data (async-parallel)
+  // Eliminates waterfall: 3 sequential requests → 1 parallel batch
   useEffect(() => {
-    async function getStudentProfile() {
+    if (!courseId) return;
+
+    async function fetchAllData() {
       const token = localStorage.getItem("token");
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/student/profile`,
-          {
+        // Start all fetches in parallel
+        const [profileRes, completedRes, courseRes] = await Promise.all([
+          fetch(`${backendUrl}/student/profile`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-          }
-        );
-        const data = await response.json();
-        setStudentId(data.data._id);
-      } catch (error) {
-        console.log("err occurred...", error);
-      }
-    }
-    getStudentProfile();
-  }, []);
-
-  // Fetch completed topics for this course
-  useEffect(() => {
-    if (!courseId) return;
-    
-    async function fetchCompletedTopics() {
-      try {
-        const token = localStorage.getItem("token");
-        const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-        
-        const response = await fetch(
-          `${backendUrl}/student/topic-completion?courseId=${courseId}`,
-          {
+          }),
+          fetch(`${backendUrl}/student/topic-completion?courseId=${courseId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
-        );
-        
-        const data = await response.json();
-        if (data.success) {
-          setCompletedTopics(data.data.completedTopics || []);
+          }),
+          fetch(`${backendUrl}/student/courses/${courseId}`,
+            token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+          ),
+        ]);
+
+        // Parse all responses in parallel
+        const [profileData, completedData, courseData] = await Promise.all([
+          profileRes.json(),
+          completedRes.json(),
+          courseRes.json(),
+        ]);
+
+        // Update state with fetched data
+        if (profileData.data?._id) {
+          setStudentId(profileData.data._id);
         }
-      } catch (error) {
-        console.error("Error fetching completed topics:", error);
-      }
-    }
-    
-    fetchCompletedTopics();
-  }, [courseId]);
-
-  useEffect(() => {
-    async function getCourseById() {
-      try {
-        const backendUrl =
-          import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-        const token = localStorage.getItem("token");
-
-        const response = await fetch(
-          `${backendUrl}/student/courses/${courseId}`,
-          token ? { headers: { Authorization: `Bearer ${token}` } } : {}
-        );
-        const courseResponse = await response.json();
-
-        if (response.ok && courseResponse.success) {
-          setCourse(courseResponse.data);
-          console.log("Course data with ratings:", courseResponse.data.ratings);
+        if (completedData.success) {
+          setCompletedTopics(completedData.data.completedTopics || []);
+        }
+        if (courseRes.ok && courseData.success) {
+          setCourse(courseData.data);
+          console.log("Course data with ratings:", courseData.data.ratings);
         } else {
-          console.error("Error fetching course:", courseResponse.message);
+          console.error("Error fetching course:", courseData.message);
         }
       } catch (error) {
-        console.log("err occurred...", error);
+        console.error("Error fetching course data:", error);
       }
     }
 
-    getCourseById();
-  }, []);
+    fetchAllData();
+  }, [courseId]);
   console.log("course", course);
 
   useEffect(() => {
@@ -797,7 +774,7 @@ const CourseDetail = () => {
             display: "block",
           }}
         />
-        
+
         {/* Mark as Done Button */}
         {selectedTopic.chapterId && selectedTopic.topicId && (
           <div style={{
@@ -824,8 +801,8 @@ const CourseDetail = () => {
               disabled={markingComplete || isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId)}
               style={{
                 padding: "10px 24px",
-                backgroundColor: isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) 
-                  ? "#d1d5db" 
+                backgroundColor: isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId)
+                  ? "#d1d5db"
                   : "#2337AD",
                 color: "#fff",
                 border: "none",
@@ -833,7 +810,7 @@ const CourseDetail = () => {
                 fontWeight: "600",
                 fontSize: "0.9rem",
                 cursor: isTopicCompleted(selectedTopic.chapterId, selectedTopic.topicId) || markingComplete
-                  ? "not-allowed" 
+                  ? "not-allowed"
                   : "pointer",
                 transition: "all 0.2s ease",
                 opacity: markingComplete ? 0.7 : 1,
@@ -853,7 +830,7 @@ const CourseDetail = () => {
             </button>
           </div>
         )}
-        
+
         {/* Video Info Section */}
         <div
           style={{
@@ -929,7 +906,7 @@ const CourseDetail = () => {
               }}>
                 Rate this course
               </h4>
-              
+
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
                 {Array.from({ length: 5 }).map((_, i) => {
                   const val = i + 1;
@@ -958,7 +935,7 @@ const CourseDetail = () => {
                     </button>
                   );
                 })}
-                
+
                 <button
                   onClick={async () => {
                     if (!ratingValue) {
@@ -999,7 +976,7 @@ const CourseDetail = () => {
                         // Reset form
                         setRatingValue(0);
                         setReviewText("");
-                        
+
                         // Refresh course data to get updated reviews
                         setTimeout(async () => {
                           try {
@@ -1072,11 +1049,11 @@ const CourseDetail = () => {
                     padding: "8px 12px",
                     borderRadius: "6px",
                     fontSize: "0.9rem",
-                    backgroundColor: ratingMsg.includes("Thank you") || ratingMsg.includes("success") 
+                    backgroundColor: ratingMsg.includes("Thank you") || ratingMsg.includes("success")
                       ? "#d1fae5" : "#fee2e2",
-                    color: ratingMsg.includes("Thank you") || ratingMsg.includes("success") 
+                    color: ratingMsg.includes("Thank you") || ratingMsg.includes("success")
                       ? "#065f46" : "#dc2626",
-                    border: `1px solid ${ratingMsg.includes("Thank you") || ratingMsg.includes("success") 
+                    border: `1px solid ${ratingMsg.includes("Thank you") || ratingMsg.includes("success")
                       ? "#10b981" : "#ef4444"}`,
                   }}
                 >
@@ -1301,9 +1278,9 @@ const CourseDetail = () => {
             color: "#1f2937",
             margin: "0 0 16px 0",
           }}>Student Reviews</h3>
-          
+
           {console.log("Rendering reviews section, course.ratings:", course.ratings)}
-          
+
           {course.ratings && Array.isArray(course.ratings) && course.ratings.length > 0 ? (
             course.ratings.map((review, index) => (
               <div key={review._id || index} style={{
@@ -1364,7 +1341,7 @@ const CourseDetail = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 {review.review && review.review.trim() && (
                   <p style={{
                     fontSize: "0.9rem",
@@ -1380,7 +1357,7 @@ const CourseDetail = () => {
                     "{review.review}"
                   </p>
                 )}
-                
+
                 <small style={{
                   color: "#9ca3af",
                   fontSize: "0.8rem",
@@ -1402,12 +1379,12 @@ const CourseDetail = () => {
               color: "#9ca3af",
             }}>
               <span style={{ fontSize: "2rem", marginBottom: "8px", display: "block" }}>💬</span>
-              <p style={{ 
+              <p style={{
                 fontSize: "0.9rem",
                 margin: "0",
                 color: "#6b7280",
               }}>No reviews yet.</p>
-              <p style={{ 
+              <p style={{
                 fontSize: "0.8rem",
                 margin: "4px 0 0 0",
                 color: "#9ca3af",
