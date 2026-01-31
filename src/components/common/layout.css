@@ -63,6 +63,23 @@
   transition: color var(--transition-fast);
   padding: var(--space-2) 0;
   position: relative;
+  cursor: pointer;
+}
+
+/* Underline slide animation */
+.site-navbar .nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+  transition: width var(--transition-normal);
+}
+
+.site-navbar .nav-item:hover::after {
+  width: 100%;
 }
 
 .site-navbar .nav-item:hover {
@@ -70,9 +87,20 @@
   background: transparent; /* Override old bg */
 }
 
+/* Focus visible for keyboard navigation */
+.site-navbar .nav-item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
 /* Active State indicator (optional, if you add active class) */
 .site-navbar .nav-item.active {
   color: var(--color-primary);
+}
+
+.site-navbar .nav-item.active::after {
+  width: 100%;
 }
 
 /* Action Button in Nav */
@@ -229,8 +257,28 @@ button.nav-item.action {
 .footer-links a {
   color: var(--color-text-secondary);
   transition: color var(--transition-fast);
+  position: relative;
+  display: inline-block;
 }
-.footer-links a:hover { color: var(--color-primary); }
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--color-primary);
+  transition: width var(--transition-normal);
+}
+
+.footer-links a:hover { 
+  color: var(--color-primary); 
+}
+
+.footer-links a:hover::after {
+  width: 100%;
+}
 
 .contact-form input,
 .contact-form textarea {

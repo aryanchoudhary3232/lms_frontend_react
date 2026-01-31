@@ -136,11 +136,18 @@
   border: 1px solid rgba(0, 0, 0, 0.04);
   transition: all var(--transition-normal);
   overflow: hidden;
+  cursor: pointer;
 }
 
 .dashboard-card:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+  border-color: var(--color-primary-light);
+}
+
+.dashboard-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
 }
 
 .card-title {
@@ -177,11 +184,18 @@
   border: 1px solid rgba(0, 0, 0, 0.04);
   transition: all var(--transition-normal);
   min-height: 100px;
+  cursor: pointer;
 }
 
 .stat-card:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+  border-color: var(--color-primary-light);
+}
+
+.stat-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
 }
 
 /* Accent variant - green background */
@@ -482,12 +496,18 @@
   overflow: hidden;
   transition: all var(--transition-normal);
   border: 1px solid transparent;
+  cursor: pointer;
 }
 
 .course-item:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
   border-color: var(--color-primary);
+}
+
+.course-item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .course-item img {

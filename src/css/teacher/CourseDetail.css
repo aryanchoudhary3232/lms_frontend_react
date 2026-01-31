@@ -346,14 +346,28 @@
 }
 .start-course-btn:hover {
   background-color: #000;
+  transform: translateY(-2px);
+}
+.start-course-btn:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .enroll-now-btn {
-  background-color: #a435f0; /* Udemy Purple style */
+  background-color: #a435f0;
   color: white;
 }
 .enroll-now-btn:hover {
   background-color: #8710d8;
+  transform: translateY(-2px);
+}
+.enroll-now-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.start-course-btn:focus-visible,
+.enroll-now-btn:focus-visible {
+  outline: 2px solid #a435f0;
+  outline-offset: 2px;
 }
 
 /* =========================================

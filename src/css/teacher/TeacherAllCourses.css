@@ -129,7 +129,6 @@
   color: #999;
 }
 
-/* --- New Course Card --- */
 .course-card {
   display: flex;
   flex-direction: column;
@@ -137,14 +136,21 @@
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(35, 55, 173, 0.04);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.04);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   height: 100%;
+  cursor: pointer;
 }
 
 .course-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 36px rgba(35, 55, 173, 0.08);
+  box-shadow: 0 16px 36px rgba(124, 58, 237, 0.12);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.course-card:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 4px;
 }
 
 .course-image {
@@ -246,6 +252,17 @@
 
 .btn-add-to-cart:hover {
   background-color: var(--darker-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.btn-add-to-cart:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-add-to-cart:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
 }
 
 .add-course-btn{
@@ -309,6 +326,15 @@
 
 .tab:hover {
   transform: translateY(-2px);
+}
+
+.tab:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
 }
 
 /* empty state */

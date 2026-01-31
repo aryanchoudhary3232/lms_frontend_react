@@ -151,7 +151,17 @@
 .modern-search-btn:hover {
   background-color: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(35, 55, 173, 0.3);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.modern-search-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.2);
+}
+
+.modern-search-btn:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
 }
 
 /* --- Grid & Cards --- */
@@ -171,12 +181,18 @@
   display: flex;
   flex-direction: column;
   border: 1px solid transparent;
+  cursor: pointer;
 }
 
 .course-card:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-hover);
-  border-color: rgba(35, 55, 173, 0.1);
+  border-color: rgba(124, 58, 237, 0.15);
+}
+
+.course-card:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 4px;
 }
 
 /* Reuse existing card internals from your previous file if needed, 
@@ -253,7 +269,19 @@
 .btn-details:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(35, 55, 173, 0.3);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.btn-add-to-cart:active,
+.btn-details:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.2);
+}
+
+.btn-add-to-cart:focus-visible,
+.btn-details:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
 }
 
 .course-card-actions-row {
