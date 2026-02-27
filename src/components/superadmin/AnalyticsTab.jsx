@@ -80,15 +80,31 @@ const AnalyticsTab = () => {
       {analytics.revenue && (
         <div className="chart-card">
           <h3>💰 Revenue by Category</h3>
+          <div style={{ marginBottom: '1rem', padding: '1rem', background: '#f7fafc', borderRadius: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', textAlign: 'center' }}>
+              <div>
+                <strong style={{ color: '#667eea' }}>Total Revenue</strong>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>₹{analytics.revenue.totalRevenue.toLocaleString()}</div>
+              </div>
+              <div>
+                <strong style={{ color: '#48bb78' }}>Platform (30%)</strong>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>₹{analytics.revenue.platformRevenue.toLocaleString()}</div>
+              </div>
+              <div>
+                <strong style={{ color: '#ed8936' }}>Teachers (70%)</strong>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>₹{analytics.revenue.teacherRevenue.toLocaleString()}</div>
+              </div>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={analytics.revenue.revenueByCategory}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="_id" />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
               <Legend />
-              <Bar dataKey="revenue" fill="#667eea" />
-              <Bar dataKey="orderCount" fill="#764ba2" />
+              <Bar dataKey="platformRevenue" fill="#48bb78" name="Platform Revenue (30%)" />
+              <Bar dataKey="teacherRevenue" fill="#ed8936" name="Teacher Revenue (70%)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -121,10 +137,13 @@ const AnalyticsTab = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="_id" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip formatter={(value, name) => {
+                  if (name === "Revenue") return `₹${value.toLocaleString()}`;
+                  return value;
+                }} />
                 <Legend />
                 <Line type="monotone" dataKey="enrollments" stroke="#667eea" name="Enrollments" />
-                <Line type="monotone" dataKey="revenue" stroke="#764ba2" name="Revenue (₹)" />
+                <Line type="monotone" dataKey="revenue" stroke="#764ba2" name="Revenue" />
               </LineChart>
             </ResponsiveContainer>
           </div>

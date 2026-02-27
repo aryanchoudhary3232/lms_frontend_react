@@ -54,6 +54,20 @@ const OverviewTab = ({ overview }) => {
           <span className="subtext">{revenue.completedOrders} completed orders</span>
         </div>
 
+        <div className="superadmin-stat-card revenue">
+          <span className="icon">🏢</span>
+          <h3>Platform Revenue (30%)</h3>
+          <span className="value">₹{revenue.platformRevenue.toLocaleString()}</span>
+          <span className="subtext">Platform's share</span>
+        </div>
+
+        <div className="superadmin-stat-card revenue">
+          <span className="icon">👨‍🏫</span>
+          <h3>Teacher Revenue (70%)</h3>
+          <span className="value">₹{revenue.teacherRevenue.toLocaleString()}</span>
+          <span className="subtext">Teachers' share</span>
+        </div>
+
         <div className="superadmin-stat-card">
           <span className="icon">📦</span>
           <h3>Total Orders</h3>
