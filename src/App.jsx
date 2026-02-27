@@ -46,6 +46,8 @@ import AdminCourses from "./components/admin/AdminCourses";
 import AdminCourseDetail from "./components/admin/AdminCourseDetail";
 import AdminTeacherDetail from "./components/admin/AdminTeacherDetail";
 import AdminSidebar from "./components/admin/AdminSidebar";
+//superadmin routes
+import SuperAdminDashboard from "./components/superadmin/SuperAdminDashboard";
 //common components (shared across all roles)
 import Profile from "./components/common/Profile";
 import Settings from "./components/common/Settings";
@@ -67,6 +69,7 @@ function Main() {
       {!hideShell &&
         !(location.pathname === "/teacher/courses/add") &&
         !location.pathname.startsWith("/admin") &&
+        !location.pathname.startsWith("/superadmin") &&
         !location.pathname.startsWith("/teacher/sidebar") &&
         !location.pathname.startsWith("/student/sidebar") && <Navbar />}
 
@@ -182,6 +185,17 @@ function Main() {
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+
+        {/* SuperAdmin routes - protect superadmin pages */}
+        <Route
+          path="/superadmin"
+          element={
+            <ProtectedRoute allowedRole={["SuperAdmin"]}>
+              <SuperAdminDashboard />
+            </ProtectedRoute>superadmin") &&
+        !location.pathname.startsWith("/
+          }
+        />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFound />} />
