@@ -69,7 +69,6 @@ function Main() {
       {!hideShell &&
         !(location.pathname === "/teacher/courses/add") &&
         !location.pathname.startsWith("/admin") &&
-        !location.pathname.startsWith("/superadmin") &&
         !location.pathname.startsWith("/teacher/sidebar") &&
         !location.pathname.startsWith("/student/sidebar") && <Navbar />}
 
