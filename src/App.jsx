@@ -192,8 +192,7 @@ function Main() {
           element={
             <ProtectedRoute allowedRole={["SuperAdmin"]}>
               <SuperAdminDashboard />
-            </ProtectedRoute>superadmin") &&
-        !location.pathname.startsWith("/
+            </ProtectedRoute>
           }
         />
 
