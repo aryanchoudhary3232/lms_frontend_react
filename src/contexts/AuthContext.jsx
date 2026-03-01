@@ -47,6 +47,8 @@ export const AuthProvider = ({ children }) => {
           navigate("/teacher/home");
         } else if (data.data.role === "Admin") {
           navigate("/admin/dashboard");
+        } else if (data.data.role === "SuperAdmin") {
+          navigate("/superadmin");
         } else if (data.data.role === "Student") {
           navigate("/student/home");
         } else {

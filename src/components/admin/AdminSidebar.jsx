@@ -29,14 +29,15 @@ const AdminSidebar = () => {
 
       {/* 2. The Dashboard Layout sits below it */}
       <div className="admin-layout-container">
-        
         {/* Mobile Hamburger Button for Sidebar */}
         <button className="mobile-menu-btn" onClick={toggleSidebar}>
           {isOpen ? "✕" : "☰"}
         </button>
 
         {/* Overlay for mobile */}
-        {isOpen && <div className="sidebar-overlay" onClick={closeSidebar}></div>}
+        {isOpen && (
+          <div className="sidebar-overlay" onClick={closeSidebar}></div>
+        )}
 
         {/* Sidebar */}
         <div className={`admin-sidebar ${isOpen ? "open" : ""}`}>
@@ -52,8 +53,8 @@ const AdminSidebar = () => {
                     role === "Admin"
                       ? "/admin/dashboard"
                       : role === "Teacher"
-                      ? "/teacher/sidebar/dashboard"
-                      : "/student/sidebar/dashboard"
+                        ? "/teacher/sidebar/dashboard"
+                        : "/student/sidebar/dashboard"
                   }
                   className={({ isActive }) =>
                     `admin-nav-link ${isActive ? "active" : ""}`
@@ -82,14 +83,28 @@ const AdminSidebar = () => {
                   </NavLink>
                 </li>
               )}
+              {role === "Admin" && (
+                <li className="admin-nav-item">
+                  <NavLink
+                    to="/admin/deleted-members"
+                    className={({ isActive }) =>
+                      `admin-nav-link ${isActive ? "active" : ""}`
+                    }
+                    onClick={closeSidebar}
+                  >
+                    <span className="admin-nav-icon">🗑️</span>
+                    Deleted Members
+                  </NavLink>
+                </li>
+              )}
               <li className="admin-nav-item">
                 <NavLink
                   to={
                     role === "Admin"
                       ? "/admin/courses"
                       : role === "Teacher"
-                      ? "/teacher/sidebar/courses"
-                      : "/student/sidebar/courses"
+                        ? "/teacher/sidebar/courses"
+                        : "/student/sidebar/courses"
                   }
                   className={({ isActive }) =>
                     `admin-nav-link ${isActive ? "active" : ""}`
@@ -122,8 +137,8 @@ const AdminSidebar = () => {
                     role === "Admin"
                       ? "/admin/profile"
                       : role === "Teacher"
-                      ? "/teacher/sidebar/profile"
-                      : "/student/sidebar/profile"
+                        ? "/teacher/sidebar/profile"
+                        : "/student/sidebar/profile"
                   }
                   className={({ isActive }) =>
                     `admin-nav-link ${isActive ? "active" : ""}`
@@ -142,8 +157,8 @@ const AdminSidebar = () => {
                     role === "Admin"
                       ? "/admin/settings"
                       : role === "Teacher"
-                      ? "/teacher/sidebar/settings"
-                      : "/student/sidebar/settings"
+                        ? "/teacher/sidebar/settings"
+                        : "/student/sidebar/settings"
                   }
                   className={({ isActive }) =>
                     `admin-nav-link ${isActive ? "active" : ""}`

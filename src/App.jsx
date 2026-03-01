@@ -45,7 +45,10 @@ import AdminUsers from "./components/admin/AdminUsers";
 import AdminCourses from "./components/admin/AdminCourses";
 import AdminCourseDetail from "./components/admin/AdminCourseDetail";
 import AdminTeacherDetail from "./components/admin/AdminTeacherDetail";
+import AdminDeletedMembers from "./components/admin/AdminDeletedMembers";
 import AdminSidebar from "./components/admin/AdminSidebar";
+//superadmin routes
+import SuperAdminDashboard from "./components/superadmin/SuperAdminDashboard";
 //common components (shared across all roles)
 import Profile from "./components/common/Profile";
 import Settings from "./components/common/Settings";
@@ -176,12 +179,23 @@ function Main() {
         >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="deleted-members" element={<AdminDeletedMembers />} />
           <Route path="teachers/:teacherId" element={<AdminTeacherDetail />} />
           <Route path="courses" element={<AdminCourses />} />
           <Route path="courses/:courseId" element={<AdminCourseDetail />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+
+        {/* SuperAdmin routes - protect superadmin pages */}
+        <Route
+          path="/superadmin"
+          element={
+            <ProtectedRoute allowedRole={["SuperAdmin"]}>
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFound />} />

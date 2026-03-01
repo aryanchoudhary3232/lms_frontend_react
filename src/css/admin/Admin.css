@@ -668,6 +668,122 @@
   padding: 20px 0;
 }
 
+/* Enrolled Students Section */
+.admin-enrolled-students-section {
+  margin-top: 30px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  padding: 30px;
+}
+
+.admin-enrolled-students-section h2 {
+  color: #2337AD;
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.admin-students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.admin-student-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.admin-student-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(35, 55, 173, 0.15);
+  border-color: #2337AD;
+}
+
+.student-card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.student-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2337AD 0%, #1a2a88 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.student-info h4 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.student-email {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.student-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.detail-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.detail-item > div {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: #2337AD;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 992px) {
   .admin-course-detail-container {
     padding: 20px;
@@ -679,6 +795,14 @@
 
   .admin-course-sidebar {
     max-height: none;
+  }
+
+  .admin-students-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-enrolled-students-section {
+    padding: 20px;
   }
 }
 
@@ -1790,6 +1914,21 @@
   .verification-actions button {
     width: 100%;
   }
+}
+
+/* Deleted Members Styles */
+.admin-card.user.deleted-member {
+  border-left-color: #e74c3c;
+  background: linear-gradient(to right, #fff5f5 0%, white 100%);
+}
+
+.admin-card.user.deleted-member::before {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  opacity: 0.08;
+}
+
+.admin-card.user.deleted-member:hover::before {
+  opacity: 0.12;
 }
 
 @media (max-width: 480px) {
