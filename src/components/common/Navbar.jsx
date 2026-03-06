@@ -67,6 +67,8 @@ const Navbar = () => {
               ? "/"
               : role === "Admin"
               ? "/admin/dashboard"
+              : role === "SuperAdmin"
+              ? "/superadmin"
               : role === "Teacher"
               ? "/teacher/home"
               : "/student/home"
@@ -86,6 +88,11 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <nav className={`nav-links ${isMenuOpen ? "active" : ""}`}>
+          {role === "SuperAdmin" && (
+            <Link to={"/superadmin"} className="nav-item" onClick={closeMenu}>
+              Dashboard
+            </Link>
+          )}
           {role === "Teacher" && (
             <Link to={"/teacher/sidebar/dashboard"} className="nav-item" onClick={closeMenu}>
               Dashboard
@@ -97,21 +104,23 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link
-            to={
-              !token
-                ? "/courses"
-                : role === "Admin"
-                ? "/admin/courses"
-                : role === "Student"
-                ? "/student/courses"
-                : "/teacher/courses"
-            }
-            className="nav-item"
-            onClick={closeMenu}
-          >
-            Courses
-          </Link>
+          {role !== "SuperAdmin" && (
+            <Link
+              to={
+                !token
+                  ? "/courses"
+                  : role === "Admin"
+                  ? "/admin/courses"
+                  : role === "Student"
+                  ? "/student/courses"
+                  : "/teacher/courses"
+              }
+              className="nav-item"
+              onClick={closeMenu}
+            >
+              Courses
+            </Link>
+          )}
 
           {/* Assignments Link for Teacher and Student */}
           {role === "Teacher" && (

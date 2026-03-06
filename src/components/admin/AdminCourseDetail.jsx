@@ -174,7 +174,7 @@ const AdminCourseDetail = () => {
             <div className="admin-info-item">
               <span className="info-label">Students:</span>
               <span className="info-value">
-                {course.students ? course.students.length : 0} enrolled
+                {course.enrolledCount || 0} enrolled
               </span>
             </div>
             <div className="admin-info-item">
@@ -250,6 +250,66 @@ const AdminCourseDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Enrolled Students Section */}
+      {course.enrolledStudents && course.enrolledStudents.length > 0 && (
+        <div className="admin-enrolled-students-section">
+          <h2>📚 Enrolled Students ({course.enrolledStudents.length})</h2>
+          <div className="admin-students-grid">
+            {course.enrolledStudents.map((student) => (
+              <div key={student._id} className="admin-student-card">
+                <div className="student-card-header">
+                  <div className="student-avatar">
+                    {student.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="student-info">
+                    <h4>{student.name}</h4>
+                    <p className="student-email">{student.email}</p>
+                  </div>
+                </div>
+                <div className="student-card-details">
+                  <div className="detail-item">
+                    <span className="detail-icon">📅</span>
+                    <div>
+                      <span className="detail-label">Enrolled:</span>
+                      <span className="detail-value">
+                        {student.enrolledAt
+                          ? new Date(student.enrolledAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )
+                          : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-icon">✅</span>
+                    <div>
+                      <span className="detail-label">Completed Topics:</span>
+                      <span className="detail-value">
+                        {student.completedTopicsCount || 0}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-icon">📝</span>
+                    <div>
+                      <span className="detail-label">Quizzes Taken:</span>
+                      <span className="detail-value">
+                        {student.quizScoresCount || 0}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
